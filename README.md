@@ -1,7 +1,7 @@
 # TC_Grupo9
 
 # DESARROLLO
-Dependiendo del tipo de tarea que hagas, trabaja en la rama correspondiente:
+Dependiendo del tipo de tarea que hagas, trabaja en la rama correspondiente (NUNCA EN MAIN):
 
 Para tareas de frontend, usa la rama front.
 
