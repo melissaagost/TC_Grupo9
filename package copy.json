@@ -1,0 +1,26 @@
+{
+  "name": "foro-monorepo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "start": "node apps/server/dist/main.js",
+    "generate": "cd apps/server && npx prisma generate",
+    "pull": "dotenv -e .env -- cd apps/server && npx prisma db pull --schema=apps/server/prisma/schema.prisma"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "dotenv-cli": "^8.0.0",
+    "turbo": "^2.4.4"
+  },
+  "packageManager": "npm@8.5.0"
+}
