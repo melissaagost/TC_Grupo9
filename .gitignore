@@ -2,6 +2,9 @@
 node_modules/
 **/node_modules/
 .turbo
+# vite
+.vite
+.vite-temp
 
 # Salidas de builds
 dist/

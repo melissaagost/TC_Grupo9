@@ -1,13 +1,18 @@
-// 🎨 Colores base
-$color-rojo:        #E24137;
-$color-rojo-claro:  #F68C65;
-$color-durazno:     #F6D0A1;
-$color-turquesa:    #29B9B9;
-$color-turquesa-oscuro: #168090;
+// Colores
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$text-color: #333;
+$background-color: #f5f5f5;
 
-// 🌚 Tonos neutros
-$color-fondo:       #f9f9f9;
-$color-texto:       #333;
+// Tipografía
+$font-stack: 'Roboto', sans-serif;
+$font-size-base: 16px;
 
-// 🔤 Tipografías
-$fuente-base: 'Segoe UI', sans-serif;
+// Espaciado
+$spacing-unit: 1rem;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
