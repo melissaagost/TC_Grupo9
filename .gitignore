@@ -1,0 +1,35 @@
+# Dependencias
+node_modules/
+**/node_modules/
+.turbo
+
+# Salidas de builds
+dist/
+**/dist/
+build/
+**/build/
+
+# Archivos de logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Caché y archivos temporales de Turborepo y otras herramientas
+.cache/
+turbo/
+tmp/
+**/tmp/
+
+# Directorios de cobertura de tests
+coverage/
+**/coverage/
+
+# Variables de entorno (guarda .env.example para referencia)
+.env
+.env.*
+!.env.example
+
+# Archivos y carpetas de configuración locales (IDE, sistema operativo, etc.)
+.vscode/
+.DS_Store

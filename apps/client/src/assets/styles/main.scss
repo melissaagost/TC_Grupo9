@@ -1,0 +1,42 @@
+@use './variables' as *;
+
+
+body {
+  margin: 0;
+  font-family: $fuente-base;
+  background-color: $color-fondo;
+  color: $color-texto;
+}
+
+  
+  .navbar {
+    background: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+  
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+  
+      a {
+        text-decoration: none;
+        color: #333;
+        &.active {
+          color: #007bff;
+        }
+      }
+    }
+  }
+  
+  section {
+    padding: 2rem;
+    text-align: center;
+  }
+  

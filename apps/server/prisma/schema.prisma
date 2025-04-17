@@ -1,0 +1,33 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth"]
+}
+
+model TipoUsuario {
+  id_tipousuario Int       @id @default(autoincrement())
+  descripcion    String
+  estado         Int       @default(1)
+  usuarios       Usuario[]
+
+  @@map("tipousuario")
+  @@schema("auth")
+}
+
+model Usuario {
+  id_usuario     Int         @id @default(autoincrement())
+  nombre         String
+  correo         String      @unique
+  password       String
+  id_tipousuario Int
+  estado         Int         @default(1)
+  tipoUsuario    TipoUsuario @relation(fields: [id_tipousuario], references: [id_tipousuario], map: "fk_usuario_tipousuario")
+
+  @@map("usuario")
+  @@schema("auth")
+}
