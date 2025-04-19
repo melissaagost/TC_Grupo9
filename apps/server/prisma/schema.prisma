@@ -41,7 +41,6 @@ model categoria {
   descripcion  String? @db.VarChar(200)
   estado       Int     @default(1)
   item         item[]
-  menu         menu[]
 
   @@schema("restaurant")
 }
@@ -65,19 +64,21 @@ model item {
   precio       Decimal    @db.Decimal(10, 2)
   estado       Int        @default(1)
   id_categoria Int?
+  id_menu      Int?
   categoria    categoria? @relation(fields: [id_categoria], references: [id_categoria], onDelete: Restrict, map: "fk_item_categoria")
+  menu         menu?      @relation(fields: [id_menu], references: [id_menu], onUpdate: NoAction, map: "fk_item_menu")
   pedido       pedido[]
 
   @@schema("restaurant")
 }
 
 model menu {
-  id_menu      Int           @id @default(autoincrement())
-  nombre       String        @db.VarChar(100)
-  descripcion  String?       @db.VarChar(200)
-  id_categoria Int
-  categoria    categoria     @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction, map: "fk_menu_categoria")
-  restaurante  restaurante[]
+  id_menu     Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(100)
+  descripcion String?       @db.VarChar(200)
+  estado      Int?
+  item        item[]
+  restaurante restaurante[]
 
   @@schema("restaurant")
 }
