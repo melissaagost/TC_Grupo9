@@ -7,6 +7,12 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { RestaurantModule } from './restaurant/restaurant.module';
+import { MenuModule } from './menu/menu.module';
+import { ItemModule } from './item/item.module';
+import { CategoriesController } from './categories/categories.controller';
+import { CategoriesModule } from './categories/categories.module';
+import { UsuarioController } from './usuario/usuario.controller';
 
 @Module({
   imports: [
@@ -20,8 +26,12 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: join(__dirname, '..', '..', '..', '.env'),
     }),
+    RestaurantModule,
+    MenuModule,
+    ItemModule,
+    CategoriesModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, CategoriesController, UsuarioController],
   providers: [AppService],
 })
 export class AppModule {}
