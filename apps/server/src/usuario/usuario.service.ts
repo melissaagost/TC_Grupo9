@@ -9,11 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-
-enum Estado {
-  ACTIVO = 1,
-  INACTIVO = 0,
-}
+import { Estado } from 'src/common/enums/estado.enum';
 
 @Injectable()
 export class UsuarioService {
