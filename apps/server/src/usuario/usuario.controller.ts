@@ -33,12 +33,16 @@ export class UsuarioController {
     return { data: usuarios };
   }
   //Endpoint create user
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Administrador)
   @Post()
   createUser(@Body() data: CreateUserDto): Promise<Usuario> {
     return this.usuarioService.createUser(data);
   }
 
   // Endpoint for updateUser
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Administrador)
   @Patch(':id')
   updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -48,12 +52,16 @@ export class UsuarioController {
   }
 
   //Endpoint to set inactive
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Administrador)
   @Patch(':id/inactive')
   setUserInactive(@Param('id', ParseIntPipe) id: number): Promise<Usuario> {
     return this.usuarioService.setInactive(id);
   }
 
   //Endpoint for update password
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Administrador)
   @Patch(':id/updatepass')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,

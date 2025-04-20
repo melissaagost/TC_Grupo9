@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth"]
+  schemas  = ["auth", "restaurant"]
 }
 
 model TipoUsuario {
@@ -27,7 +27,134 @@ model Usuario {
   id_tipousuario Int
   estado         Int         @default(1)
   tipoUsuario    TipoUsuario @relation(fields: [id_tipousuario], references: [id_tipousuario], map: "fk_usuario_tipousuario")
+  pedido         pedido[]
+  reserva        reserva[]
 
   @@map("usuario")
   @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model categoria {
+  id_categoria Int     @id @default(autoincrement())
+  nombre       String  @db.VarChar(50)
+  descripcion  String? @db.VarChar(200)
+  estado       Int     @default(1)
+  item         item[]
+
+  @@schema("restaurant")
+}
+
+model detalle_pedido {
+  id_detalle_pedido Int    @id @default(autoincrement())
+  cliente           String @db.VarChar(100)
+  direccion         String @db.VarChar(100)
+  id_pedido         Int
+  pedido            pedido @relation(fields: [id_pedido], references: [id_pedido], onDelete: NoAction, onUpdate: NoAction, map: "fk_detalle_pedido")
+
+  @@schema("restaurant")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model item {
+  id_item      Int        @id @default(autoincrement())
+  nombre       String     @db.VarChar(50)
+  descripcion  String?    @db.VarChar(100)
+  stock        Int
+  precio       Decimal    @db.Decimal(10, 2)
+  estado       Int        @default(1)
+  id_categoria Int?
+  id_menu      Int?
+  categoria    categoria? @relation(fields: [id_categoria], references: [id_categoria], onDelete: Restrict, map: "fk_item_categoria")
+  menu         menu?      @relation(fields: [id_menu], references: [id_menu], onUpdate: NoAction, map: "fk_item_menu")
+  pedido       pedido[]
+
+  @@schema("restaurant")
+}
+
+model menu {
+  id_menu     Int           @id @default(autoincrement())
+  nombre      String        @db.VarChar(100)
+  descripcion String?       @db.VarChar(200)
+  estado      Int?
+  item        item[]
+  restaurante restaurante[]
+
+  @@schema("restaurant")
+}
+
+model mesa {
+  id_mesa        Int         @id @default(autoincrement())
+  numero         Int
+  capacidad      Int
+  descripcion    String?     @db.VarChar(100)
+  id_restaurante Int
+  restaurante    restaurante @relation(fields: [id_restaurante], references: [id_restaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_mesa_restaurante")
+  reserva        reserva[]
+
+  @@schema("restaurant")
+}
+
+model metodo_pago {
+  id_metodo Int    @id @default(autoincrement())
+  nombre    String @db.VarChar(50)
+  pago      pago[]
+
+  @@schema("restaurant")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model pago {
+  id_pago     Int         @id @default(autoincrement())
+  id_pedido   Int
+  fecha       DateTime    @db.Timestamp(6)
+  monto       Decimal     @db.Decimal(10, 2)
+  estado      Int
+  id_metodo   Int
+  metodo_pago metodo_pago @relation(fields: [id_metodo], references: [id_metodo], onDelete: NoAction, onUpdate: NoAction, map: "fk_pago_metodo")
+  pedido      pedido      @relation(fields: [id_pedido], references: [id_pedido], onDelete: NoAction, onUpdate: NoAction, map: "fk_pago_pedido")
+
+  @@schema("restaurant")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model pedido {
+  id_pedido      Int              @id @default(autoincrement())
+  cantidad       Int
+  precio         Decimal          @db.Decimal(10, 2)
+  id_item        Int
+  id_usuario     Int
+  estado         Int              @default(1)
+  detalle_pedido detalle_pedido[]
+  pago           pago[]
+  item           item             @relation(fields: [id_item], references: [id_item], onDelete: NoAction, onUpdate: NoAction, map: "fk_pedido_item")
+  usuario        Usuario          @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_pedido_usuario")
+
+  @@schema("restaurant")
+}
+
+model reserva {
+  id_reserva Int      @id @default(autoincrement())
+  fecha      DateTime @db.Date
+  hora       DateTime @db.Time(6)
+  id_mesa    Int
+  id_usuario Int
+  estado     Int
+  mesa       mesa     @relation(fields: [id_mesa], references: [id_mesa], onDelete: NoAction, onUpdate: NoAction, map: "fk_reserva_mesa")
+  usuario    Usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_reserva_usuario")
+
+  @@schema("restaurant")
+}
+
+model restaurante {
+  id_restaurante Int     @id @default(autoincrement())
+  nombre         String  @db.VarChar(100)
+  direccion      String  @db.VarChar(200)
+  telefono       String? @db.VarChar(20)
+  email          String? @db.VarChar(100)
+  id_menu        Int
+  mesa           mesa[]
+  menu           menu    @relation(fields: [id_menu], references: [id_menu], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurante_menu")
+
+  @@schema("restaurant")
 }
