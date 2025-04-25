@@ -1,6 +1,6 @@
 import AppRoutes from './routes';
-import Navbar from './components/Navbar/Navbar';
-import Footer from './components/Footer/Footer'
+import Navbar from './components/Navbar.tsx';
+import Footer from './components/Footer.tsx';
 
 const App = () => {
   return (
