@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
-import { Usuario, TipoUsuario } from '@prisma/client';
+import { Usuario } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -18,8 +18,7 @@ import { AuthenticatedUser, Role } from 'src/auth/types/authenticatedUser.type';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
-
-type userType = Usuario & { tipoUsuario: TipoUsuario };
+import { UsuarioConTipo, UsuarioPerfil } from './interfaces/usuario.interface';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -28,7 +27,7 @@ export class UsuarioController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Administrador)
   @Get()
-  async obtenerTodos(): Promise<{ data: userType[] }> {
+  async obtenerTodos(): Promise<{ data: UsuarioConTipo[] }> {
     const usuarios = await this.usuarioService.obtenerTodos();
     return { data: usuarios };
   }
@@ -47,7 +46,7 @@ export class UsuarioController {
   updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdateUserDto,
-  ): Promise<Usuario> {
+  ): Promise<UsuarioPerfil> {
     return this.usuarioService.updateUser(id, data);
   }
 
@@ -55,8 +54,11 @@ export class UsuarioController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Administrador)
   @Patch(':id/inactive')
-  setUserInactive(@Param('id', ParseIntPipe) id: number): Promise<Usuario> {
-    return this.usuarioService.setInactive(id);
+  setUserInactive(
+    @User() user: AuthenticatedUser,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    return this.usuarioService.setInactive(user.id_usuario, id);
   }
 
   //Endpoint for update password
@@ -66,7 +68,7 @@ export class UsuarioController {
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: UpdatePasswordDto,
-  ): Promise<Usuario> {
+  ): Promise<{ message: string; correo: string }> {
     return this.usuarioService.updatePassword(id, data);
   }
 
