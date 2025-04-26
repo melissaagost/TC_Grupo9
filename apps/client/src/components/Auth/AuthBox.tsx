@@ -7,7 +7,7 @@ const AuthBox = () => {
 
         <div className="min-h-screen flex items-center justify-center bg-eggshell-whitedove 0 p-4">
 
-            <Card className="w-full max-w-4xl overflow-hidden">
+            <Card className="w-full max-w-4xl overflow-hidden animate-slide-in">
 
                 <div className="flex flex-col md:flex-row">
                     {/* Left side - Image */}
@@ -19,7 +19,7 @@ const AuthBox = () => {
 
             </Card>
 
-      </div>
+        </div>
 
     );
 };

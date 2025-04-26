@@ -3,7 +3,7 @@ import FeatureCard from "./FeatureCard";
 const Features = () =>{
     return(
 
-    <section className="py-20 px-6 bg-eggshell-whitedove">
+    <section className="py-20 px-6 bg-eggshell-whitedove animate-slide-in">
 
         <div className="container mx-auto text-center space-y-8">
 

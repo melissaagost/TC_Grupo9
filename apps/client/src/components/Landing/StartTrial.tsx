@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 const StartTrial = () => {
     return (
 
-        <section className="py-25 px-6 bg-eggshell-whitedove">
+        <section className="py-25 px-6 bg-eggshell-whitedove animate-slide-in">
 
             <div className="container mx-auto text-center space-y-10">
 

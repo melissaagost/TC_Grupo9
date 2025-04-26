@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 const CallToAction = () => {
     return (
 
-    <section className="bg-cover bg-center bg-no-repeat bg-[url(/assets/img/bg-calltoaction2.jpg)]">
+    <section className="bg-cover animate-slide-in bg-center bg-no-repeat bg-[url(/assets/img/bg-calltoaction2.jpg)]">
 
       <div className="bg-blood-500/80  backdrop-opacity-15 py-16 px-40 ">
 

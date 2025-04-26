@@ -65,9 +65,24 @@ module.exports = {
         raleway: ['Raleway', 'sans-serif'],
       },
 
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+
+        'slide-in': {
+          '0%': { transform: 'translateY(50px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        }
+      },
+
       animation: {
-        spinOnce: "spin 1s linear",
-      }
+        'fade-in': 'fade-in 0.7s ease-out',
+        'slide-in': 'slide-in 0.7s ease-out'
+      },
+
+
 
     }
 

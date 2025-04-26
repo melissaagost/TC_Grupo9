@@ -4,7 +4,7 @@ const Efficiency = () => {
 
     return (
 
-        <section>
+        <section className='animate-slide-in'>
 
 
             <div className="bg-blood-100 py-16 px-40 bg-gradient-to-l from-black/50 via-black/10 to-black/0">

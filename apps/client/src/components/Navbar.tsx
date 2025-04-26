@@ -12,10 +12,10 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between py-6 px-6">
 
         {/* Logo */}
-        <div className="flex items-center gap-1">
+        <Link  to="/" className="flex items-center gap-1">
           <span className="text-2xl font-playfair font-bold text-blood-100">FoodTable</span>
           <span className="text-lg font-playfair text-gold-golden">Pro</span>
-        </div>
+        </Link>
 
         {/* Navigation for desktop */}
         <div className="hidden md:flex items-center font-medium gap-8 font-raleway text-base text-gray-700">
