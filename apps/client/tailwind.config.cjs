@@ -24,6 +24,7 @@ module.exports = {
         /*grises*/
         gray:{
           200: '#565359', // light gray
+          300: '#B8BBAD',
           700: '#170E10', //almost black
           charcoal: "#2e2e2e", //from loveable
         },
@@ -34,6 +35,8 @@ module.exports = {
           200: '#FAB245',
           300: '#FAB877',
           400: '#F69650',
+          mustard: '#D7B30C',
+          after: '#A79510',
           golden: "#D4AF37" //from loveable
         },
 
@@ -43,6 +46,9 @@ module.exports = {
           200: '#E1E8E3', //mid
           300: '#DEE2E5', //office
           creamy: '#F3E3C4',
+          whitedove: '#F0EFE7',
+          wonw: '#EDEFEF',
+          greekvilla: '#F0EBE3',
           cream: "#fdfaf6", //from loveable
         }
 

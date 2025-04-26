@@ -7,7 +7,8 @@ const Navbar = () => {
 
   return (
 
-    <nav className="bg-gradient-to-b from-eggshell-100 border-b border-eggshell-200">
+    <nav className="sticky top-0 z-50 border-b border-b-eggshell-creamy bg-eggshell-whitedove/80 backdrop-blur-lg">
+
       <div className="container mx-auto flex items-center justify-between py-6 px-6">
 
         {/* Logo */}
@@ -68,7 +69,7 @@ const Navbar = () => {
 
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 border border-blood-500 text-blood-500 px-4 py-2 rounded-md hover:bg-blood-500 hover:text-eggshell-100 transition-colors w-30 justify-left">
+            className="inline-flex items-center gap-2  border border-blood-500 text-blood-500 px-4 py-2 rounded-md hover:bg-blood-500 hover:text-eggshell-100 transition-colors w-30 justify-left">
             <LogIn size={18} />
             Ingresar
           </Link>

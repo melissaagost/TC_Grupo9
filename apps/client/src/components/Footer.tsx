@@ -23,7 +23,7 @@ const Footer = () => {
           </div>
 
           <p className="text-eggshell-creamy font-raleway max-w-md text-sm">
-            Elevá la gestión de tu restaurante con nuestra plataforma comprensiva para reserva de mesas, administración de menú y administración de usuarios.</p>
+            Eleva la gestión de tu restaurante con nuestra plataforma integral para reserva de mesas, administración de menú y administración de usuarios.</p>
 
           <div className="flex gap-4 pt-2 text-eggshell-creamy">
             <a href="#"><Instagram size={20} /></a>
@@ -47,7 +47,7 @@ const Footer = () => {
 
         {/* Contact Info */}
         <div>
-          <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-300">Contactanos</h4>
+          <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-300">Contáctanos</h4>
           <ul className="space-y-4 font-raleway text-eggshell-creamy text-sm">
             <li className="flex gap-3 items-start">
               <MapPin className="text-gold-golden mt-1" size={18} />
@@ -67,7 +67,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t font-raleway border-eggshell-300 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-eggshell-creamy">
-        <p>&copy; {currentYear} FoodTable Pro. Todos los derechos reservados.</p>
+        <p>&copy; {currentYear} FoodTable Pro. Todos los Derechos Reservados.</p>
         <div className="flex gap-4 mt-4 md:mt-0">
           <a href="#" className="hover:text-gold-golden transition-colors">Política de Privacidad</a>
           <a href="#" className="hover:text-gold-golden transition-colors">Términos y Condiciones</a>
