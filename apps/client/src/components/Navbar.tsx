@@ -33,7 +33,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/login"
+            to="/auth"
             className="ml-4 inline-flex items-center gap-2 border border-blood-500 text-blood-500 px-4 py-1.5 rounded-md text-sm hover:bg-blood-100 hover:text-eggshell-100 transition-colors">
             <User size={16} /> Ingresar
           </Link>
@@ -68,7 +68,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/login"
+            to="/auth"
             className="inline-flex items-center gap-2  border border-blood-500 text-blood-500 px-4 py-2 rounded-md hover:bg-blood-500 hover:text-eggshell-100 transition-colors w-30 justify-left">
             <LogIn size={18} />
             Ingresar

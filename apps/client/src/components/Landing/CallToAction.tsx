@@ -19,7 +19,7 @@ const CallToAction = () => {
             </h2>
 
             <p className="text-lg font-raleway">
-            Simplifica las reservas, optimiza la gestión del menú y fortaleca las relaciones con los clientes con nuestra plataforma de gestión de restaurantes todo en uno.
+            Simplifica las reservas, optimiza la gestión del menú y fortalezca las relaciones con los clientes con nuestra plataforma de gestión de restaurantes todo en uno.
             </p>
 
             <div className="flex gap-4 font-raleway">

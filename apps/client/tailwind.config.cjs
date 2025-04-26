@@ -50,9 +50,15 @@ module.exports = {
           wonw: '#EDEFEF',
           greekvilla: '#F0EBE3',
           cream: "#fdfaf6", //from loveable
+        },
+
+        /*rosas */
+        pink: {
+          100: '#FDFBFB',
         }
 
       },
+
 
       fontFamily: {
         playfair: ['Playfair Display', 'serif'],
