@@ -15,7 +15,7 @@ const StartTrial = () => {
                     </h2>
 
                     <p className="text-lg md:text-base font-raleway text-gray-700">
-                    Únete a los miles de restaurantes que ya usan <strong>FoodTable Pro</strong> para optimizar sus operaciones y mejorar la experiencia de sus clientes.
+                    Únete a los miles de restaurantes que ya usan <strong>Pora</strong> para optimizar sus operaciones y mejorar la experiencia de sus clientes.
                     </p>
 
                 </div>

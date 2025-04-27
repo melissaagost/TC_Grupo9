@@ -45,6 +45,7 @@ module.exports = {
           100: '#ECF1F1', //egg
           200: '#E1E8E3', //mid
           300: '#DEE2E5', //office
+          400: '#F8F7ED', //form bg
           creamy: '#F3E3C4',
           whitedove: '#F0EFE7',
           wonw: '#EDEFEF',

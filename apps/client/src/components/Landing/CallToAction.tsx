@@ -28,7 +28,7 @@ const CallToAction = () => {
                   Empieza <ArrowRight size={16} />
                 </button>
 
-                <button className="bg-white text-blood-500 px-6 py-3 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300 hover:-translate-y-1 shadow-md">
+                <button className="bg-eggshell-whitedove text-blood-500 px-6 py-3 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300 hover:-translate-y-1 shadow-md">
                   Aprender Más
                 </button>
 

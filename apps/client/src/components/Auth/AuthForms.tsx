@@ -1,15 +1,48 @@
 import { useState } from "react";
+import { login } from '../../services/authService.ts';
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../UI/Button";
 import { Input } from "../UI/Input";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const AuthForms = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const { setToken } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+
+    e.preventDefault();
+
+    try {
+
+      const response = await login(email, password);
+      const token = response.access_token;
+      setToken(token); // Usar el context (esto ya guarda en localStorage también gracias al useEffect en AuthProvider)
+      console.log('Login exitoso ✅');
+      navigate('/');
+
+    } catch (error) {
+
+      if (axios.isAxiosError(error)) {
+        console.error('Error en login ❌', error.response?.data?.message || error.message);
+      } else {
+        console.error('Error desconocido ❌', error);
+      }
+
+    }
+
+  };
+
 
   return (
-    <div className="md:w-1/2 p-8 relative overflow-hidden">
+    <div className="md:w-1/2 p-8 bg-eggshell-400 relative overflow-hidden">
 
       <div className="relative w-full" style={{ height: "500px" }}>
 
@@ -19,74 +52,81 @@ const AuthForms = () => {
             isLogin ? "translate-x-0" : "-translate-x-full opacity-0"
           }`}>
 
-          <h2 className="text-3xl font-playfair font-semibold text-gray-700 mb-6">Bienvenido de Vuelta</h2>
+          <h2 className="text-3xl font-playfair font-semibold text-gray-700 mb-6">
+              Bienvenido de Vuelta
+          </h2>
 
-          <form className="space-y-4 font-raleway">
+          <form onSubmit={handleSubmit} className="space-y-4 font-raleway">
 
             <div>
+
               <label className="text-sm text-charcoal-600 block mb-1">Email</label>
-              <Input className='bg-pink-100 border-eggshell-creamy' type="email" placeholder="Ingresa tu email" />
+
+              <Input
+                className="bg-pink-100 border-eggshell-creamy"
+                type="email"
+                placeholder="Ingresa tu email"
+                value={email}
+                required
+                onChange={(e) => setEmail(e.target.value)}/>
+
+
             </div>
 
             <div>
 
               <label className="text-sm text-charcoal-600 block mb-1">Contraseña</label>
 
+                <div className="relative">
 
-              <div className="relative">
+                    <Input
+                      className="bg-pink-100 border-eggshell-creamy"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Ingresa tu contraseña"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required/>
 
-                <Input
-                  className='bg-pink-100 border-eggshell-creamy'
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Ingresa tu contraseña"
-                />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-600">
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-600">
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
 
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
 
-                </button>
-
-              </div>
-
+                </div>
 
             </div>
 
-            <Button className="w-full">
-              Ingresar
-            </Button>
-
+              <Button type="submit" className="w-full">
+                Ingresar
+              </Button>
           </form>
 
+        {/* puente hacia register */}
+        <p className="mt-6 text-center font-raleway text-charcoal-600">
+          Nuevo aquí?{" "}
+          <button
+            onClick={() => setIsLogin(false)}
+            className="text-blood-300 hover:underline font-semibold"
+          >
+            Registrate
+          </button>
+        </p>
 
+        {/* olvidaste pass */}
+        <p className="mt-6 text-sm text-center font-raleway text-gray-200">
 
-          {/*puente hacia register */}
-          <p className="mt-6 text-center font-raleway text-charcoal-600">
-            Nuevo aquí?{" "}
+          Olvidaste tu contraseña?{" "}
 
-            <button
-              onClick={() => setIsLogin(false)}
-              className="text-blood-300 hover:underline  font-semibold">
-              Registrate
-            </button>
+          <Link to="/building" className="text-gray-200 hover:underline font-semibold">
+            Reestablecer
+          </Link>
+        </p>
 
-          </p>
-
-          {/*cambias pass */}
-          <p className="mt-6 text-sm text-center font-raleway text-gray-200">
-            Olvidaste tu contraseña?{" "}
-
-            <Link to="/building"
-              className="text-gray-200 hover:underline font-semibold">
-              Reestablecer
-            </Link>
-
-          </p>
-
-        </div>
+    </div>
 
 
 
@@ -137,7 +177,7 @@ const AuthForms = () => {
 
             </div>
 
-            <Button className="w-full">
+            <Button type="button" className="w-full">
               Crear Cuenta
             </Button>
 

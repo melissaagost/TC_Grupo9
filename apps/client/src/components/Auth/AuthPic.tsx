@@ -12,7 +12,7 @@ const AuthPic = () =>{
 
             <div className="absolute inset-0 bg-blood-100/60 backdrop-blur-xs"></div>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6">
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-eggshell-400 p-6">
 
                 <h1 className="text-4xl font-playfair mb-4">Pora</h1>
 

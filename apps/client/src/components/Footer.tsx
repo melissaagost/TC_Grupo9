@@ -1,5 +1,4 @@
 import {
-  FlameIcon,
   Facebook,
   Twitter,
   Instagram,
@@ -18,7 +17,7 @@ const Footer = () => {
         {/* Logo & Description */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-playfair font-bold text-eggshell-300">Pora</span>
+            <span className="text-2xl font-playfair font-bold text-eggshell-whitedove">Pora</span>
             {/*<span className="text-xl font-playfair text-gold-golden">Pro</span>*/}
           </div>
 
@@ -26,28 +25,28 @@ const Footer = () => {
             Eleva la gestión de tu restaurante con nuestra plataforma integral para reserva de mesas, administración de menú y administración de usuarios.</p>
 
           <div className="flex gap-4 pt-2 text-eggshell-creamy">
-            <a href="#"><Instagram size={20} /></a>
+            <a href="https://www.instagram.com/melissa.agost?igsh=MWlhbzBoMzlvd2p3cw=="><Instagram size={20} /></a>
             <a href="#"><Facebook size={20} /></a>
-            <a href="#"><Twitter size={20} /></a>
+            <a href="https://x.com/melissa_agost?t=v_oZyY6JXZn_R2_2Tmi4cg&s=08"><Twitter size={20} /></a>
           </div>
         </div>
 
         {/* Quick Links */}
         <div>
-          <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-300">Quick Links</h4>
+          <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-whitedove">Quick Links</h4>
           <ul className="space-y-2 font-raleway text-eggshell-creamy">
             <li><a href="/" className="hover:text-gold-golden transition-colors">Inicio</a></li>
-            <li><a href="#" className="hover:text-gold-golden transition-colors">Reservas</a></li>
-            <li><a href="#" className="hover:text-gold-golden transition-colors">Gestión de Menú</a></li>
-            <li><a href="#" className="hover:text-gold-golden transition-colors">Gestión de Usuarios</a></li>
-            <li><a href="#" className="hover:text-gold-golden transition-colors">Sobre Nosotros</a></li>
-            <li><a href="#" className="hover:text-gold-golden transition-colors">Contacto</a></li>
+            <li><a href="/building" className="hover:text-gold-golden transition-colors">Reservas</a></li>
+            <li><a href="/building" className="hover:text-gold-golden transition-colors">Gestión de Menú</a></li>
+            <li><a href="/building" className="hover:text-gold-golden transition-colors">Gestión de Usuarios</a></li>
+            <li><a href="/building" className="hover:text-gold-golden transition-colors">Sobre Nosotros</a></li>
+            <li><a href="/building" className="hover:text-gold-golden transition-colors">Contacto</a></li>
           </ul>
         </div>
 
         {/* Contact Info */}
         <div>
-          <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-300">Contáctanos</h4>
+          <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-whitedove">Contáctanos</h4>
           <ul className="space-y-4 font-raleway text-eggshell-creamy text-sm">
             <li className="flex gap-3 items-start">
               <MapPin className="text-gold-golden mt-1" size={18} />
@@ -59,7 +58,7 @@ const Footer = () => {
             </li>
             <li className="flex gap-3 items-center">
               <Mail className="text-gold-golden" size={18} />
-              <span>soporte@foodtablepro.com</span>
+              <span>soporte@pora.com</span>
             </li>
           </ul>
         </div>
@@ -69,8 +68,8 @@ const Footer = () => {
       <div className="border-t font-raleway border-eggshell-300 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-eggshell-creamy">
         <p>&copy; {currentYear} Pora. Todos los Derechos Reservados.</p>
         <div className="flex gap-4 mt-4 md:mt-0">
-          <a href="#" className="hover:text-gold-golden transition-colors">Política de Privacidad</a>
-          <a href="#" className="hover:text-gold-golden transition-colors">Términos y Condiciones</a>
+          <a href="/building" className="hover:text-gold-golden transition-colors">Política de Privacidad</a>
+          <a href="/building" className="hover:text-gold-golden transition-colors">Términos y Condiciones</a>
         </div>
       </div>
     </footer>

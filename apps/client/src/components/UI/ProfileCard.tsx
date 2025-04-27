@@ -8,7 +8,7 @@ interface ProfileCardProps {
 
 const ProfileCardRoot = ({ children, className }: ProfileCardProps) => {
   return (
-    <div className={classNames("rounded-lg animate-fade-in border-eggshell-creamy border-1  bg-white shadow-sm", className)}>
+    <div className={classNames("rounded-lg animate-fade-in border-eggshell-cream border-1  bg-white shadow-sm", className)}>
 
       {children}
     </div>
