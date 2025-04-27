@@ -4,7 +4,6 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  TableCell,
 } from "../UI/Table";
 import TableRowComponent from "./TableRow";
 import { Table } from "./types";
@@ -37,7 +36,6 @@ const TablesList = ({
 
             <TableHead>Número de Mesa</TableHead>
             <TableHead>Capacidad</TableHead>
-            <TableHead>Ubicación</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead>Acciones</TableHead>
 

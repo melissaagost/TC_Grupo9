@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "../UI/Button";
 import { Dialog } from "@headlessui/react";
-//import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../UI/Dialog";
 import { Input } from "../UI/Input";
 import { Label } from "../UI/Label";
 import { TableStatus, Table } from "./types";
@@ -11,24 +10,29 @@ interface TablesHeaderProps {
 }
 
 const TablesHeader = ({ onCreate }: TablesHeaderProps) => {
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [newTable, setNewTable] = useState<Omit<Table, "id">>({
     number: "",
     capacity: 2,
-    location: "",
     status: "available",
   });
 
   const handleCreate = () => {
-    if (!newTable.number || !newTable.location) return;
+
+    if (!newTable.number ) return;
+
     onCreate(newTable);
-    setNewTable({
-      number: "",
-      capacity: 2,
-      location: "",
-      status: "available",
-    });
-    setIsOpen(false); // Cierra el modal
+
+      setNewTable({
+        number: "",
+        capacity: 2,
+        status: "available",
+      });
+
+    setIsOpen(false);
+
   };
 
   return (
@@ -55,7 +59,7 @@ const TablesHeader = ({ onCreate }: TablesHeaderProps) => {
 
 
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md z-50 relative">
-          <Dialog.Title className="text-2xl font-bold mb-4">Añadir Nueva Mesa</Dialog.Title>
+          <Dialog.Title className="text-2xl font-playfair font-bold mb-4">Añadir Nueva Mesa</Dialog.Title>
 
           <div className="space-y-4">
             <div>
@@ -80,14 +84,6 @@ const TablesHeader = ({ onCreate }: TablesHeaderProps) => {
               />
             </div>
 
-            <div>
-              <Label htmlFor="location">Ubicación</Label>
-              <Input
-                id="location"
-                value={newTable.location}
-                onChange={(e) => setNewTable({ ...newTable, location: e.target.value })}
-              />
-            </div>
 
             <div>
               <Label htmlFor="status">Estado</Label>

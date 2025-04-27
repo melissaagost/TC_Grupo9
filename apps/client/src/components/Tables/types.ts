@@ -4,6 +4,5 @@ export type Table = {
   id: number;
   number: string;
   capacity: number;
-  location: string;
   status: TableStatus;
 };

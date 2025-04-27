@@ -6,11 +6,11 @@ import { Label } from "../UI/Label";
 import { AlertDialog } from "../UI/AlertDialog";
 import { Edit, Trash2 } from "lucide-react";
 
+
 interface Table {
   id: number;
   number: string;
   capacity: number;
-  location: string;
   status: string;
 }
 
@@ -21,10 +21,11 @@ interface TableRowProps {
 }
 
 const TableRowComponent = ({ table, onEdit, onDelete }: TableRowProps) => {
+
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  //logica de guardado de cambios (actualizar a log real)
+  //logica de guardado de cambios (actualizar a logica real)
   const handleSaveChanges = () => {
     console.log("Saving changes...");
     setIsEditOpen(false);
@@ -34,14 +35,17 @@ const TableRowComponent = ({ table, onEdit, onDelete }: TableRowProps) => {
 
     //filas
     <tr className="hover:bg-gray-100 transition-colors">
+
       <td className="text-center">{table.number}</td>
+
       <td className="text-center">{table.capacity} invitados</td>
-      <td className="text-center">{table.location}</td>
+
       <td className="text-center">
         <span className="px-2 py-1 rounded-full text-xs bg-green-50 text-green-600">
           {table.status}
         </span>
       </td>
+
       <td className="text-center space-x-2">
 
         {/* Editar */}
@@ -52,7 +56,7 @@ const TableRowComponent = ({ table, onEdit, onDelete }: TableRowProps) => {
           <Edit  size={16} />
         </Button>
 
-        {/* dialago */}
+        {/* dialogo */}
         <Dialog open={isEditOpen} onClose={() => setIsEditOpen(false)}>
           <div className="space-y-4 font-raleway">
             <h2 className="text-2xl font-playfair font-bold mb-4">Editar Mesa</h2>
@@ -67,10 +71,7 @@ const TableRowComponent = ({ table, onEdit, onDelete }: TableRowProps) => {
               <Input value={table.capacity} disabled />
             </div>
 
-            <div className="space-y-2">
-              <Label>Ubicación</Label>
-              <Input value={table.location} disabled />
-            </div>
+
 
             <div className="flex justify-end gap-4 mt-6">
               <Button onClick={() => setIsEditOpen(false)} className="bg-gray-300 hover:bg-gray-200 hover:text-white text-gray-700">
@@ -85,7 +86,9 @@ const TableRowComponent = ({ table, onEdit, onDelete }: TableRowProps) => {
               </Button>
 
             </div>
+
           </div>
+
         </Dialog>
 
         {/* eliminar */}
@@ -97,33 +100,40 @@ const TableRowComponent = ({ table, onEdit, onDelete }: TableRowProps) => {
 
         {/* eliminar AlertDialog */}
         <AlertDialog open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
+
           <div className="space-y-4 font-raleway">
+
             <h2 className="text-xl font-bold text-center">Eliminar Mesa</h2>
+
             <p className="text-center text-gray-600">
               Seguro que quieres eliminar la mesa {table.number}? Esta acción no puede ser revertida.
             </p>
 
             <div className="flex justify-center gap-4 mt-6">
+
               <Button
                 className="bg-gray-300 hover:bg-gray-200 hover:text-white text-gray-700"
-                onClick={() => setIsDeleteOpen(false)}
-              >
+                onClick={() => setIsDeleteOpen(false)}>
                 Cancelar
               </Button>
+
               <Button
                 className="bg-red-600 hover:bg-red-700 text-white"
                 onClick={() => {
                   onDelete(table.id);
                   setIsDeleteOpen(false);
-                }}
-              >
+                }}>
                 Eliminar
               </Button>
+
             </div>
+
           </div>
+
         </AlertDialog>
 
       </td>
+
     </tr>
   );
 };
