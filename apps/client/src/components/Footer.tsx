@@ -18,8 +18,8 @@ const Footer = () => {
         {/* Logo & Description */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-playfair font-bold text-eggshell-300">FoodTable</span>
-            <span className="text-xl font-playfair text-gold-golden">Pro</span>
+            <span className="text-2xl font-playfair font-bold text-eggshell-300">Pora</span>
+            {/*<span className="text-xl font-playfair text-gold-golden">Pro</span>*/}
           </div>
 
           <p className="text-eggshell-creamy font-raleway max-w-md text-sm">
@@ -67,7 +67,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t font-raleway border-eggshell-300 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-eggshell-creamy">
-        <p>&copy; {currentYear} FoodTable Pro. Todos los Derechos Reservados.</p>
+        <p>&copy; {currentYear} Pora. Todos los Derechos Reservados.</p>
         <div className="flex gap-4 mt-4 md:mt-0">
           <a href="#" className="hover:text-gold-golden transition-colors">Política de Privacidad</a>
           <a href="#" className="hover:text-gold-golden transition-colors">Términos y Condiciones</a>

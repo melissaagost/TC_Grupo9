@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "../UI/Button";
 import { Input } from "../UI/Input";
 import { Eye, EyeOff } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const AuthForms = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -62,7 +63,7 @@ const AuthForms = () => {
 
 
 
-
+          {/*puente hacia register */}
           <p className="mt-6 text-center font-raleway text-charcoal-600">
             Nuevo aquí?{" "}
 
@@ -71,6 +72,17 @@ const AuthForms = () => {
               className="text-blood-300 hover:underline  font-semibold">
               Registrate
             </button>
+
+          </p>
+
+          {/*cambias pass */}
+          <p className="mt-6 text-sm text-center font-raleway text-gray-200">
+            Olvidaste tu contraseña?{" "}
+
+            <Link to="/building"
+              className="text-gray-200 hover:underline font-semibold">
+              Reestablecer
+            </Link>
 
           </p>
 

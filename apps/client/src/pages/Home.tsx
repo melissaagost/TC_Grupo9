@@ -1,4 +1,4 @@
-import MainLayout from '../layouts/MainLayout.tsx'
+
 import CallToAction from '../components/Landing/CallToAction.tsx';
 import Features from '../components/Landing/Features.tsx'
 import Efficiency from '../components/Landing/Efficiency.tsx'

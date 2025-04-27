@@ -13,23 +13,26 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link  to="/" className="flex items-center gap-1">
-          <span className="text-2xl font-playfair font-bold text-blood-100">FoodTable</span>
-          <span className="text-lg font-playfair text-gold-golden">Pro</span>
+          <span className="text-2xl font-playfair font-bold text-blood-100">Pora</span>
         </Link>
 
         {/* Navigation for desktop */}
         <div className="hidden md:flex items-center font-medium gap-8 font-raleway text-base text-gray-700">
 
-          <Link to="/reservations" className="flex items-center gap-1 hover:text-blood-100">
+          <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
             <Calendar size={16} /> Reservas
           </Link>
 
-          <Link to="/menu" className="flex items-center gap-1 hover:text-blood-100">
+          <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
             <BookOpen size={16} /> Menú
           </Link>
 
-          <Link to="/users" className="flex items-center gap-1 hover:text-blood-100">
+          <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
             <Users size={16} /> Usuarios
+          </Link>
+
+          <Link to="/profile" className="flex items-center gap-1 hover:text-blood-100">
+            <User size={16} /> Perfil
           </Link>
 
           <Link

@@ -14,7 +14,7 @@ const AuthPic = () =>{
 
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6">
 
-                <h1 className="text-4xl font-playfair mb-4">FoodTable Pro</h1>
+                <h1 className="text-4xl font-playfair mb-4">Pora</h1>
 
                 <p className="text-cream-100 font-raleway text-center max-w-xs">
                     Optimiza la gestión de tu restaurante con nuestra plataforma integral.
