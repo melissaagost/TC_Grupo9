@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UsuarioService } from 'src/usuario/usuario.service';
 import { ValidateUserDto } from './dto/validate-user.dto';
 import { AuthenticatedUser } from './types/authenticatedUser.type';
-import { Usuario } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { UsuarioWithRol } from 'src/usuario/interfaces/UsuarioRol.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,8 @@ export class AuthService {
 
   async validateUser(login: ValidateUserDto): Promise<AuthenticatedUser> {
     const { correo, password } = login;
-    const user: Usuario | null = await this.usuarioService.findByMail(correo);
+    const user: UsuarioWithRol | null =
+      await this.usuarioService.findByMail(correo);
 
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
@@ -36,7 +37,8 @@ export class AuthService {
     const payload = {
       mail: user.correo,
       sub: user.id_usuario,
-      rol: user.tipoUsuario.id_tipousuario, // o bien: rol: {id: user.tipoUsuario.id_tipousuario, nombre: user.tipoUsuario.descripcion}
+      rol: user.tipoUsuario.descripcion,
+      id_restaurante: user.id_restaurante,
     };
     const token = await this.jwtService.signAsync(payload, { expiresIn: '1h' });
     return {

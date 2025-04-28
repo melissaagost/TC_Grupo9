@@ -11,6 +11,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UsuarioQueries } from './queries/usuario-queries';
 import { UsuarioConTipo, UsuarioPerfil } from './interfaces/usuario.interface';
+import { UsuarioWithRol } from './interfaces/UsuarioRol.interface';
 
 @Injectable()
 export class UsuarioService {
@@ -40,10 +41,15 @@ export class UsuarioService {
   }
 
   async obtenerTodos(): Promise<UsuarioConTipo[]> {
-    const usuarios = await this.prisma.$queryRawUnsafe<UsuarioConTipo[]>(
-      UsuarioQueries.getAll,
-    );
-    return usuarios;
+    try {
+      const usuarios = await this.prisma.$queryRawUnsafe<UsuarioConTipo[]>(
+        UsuarioQueries.getAll,
+      );
+      return usuarios;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Error al listar usuarios');
+    }
   }
 
   async findProfile(id: number): Promise<UsuarioPerfil> {
@@ -59,10 +65,17 @@ export class UsuarioService {
     return result[0];
   }
 
-  async findByMail(mail: string): Promise<Usuario> {
+  async findByMail(mail: string): Promise<UsuarioWithRol> {
     const user = await this.prisma.usuario.findUnique({
       where: { correo: mail },
-      include: { tipoUsuario: true },
+      select: {
+        id_usuario: true,
+        correo: true,
+        password: true,
+        estado: true,
+        id_restaurante: true,
+        tipoUsuario: { select: { descripcion: true } },
+      },
     });
     if (!user) {
       throw new NotFoundException(`Usuario ${mail} no encontrado`);
