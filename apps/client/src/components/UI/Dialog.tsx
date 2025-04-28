@@ -22,7 +22,7 @@ export const Dialog = ({ open, onClose, children }: DialogProps) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/25" />
+          <div className="fixed inset-0 bg-black/25 backdrop-blur-lg" />
         </Transition.Child>
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -35,9 +35,10 @@ export const Dialog = ({ open, onClose, children }: DialogProps) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <HeadlessDialog.Panel className="bg-white p-6 rounded-md shadow-xl w-full max-w-md">
+            <HeadlessDialog.Panel className="bg-eggshell-400 p-6 rounded-xl shadow-2xl w-full max-w-md">
               {children}
             </HeadlessDialog.Panel>
+
           </Transition.Child>
         </div>
       </HeadlessDialog>
@@ -46,15 +47,15 @@ export const Dialog = ({ open, onClose, children }: DialogProps) => {
 };
 
 export const DialogContent = ({ children }: { children: ReactNode }) => (
-  <div>{children}</div>
+  <div className="font-urbanist">{children}</div>
 );
 
 export const DialogHeader = ({ children }: { children: ReactNode }) => (
-  <div className="mb-4">{children}</div>
+  <div className="mb-4 ">{children}</div>
 );
 
 export const DialogTitle = ({ children }: { children: ReactNode }) => (
-  <HeadlessDialog.Title className="text-lg font-semibold">{children}</HeadlessDialog.Title>
+  <HeadlessDialog.Title className="text-3xl font-raleway text-blood-100 font-semibold">{children}</HeadlessDialog.Title>
 );
 
 export const DialogTrigger = ({ children, ...props }: { children: ReactNode } & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
