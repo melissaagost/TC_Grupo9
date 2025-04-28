@@ -1,13 +1,12 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from '../pages/Home';
-import Auth from '../pages/Auth';
-import Profile from '../pages/Profile';
-import EditProfile from '../pages/EditProfile';
-import Tables from '../pages/Tables';
-import Building  from '../pages/Building';
-import PrivateRoute from '../components/PrivateRoute';
-import PublicRoute from '../components/PublicRoute';
-
+import { Routes, Route } from 'react-router-dom'
+import Home from '../pages/Home'
+import Auth from '../pages/Auth'
+import Profile from '../pages/Profile'
+import EditProfile from '../pages/EditProfile'
+import Tables from '../pages/Tables'
+import Building from '../pages/Building'
+import PrivateRoute from '../components/PrivateRoute'
+import PublicRoute from '../components/PublicRoute'
 
 //se envuelve la ruta en el layout que corresponda
 
@@ -19,22 +18,48 @@ import PublicRoute from '../components/PublicRoute';
 const AppRoutes = () => {
   return (
     <Routes>
-
       <Route path="/" element={<Home />} />
 
-      <Route path="/auth" element={<PublicRoute><Auth/></PublicRoute>}/>
+      <Route
+        path="/auth"
+        element={
+          <PublicRoute>
+            <Auth />
+          </PublicRoute>
+        }
+      />
 
-      <Route path="/profile" element={<PrivateRoute allowedUserTypes={[1, 2]}><Profile/></PrivateRoute>}/>
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+            <Profile />
+          </PrivateRoute>
+        }
+      />
 
-      <Route path="/profile/edit" element={<PrivateRoute allowedUserTypes={[1, 2]}><EditProfile/></PrivateRoute>}/>
+      <Route
+        path="/profile/edit"
+        element={
+          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+            <EditProfile />
+          </PrivateRoute>
+        }
+      />
 
-      <Route path="/tables" element={<PrivateRoute allowedUserTypes={[1, 2]}><Tables/></PrivateRoute>}/>
+      <Route
+        path="/tables"
+        element={
+          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+            <Tables />
+          </PrivateRoute>
+        }
+      />
 
       {/*esta seria abm usuarios pero esta en construccion */}
-      <Route path="/building" element={<Building/>}/>
-
+      <Route path="/building" element={<Building />} />
     </Routes>
-  );
-};
+  )
+}
 
-export default AppRoutes;
+export default AppRoutes
