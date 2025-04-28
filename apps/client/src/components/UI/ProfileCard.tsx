@@ -39,7 +39,6 @@ const Title = ({ children, className }: ProfileCardProps) => {
   );
 };
 
-// ❗ Asignamos explícitamente
 export const ProfileCard = Object.assign(ProfileCardRoot, {
   Header,
   Content,

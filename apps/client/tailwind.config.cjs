@@ -19,6 +19,7 @@ module.exports = {
           400: '#572320', // mid
           500: '#4A1A1C', // dark
           700: '#3B1206', // extradark
+          pay: '#E6473C',
         },
 
         /*grises*/
@@ -35,6 +36,8 @@ module.exports = {
           200: '#FAB245',
           300: '#FAB877',
           400: '#F69650',
+          order: '#FAB245',
+          modify: '#A2B9BE',
           mustard: '#D7B30C',
           after: '#A79510',
           golden: "#D4AF37" //from loveable

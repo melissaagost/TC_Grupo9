@@ -19,7 +19,7 @@ const ViewProfile = () => {
 
         <section className="bg-eggshell-whitedove font-raleway">
 
-            <div className="container mx-auto py-8">
+            <div className="container  mx-auto py-8">
 
                 <div className="max-w-2xl mx-auto">
 
