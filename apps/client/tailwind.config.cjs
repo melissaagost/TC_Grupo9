@@ -56,6 +56,14 @@ module.exports = {
         /*rosas */
         pink: {
           100: '#FDFBFB',
+        },
+
+        /*toasts */
+        toast: {
+          red: '#9C1013',
+          green: '#3E9A39',
+          yellow: '#FAD565',
+          blue: '#4C7BAF',
         }
 
       },
