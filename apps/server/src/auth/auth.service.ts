@@ -36,7 +36,7 @@ export class AuthService {
     const payload = {
       mail: user.correo,
       sub: user.id_usuario,
-      rol: user.tipoUsuario.descripcion,
+      rol: user.tipoUsuario.id_tipousuario, // o bien: rol: {id: user.tipoUsuario.id_tipousuario, nombre: user.tipoUsuario.descripcion}
     };
     const token = await this.jwtService.signAsync(payload, { expiresIn: '1h' });
     return {

@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@config "../../../tailwind.config.cjs";  /* ← ruta relativa desde /src/assets/styles/input.css */
+/*@config "apps/client/tailwind.config.cjs"*/
+
+/*fuentes importadas*/
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');

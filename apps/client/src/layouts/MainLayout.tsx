@@ -1,17 +1,17 @@
+import { Layout } from "lucide-react";
 
 
 type Props = {
     children: React.ReactNode;
   };
-  
-  const LandingLayout = ({ children }: Props) => {
+
+  const MainLayout = ({ children }: Props) => {
     return (
       <>
         <main>{children}</main>
-        
+
       </>
     );
   };
-  
-  export default LandingLayout;
-  
+
+  export default MainLayout;
