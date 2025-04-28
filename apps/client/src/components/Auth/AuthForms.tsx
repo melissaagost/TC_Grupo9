@@ -30,7 +30,7 @@ const AuthForms = () => {
       const decoded: any = jwtDecode(token);
 
       if (decoded?.rol) {
-        setUserType(decoded.rol); // guarda rol (1  o 2)
+        setUserType(decoded.rol);
       } else {
         console.error("No se encontró rol en el token.");
       }
