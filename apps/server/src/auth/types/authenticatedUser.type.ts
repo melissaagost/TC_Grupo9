@@ -1,7 +1,12 @@
-import { TipoUsuario, Usuario } from '@prisma/client';
-
-export type AuthenticatedUser = Omit<Usuario, 'password'> & {
-  tipoUsuario: TipoUsuario;
+export type AuthenticatedUser = {
+  id_usuario: number;
+  correo: string;
+  password: string;
+  estado: number;
+  id_restaurante: number | null; // 👈 este campo
+  tipoUsuario: {
+    descripcion: string;
+  };
 };
 
 export enum Role {
