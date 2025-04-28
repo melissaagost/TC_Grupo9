@@ -7,8 +7,12 @@ import {
   MapPin
 } from "lucide-react";
 
+import { useAuth } from "../context/AuthContext";
+
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { token, userType } = useAuth();
 
   return (
     <footer className="bg-gray-charcoal px-6 py-12 text-eggshell-300">
@@ -36,9 +40,18 @@ const Footer = () => {
           <h4 className="text-2xl font-playfair font-semibold mb-4 text-eggshell-whitedove">Quick Links</h4>
           <ul className="space-y-2 font-raleway text-eggshell-creamy">
             <li><a href="/" className="hover:text-gold-golden transition-colors">Inicio</a></li>
+
+            {token && (
+            <>
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Reservas</a></li>
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Gestión de Menú</a></li>
+
+            {userType === 1 &&(
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Gestión de Usuarios</a></li>
+            )}
+
+            </>
+            )}
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Sobre Nosotros</a></li>
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Contacto</a></li>
           </ul>

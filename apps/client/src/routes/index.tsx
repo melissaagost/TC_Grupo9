@@ -24,11 +24,11 @@ const AppRoutes = () => {
 
       <Route path="/auth" element={<PublicRoute><Auth/></PublicRoute>}/>
 
-      <Route path="/profile" element={<Profile/>}/>
+      <Route path="/profile" element={<PrivateRoute allowedUserTypes={[1, 2]}><Profile/></PrivateRoute>}/>
 
-      <Route path="/profile/edit" element={<EditProfile/>}/>
+      <Route path="/profile/edit" element={<PrivateRoute allowedUserTypes={[1, 2]}><EditProfile/></PrivateRoute>}/>
 
-      <Route path="/tables" element={<Tables/>}/>
+      <Route path="/tables" element={<PrivateRoute allowedUserTypes={[1, 2]}><Tables/></PrivateRoute>}/>
 
       {/*esta seria abm usuarios pero esta en construccion */}
       <Route path="/building" element={<Building/>}/>

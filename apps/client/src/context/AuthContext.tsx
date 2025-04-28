@@ -30,13 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [token]);
 
-  useEffect(() => {
-    if (userType !== null) {
-      localStorage.setItem('userType', userType.toString());
-    } else {
-      localStorage.removeItem('userType');
-    }
-  }, [userType]);
+
 
   return (
     <AuthContext.Provider value={{ token, setToken, userType, setUserType }}>
