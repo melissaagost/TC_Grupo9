@@ -91,6 +91,7 @@ model mesa {
   capacidad      Int
   descripcion    String?     @db.VarChar(100)
   id_restaurante Int
+  estado         Int         @default(0)
   restaurante    restaurante @relation(fields: [id_restaurante], references: [id_restaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_mesa_restaurante")
   pedido         pedido[]
   reserva        reserva[]
