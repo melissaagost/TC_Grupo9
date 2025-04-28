@@ -20,13 +20,15 @@ model TipoUsuario {
 }
 
 model Usuario {
-  id_usuario     Int         @id @default(autoincrement())
+  id_usuario     Int          @id @default(autoincrement())
   nombre         String
-  correo         String      @unique
+  correo         String       @unique
   password       String
   id_tipousuario Int
-  estado         Int         @default(1)
-  tipoUsuario    TipoUsuario @relation(fields: [id_tipousuario], references: [id_tipousuario], map: "fk_usuario_tipousuario")
+  estado         Int          @default(1)
+  id_restaurante Int?
+  restaurante    restaurante? @relation(fields: [id_restaurante], references: [id_restaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_restaurante")
+  tipoUsuario    TipoUsuario  @relation(fields: [id_tipousuario], references: [id_tipousuario], map: "fk_usuario_tipousuario")
   pedido         pedido[]
   reserva        reserva[]
 
@@ -89,7 +91,9 @@ model mesa {
   capacidad      Int
   descripcion    String?     @db.VarChar(100)
   id_restaurante Int
+  estado         Int         @default(0)
   restaurante    restaurante @relation(fields: [id_restaurante], references: [id_restaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_mesa_restaurante")
+  pedido         pedido[]
   reserva        reserva[]
 
   @@schema("restaurant")
@@ -125,9 +129,11 @@ model pedido {
   id_item        Int
   id_usuario     Int
   estado         Int              @default(1)
+  id_mesa        Int?
   detalle_pedido detalle_pedido[]
   pago           pago[]
   item           item             @relation(fields: [id_item], references: [id_item], onDelete: NoAction, onUpdate: NoAction, map: "fk_pedido_item")
+  mesa           mesa?            @relation(fields: [id_mesa], references: [id_mesa], onDelete: NoAction, onUpdate: NoAction, map: "fk_pedido_mesa")
   usuario        Usuario          @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_pedido_usuario")
 
   @@schema("restaurant")
@@ -147,14 +153,15 @@ model reserva {
 }
 
 model restaurante {
-  id_restaurante Int     @id @default(autoincrement())
-  nombre         String  @db.VarChar(100)
-  direccion      String  @db.VarChar(200)
-  telefono       String? @db.VarChar(20)
-  email          String? @db.VarChar(100)
+  id_restaurante Int       @id @default(autoincrement())
+  nombre         String    @db.VarChar(100)
+  direccion      String    @db.VarChar(200)
+  telefono       String?   @db.VarChar(20)
+  email          String?   @db.VarChar(100)
   id_menu        Int
+  usuario        Usuario[]
   mesa           mesa[]
-  menu           menu    @relation(fields: [id_menu], references: [id_menu], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurante_menu")
+  menu           menu      @relation(fields: [id_menu], references: [id_menu], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurante_menu")
 
   @@schema("restaurant")
 }
