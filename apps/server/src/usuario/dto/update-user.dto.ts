@@ -12,4 +12,8 @@ export class UpdateUserDto {
   @IsInt()
   @IsOptional()
   tipoUsuarioId?: number;
+
+  @IsInt()
+  @IsOptional()
+  estado?: number;
 }

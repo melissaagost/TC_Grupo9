@@ -13,6 +13,9 @@ import { ItemModule } from './item/item.module';
 import { CategoriesController } from './categories/categories.controller';
 import { CategoriesModule } from './categories/categories.module';
 import { UsuarioController } from './usuario/usuario.controller';
+import { MesaService } from './mesa/mesa.service';
+import { MesaController } from './mesa/mesa.controller';
+import { MesaModule } from './mesa/mesa.module';
 
 @Module({
   imports: [
@@ -30,8 +33,9 @@ import { UsuarioController } from './usuario/usuario.controller';
     MenuModule,
     ItemModule,
     CategoriesModule,
+    MesaModule,
   ],
-  controllers: [AppController, CategoriesController, UsuarioController],
-  providers: [AppService],
+  controllers: [AppController, CategoriesController, UsuarioController, MesaController],
+  providers: [AppService, MesaService],
 })
 export class AppModule {}
