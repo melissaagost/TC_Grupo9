@@ -98,16 +98,7 @@ const AuthForms = () => {
             </Button>
           </form>
 
-          {/* Link para Registro */}
-          <p className="mt-6 text-center font-raleway text-charcoal-600">
-            Nuevo aquí?{' '}
-            <button
-              onClick={() => setIsLogin(false)}
-              className="text-blood-300 hover:underline font-semibold"
-            >
-              Registrate
-            </button>
-          </p>
+
 
           {/* Link para recuperar contraseña */}
           <p className="mt-6 text-sm text-center font-raleway text-gray-200">

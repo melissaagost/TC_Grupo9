@@ -64,7 +64,7 @@ const Navbar = () => {
 
 
               {/* Cosas que sólo ve el admin */}
-              {userType === 1 && (
+              {userType === 'administrador' && (
                 <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
                   <Users size={16} /> Usuarios
                 </Link>
@@ -150,7 +150,7 @@ const Navbar = () => {
                   <User size={18} /> Perfil
                 </Link>
 
-                {userType === 1 &&(
+                {userType === 'administrador' &&(
                 <Link to="/building" className="flex items-center gap-2">
                   <Users size={18} /> Usuarios
                 </Link>
