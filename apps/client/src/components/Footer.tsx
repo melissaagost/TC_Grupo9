@@ -46,7 +46,7 @@ const Footer = () => {
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Reservas</a></li>
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Gestión de Menú</a></li>
 
-            {userType === 1 &&(
+            {userType === 'administrador' &&(
             <li><a href="/building" className="hover:text-gold-golden transition-colors">Gestión de Usuarios</a></li>
             )}
 
