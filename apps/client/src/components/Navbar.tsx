@@ -9,6 +9,9 @@ const Navbar = () => {
   const { setToken, setUserType } = useAuth(); // 👈 usamos AuthContext
   const navigate = useNavigate(); // 👈 para redirigir
 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+
   const { token, userType } = useAuth();
 
 
@@ -58,30 +61,57 @@ const Navbar = () => {
                 <Utensils size={16} /> Mesas
               </Link>
 
-              <Link to="/profile" className="flex items-center gap-1 hover:text-blood-100">
-                <User size={16} /> Perfil
-              </Link>
+
 
               {/* Cosas que sólo ve el admin */}
-              {userType === 1 && (
+              {userType === 'administrador' && (
                 <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
                   <Users size={16} /> Usuarios
                 </Link>
               )}
 
-              {/* Botón de logout */}
-              <button
-                onClick={handleLogout}
-                className="ml-4 inline-flex items-center gap-2 border border-blood-500 text-blood-500 px-4 py-1.5 rounded-md text-sm hover:bg-blood-100 hover:text-eggshell-100 transition-colors">
-                <LogOut size={16} /> Cerrar Sesión
-              </button>
+
+                {/* dropdown */}
+                <div className="relative">
+
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="flex items-center gap-2 px-4 py-2 bg-transparent border-1 border-to-blood-300 rounded-lg  text-gray-700 hover:bg-blood-500 hover:text-white">
+                    <User size={20} />
+                    <span>Mi cuenta</span>
+                  </button>
+
+                  {/* Dropdown menú */}
+                  {dropdownOpen && (
+                    <div className="absolute  left mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}>
+                        Perfil
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setDropdownOpen(false);
+                        }}
+                        className="gap-1 px-4 py-2 inline-flex text-gray-700 hover:bg-gray-100">
+                        <LogOut/>
+                        Cerrar Sesión
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+
             </>
           )}
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-gray-700"
+            className="lg:hidden text-gray-700"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu className="animate-spinOnce" size={24} />}
@@ -120,7 +150,7 @@ const Navbar = () => {
                   <User size={18} /> Perfil
                 </Link>
 
-                {userType === 1 &&(
+                {userType === 'administrador' &&(
                 <Link to="/building" className="flex items-center gap-2">
                   <Users size={18} /> Usuarios
                 </Link>
