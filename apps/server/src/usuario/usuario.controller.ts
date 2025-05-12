@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -83,4 +84,19 @@ export class UsuarioController {
   getProfile(@User() user: AuthenticatedUser) {
     return this.usuarioService.findProfile(user.id_usuario);
   }
+
+  @Patch('profile') //para editar perfil propio
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateOwnProfile(
+    @User() user: AuthenticatedUser,
+    @Body() dto: UpdateUserDto,
+  ): Promise<UsuarioPerfil> {
+    return this.usuarioService.updateOwnProfile(user.id_usuario, {
+      nombre: dto.nombre,
+      correo: dto.correo,
+    });
+  }
+
+
 }

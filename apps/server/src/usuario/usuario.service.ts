@@ -116,6 +116,27 @@ export class UsuarioService {
     }
   }
 
+    //para editar perfil propio
+    async updateOwnProfile(id: number, data: Pick<UpdateUserDto, 'nombre' | 'correo'>): Promise<UsuarioPerfil> {
+      await this.prisma.$executeRawUnsafe(
+        UsuarioQueries.updateProfile,
+        id,
+        data.nombre,
+        data.correo,
+      );
+
+      const result = await this.prisma.$queryRawUnsafe<UsuarioPerfil[]>(
+        UsuarioQueries.findProfile,
+        id,
+      );
+
+      if (!result.length) {
+        throw new NotFoundException('No se pudo actualizar el perfil');
+      }
+
+      return result[0];
+    }
+
   async setInactive(authUserId: number, targetUserId: number): Promise<void> {
     if (authUserId === targetUserId) {
       throw new BadRequestException('No podés desactivarte a vos mismo');
