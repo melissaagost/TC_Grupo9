@@ -19,8 +19,6 @@ interface Usuario {
 
 const UserTable = () => {
 
-
-
       const [users, setUsers] = useState<Usuario[]>([]);
 
 
@@ -73,48 +71,48 @@ const UserTable = () => {
 
 
 
-  const handleCreateUser = async (e: React.FormEvent) => {
-  e.preventDefault();
+      const handleCreateUser = async (e: React.FormEvent) => {
+      e.preventDefault();
 
-  if (!nombre.trim() || !correo.trim() || !password.trim()) {
-    setToastMessage("Todos los campos son obligatorios.");
-    setToastType("error");
-    return;
-  }
+      if (!nombre.trim() || !correo.trim() || !password.trim()) {
+        setToastMessage("Todos los campos son obligatorios.");
+        setToastType("error");
+        return;
+      }
 
-  if (!isValidEmail(correo)) {
-    setToastMessage("El correo no tiene un formato válido.");
-    setToastType("error");
-    return;
-  }
+      if (!isValidEmail(correo)) {
+        setToastMessage("El correo no tiene un formato válido.");
+        setToastType("error");
+        return;
+      }
 
-  if (!isValidPassword(password)) {
-    setToastMessage("La contraseña debe tener al menos 8 caracteres, una letra mayúscula y un número.");
-    setToastType("error");
-    return;
-  }
+      if (!isValidPassword(password)) {
+        setToastMessage("La contraseña debe tener al menos 8 caracteres, una letra mayúscula y un número.");
+        setToastType("error");
+        return;
+      }
 
-  if (tipoUsuarioId === 0) {
-    setToastMessage("Debés seleccionar un tipo de usuario.");
-    setToastType("error");
-    return;
-  }
+      if (tipoUsuarioId === 0) {
+        setToastMessage("Debés seleccionar un tipo de usuario.");
+        setToastType("error");
+        return;
+      }
 
-  const newUser = { nombre, correo, password, tipoUsuarioId };
+      const newUser = { nombre, correo, password, tipoUsuarioId };
 
-  try {
-    await userService.createUser(newUser, token);
-    fetchUsers();
-    setToastMessage("Usuario creado correctamente.");
-    setToastType("success");
-    setIsCreating(false);
-    resetForm();
-  } catch (err) {
-    console.error("Error al crear usuario:", err);
-    setToastMessage("No se pudo crear el usuario.");
-    setToastType("error");
-  }
-};
+      try {
+        await userService.createUser(newUser, token);
+        fetchUsers();
+        setToastMessage("Usuario creado correctamente.");
+        setToastType("success");
+        setIsCreating(false);
+        resetForm();
+      } catch (err) {
+        console.error("Error al crear usuario:", err);
+        setToastMessage("No se pudo crear el usuario.");
+        setToastType("error");
+      }
+    };
 
 
       useEffect(() => {

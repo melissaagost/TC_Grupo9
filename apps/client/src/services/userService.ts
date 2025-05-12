@@ -60,6 +60,21 @@ const userService = {
     });
     return res.data;
   },
+
+  // PATCH /usuario/profile
+  updateOwnProfile: async (data: { nombre: string; correo: string }, token: string) => {
+  const res = await axios.patch(`${API_URL}/usuario/profile`, data, {
+
+    headers: {
+
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+},
+
+
 };
 
 export default userService;

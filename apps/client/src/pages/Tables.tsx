@@ -1,5 +1,6 @@
-import { useState } from "react";
+
 import Mesas from "../components/Tables/Mesas"
+import FadeEffect from "../components/UI/FadeEffect";
 
 const Tables = () => {
 
@@ -8,7 +9,7 @@ const Tables = () => {
 
     <div className="min-h-screen py-6 bg-eggshell-whitedove">
 
-      <Mesas/>
+      <FadeEffect duration={1}><Mesas/></FadeEffect>
 
     </div>
 

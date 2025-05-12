@@ -1,9 +1,10 @@
 import EditProfileC from  '../components/Profile/EditProfileC'
+import FadeEffect from '../components/UI/FadeEffect';
 
 const EditProfile = () =>{
     return(
         <>
-        <EditProfileC/>
+        <FadeEffect duration={1}><EditProfileC/></FadeEffect>
         </>
     );
 };
