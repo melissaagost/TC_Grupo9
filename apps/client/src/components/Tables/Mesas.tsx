@@ -220,13 +220,13 @@ const MesasTable = () => {
                 className=" md:w-90 border  bg-white border-gray-300  rounded-xl p-2 w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blood-200"
             />
         </div>
-
+<div className="overflow-x-auto w-full">
       <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-2xl">
 
 
 
         <thead>
-          <tr className="text-lg">
+          <tr className="lg:text-lg sm:text-base sm:gap-2">
             <th className="py-2">Número</th>
             <th className="py-2">Capacidad</th>
             <th className="py-2">Descripción</th>
@@ -302,6 +302,7 @@ const MesasTable = () => {
 
 
       </table>
+      </div>
 
       <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 m-5 w-50 gap-1 inline-flex items-center bg-green-500 text-white rounded-3xl hover:bg-green-600"> <Plus size={'20'}/> Agregar una Mesa</button>
 

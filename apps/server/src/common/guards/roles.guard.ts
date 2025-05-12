@@ -22,5 +22,6 @@ export class RolesGuard implements CanActivate {
     console.log(user);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return requiredRoles.includes(user.tipoUsuario.descripcion);
+    //return requiredRoles.includes(user.rol);
   }
 }

@@ -16,10 +16,14 @@ const PrivateRoute = ({ children, redirectTo = '/auth', allowedUserTypes }: Priv
     return <Navigate to={redirectTo} replace />
   }
 
-  if (allowedUserTypes && (!userType || !allowedUserTypes.includes(userType))) {
-    // Está logueado pero no tiene el rol permitido
-    return <Navigate to="/" replace />
+  if (
+    allowedUserTypes &&
+    (!userType || !allowedUserTypes.some(r => r.toLowerCase() === userType.toLowerCase()))
+  ) {
+    return <Navigate to="/" replace />;
   }
+
+  console.log('userType desde contexto:', userType);
 
   return <>{children}</>
 }

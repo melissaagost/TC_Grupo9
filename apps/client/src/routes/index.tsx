@@ -4,6 +4,8 @@ import Auth from '../pages/Auth'
 import Profile from '../pages/Profile'
 import EditProfile from '../pages/EditProfile'
 import Tables from '../pages/Tables'
+import Users from '../pages/Users'
+
 import Building from '../pages/Building'
 import PrivateRoute from '../components/PrivateRoute'
 import PublicRoute from '../components/PublicRoute'
@@ -52,6 +54,15 @@ const AppRoutes = () => {
         element={
           <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
             <Tables />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/users"
+        element={
+          <PrivateRoute allowedUserTypes={['administrador']}>
+            <Users/>
           </PrivateRoute>
         }
       />

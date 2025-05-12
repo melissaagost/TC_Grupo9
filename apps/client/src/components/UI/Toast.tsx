@@ -19,7 +19,7 @@ interface ToastProps {
     useEffect(() => {
       const timer = setTimeout(() => {
         setIsVisible(false); //
-      }, 2500); // Mostrar 2.5 segundos
+      }, 4000);
 
       return () => clearTimeout(timer);
     }, []);

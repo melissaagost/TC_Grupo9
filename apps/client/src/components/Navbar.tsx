@@ -65,7 +65,7 @@ const Navbar = () => {
 
               {/* Cosas que sólo ve el admin */}
               {userType === 'administrador' && (
-                <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
+                <Link to="/users" className="flex items-center gap-1 hover:text-blood-100">
                   <Users size={16} /> Usuarios
                 </Link>
               )}
@@ -151,7 +151,7 @@ const Navbar = () => {
                 </Link>
 
                 {userType === 'administrador' &&(
-                <Link to="/building" className="flex items-center gap-2">
+                <Link to="/users" className="flex items-center gap-2">
                   <Users size={18} /> Usuarios
                 </Link>
                 )}
