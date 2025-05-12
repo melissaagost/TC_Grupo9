@@ -34,11 +34,17 @@ export class AuthService {
   }
 
   async login(user: AuthenticatedUser): Promise<{ access_token: string }> {
+
+    if (user.estado === 0) {
+      throw new UnauthorizedException('Su cuenta está desactivada. Por favor, póngase en contacto.');
+    }
+
     const payload = {
       mail: user.correo,
       sub: user.id_usuario,
       rol: user.tipoUsuario.descripcion,
       id_restaurante: user.id_restaurante,
+      estado: user.estado, //para manejar login de inactivos
     };
     const token = await this.jwtService.signAsync(payload, { expiresIn: '1h' });
     return {
