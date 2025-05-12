@@ -206,8 +206,8 @@ const MesasTable = () => {
         )}
 
 
-      <h1 className="text-4xl  text-blood-100 font-bold mb-4">Gestión de Mesas</h1>
-      <h3 className="text-xl  text-gray-700 font-light mb-4">Administra las mesas de tu restaurante</h3>
+      <h1 className="text-4xl font-playfair text-blood-100 font-bold mb-4">Gestión de Mesas</h1>
+      <h3 className="text-lg font-urbanist  text-gray-700 font-light mb-4">Administra las mesas de tu restaurante</h3>
 
 
       <div className="mb-4">
@@ -220,88 +220,89 @@ const MesasTable = () => {
                 className=" md:w-90 border  bg-white border-gray-300  rounded-xl p-2 w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blood-200"
             />
         </div>
-<div className="overflow-x-auto w-full">
-      <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-2xl">
+
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-2xl">
 
 
 
-        <thead>
-          <tr className="lg:text-lg sm:text-base sm:gap-2">
-            <th className="py-2">Número</th>
-            <th className="py-2">Capacidad</th>
-            <th className="py-2">Descripción</th>
-            <th className="py-2">Estado</th>
-            <th className="py-2">Acciones</th>
-            <th className="py-2">Pedido</th>
-          </tr>
-        </thead>
+            <thead>
+              <tr className="lg:text-lg sm:text-base sm:gap-2">
+                <th className="py-2">Número</th>
+                <th className="py-2">Capacidad</th>
+                <th className="py-2">Descripción</th>
+                <th className="py-2">Estado</th>
+                <th className="py-2">Acciones</th>
+                <th className="py-2">Pedido</th>
+              </tr>
+            </thead>
 
 
 
-        <tbody>
+            <tbody>
 
 
-          {filteredMesas.map((mesa) => (
-            <tr className='hover:bg-eggshell-300 border-t-1 border-t-gray-300' key={mesa.id_mesa}>
+              {filteredMesas.map((mesa) => (
+                <tr className='hover:bg-eggshell-300 border-t-1 border-t-gray-300' key={mesa.id_mesa}>
 
-              <td className="text-center">{mesa.numero}</td>
-              <td className="text-center">{mesa.capacidad}</td>
-              <td className="text-center">{mesa.descripcion}</td>
+                  <td className="text-center">{mesa.numero}</td>
+                  <td className="text-center">{mesa.capacidad}</td>
+                  <td className="text-center">{mesa.descripcion}</td>
 
-              <td className="text-center">
-                    {mesa.estado === 0 ? (
-                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
-                        Libre
-                        </span>
-                    ) : (
-                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
-                        Ocupado
-                        </span>
-                    )}
-                </td>
+                  <td className="text-center">
+                        {mesa.estado === 0 ? (
+                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                            Libre
+                            </span>
+                        ) : (
+                            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
+                            Ocupado
+                            </span>
+                        )}
+                    </td>
 
-              {/*Si la mesa esta libre: renderiza boton agregar pedido */}
-              {/*Si la mesa esta ocupada: renderiza boton pagar y boton modif pedido */}
-
-
-              <td className="font-semibold flex justify-center text-eggshell-whitedove  gap-2 py-2">
-                <button onClick={() => marcarLibre(mesa.id_mesa)} className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-green-400 hover:text-green-900 gap-1 inline-flex items-center rounded-md"><BookmarkCheck/>Libre</button>
-                <button onClick={() => marcarOcupado(mesa.id_mesa)} className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-red-400 hover:text-red-800 gap-1 inline-flex items-center rounded-md"><BookmarkX/>Ocupado</button>
-              </td>
-
-              <td className="flex font-semibold justify-center  text-eggshell-whitedove gap-2 py-2">
-                <button  onClick={() => startEditingMesa(mesa)}
-                className="px-2 py-1 bg-blue-400 hover:text-blue-900 gap-1 inline-flex items-center transition-all duration-300 hover:-translate-y-1 shadow-md rounded-md  "><SquarePen/>Modificar</button>
-              </td>
+                  {/*Si la mesa esta libre: renderiza boton agregar pedido */}
+                  {/*Si la mesa esta ocupada: renderiza boton pagar y boton modif pedido */}
 
 
-              <td className="text-center">
+                  <td className="font-semibold flex justify-center text-eggshell-whitedove  gap-2 py-2">
+                    <button onClick={() => marcarLibre(mesa.id_mesa)} className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-green-400 hover:text-green-900 gap-1 inline-flex items-center rounded-md"><BookmarkCheck/>Libre</button>
+                    <button onClick={() => marcarOcupado(mesa.id_mesa)} className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-red-400 hover:text-red-800 gap-1 inline-flex items-center rounded-md"><BookmarkX/>Ocupado</button>
+                  </td>
 
-                    {mesa.estado === 0 ? (
-                      <button className="px-2 py-1 transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
-                        <Plus/> Agregar Pedido
-                      </button>
-                    ) : (
-                      <div className="gap-1 items-center font-semibold text-white inline-flex">
-                      <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-blood-pay hover:text-blood-300 gap-1 inline-flex items-center rounded-md">
-                        Pagar
-                      </button>
-                      <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-modify hover:text-gray-200 gap-1 inline-flex items-center rounded-md">
-                        Modificar Pedido
-                      </button>
-                      </div>
-                    )}
-
-              </td>
-
-            </tr>
-          ))}
-
-        </tbody>
+                  <td className="flex font-semibold justify-center  text-eggshell-whitedove gap-2 py-2">
+                    <button  onClick={() => startEditingMesa(mesa)}
+                    className="px-2 py-1 bg-blue-400 hover:text-blue-900 gap-1 inline-flex items-center transition-all duration-300 hover:-translate-y-1 shadow-md rounded-md  "><SquarePen/>Modificar</button>
+                  </td>
 
 
+                  <td className="text-center">
 
-      </table>
+                        {mesa.estado === 0 ? (
+                          <button className="px-2 py-1 transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
+                            <Plus/> Agregar Pedido
+                          </button>
+                        ) : (
+                          <div className="gap-1 items-center font-semibold text-white inline-flex">
+                          <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-blood-pay hover:text-blood-300 gap-1 inline-flex items-center rounded-md">
+                            Pagar
+                          </button>
+                          <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-modify hover:text-gray-200 gap-1 inline-flex items-center rounded-md">
+                            Modificar Pedido
+                          </button>
+                          </div>
+                        )}
+
+                  </td>
+
+                </tr>
+              ))}
+
+            </tbody>
+
+
+
+          </table>
       </div>
 
       <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 m-5 w-50 gap-1 inline-flex items-center bg-green-500 text-white rounded-3xl hover:bg-green-600"> <Plus size={'20'}/> Agregar una Mesa</button>

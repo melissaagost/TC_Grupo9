@@ -117,44 +117,52 @@ const UserTable = () => {
 };
 
 
+      useEffect(() => {
+        if (editingUser) {
+          setNombre(editingUser.nombre);
+          setCorreo(editingUser.correo);
+          setTipoUsuarioId(editingUser.id_tipousuario);
+          setEstado(editingUser.estado);
+        }
+      }, [editingUser]);
 
-const handleUpdateUser = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!editingUser) return;
+      const handleUpdateUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingUser) return;
 
-  if (tipoUsuarioId === 0) {
-    setToastMessage("Debés seleccionar un tipo de usuario.");
-    setToastType("error");
-    return;
-  }
+        if (tipoUsuarioId === 0) {
+          setToastMessage("Debés seleccionar un tipo de usuario.");
+          setToastType("error");
+          return;
+        }
 
-  const updateData = { nombre, correo, tipoUsuarioId, estado };
+        const updateData = { nombre, correo, tipoUsuarioId, estado };
 
-  try {
-    if (
-      editingUser &&
-      nombre === editingUser.nombre &&
-      correo === editingUser.correo &&
-      tipoUsuarioId === editingUser.id_tipousuario &&
-      estado === editingUser.estado
-    ) {
-      setToastMessage("No hay cambios para guardar.");
-      setToastType("info");
-      return;
-    }
+        try {
+          if (
+            editingUser &&
+            nombre === editingUser.nombre &&
+            correo === editingUser.correo &&
+            tipoUsuarioId === editingUser.id_tipousuario &&
+            estado === editingUser.estado
+          ) {
+            setToastMessage("No hay cambios para guardar.");
+            setToastType("info");
+            return;
+          }
 
-    await userService.updateUser(editingUser.id_usuario, updateData, token);
-    fetchUsers();
-    setEditingUser(null);
-    resetForm();
+          await userService.updateUser(editingUser.id_usuario, updateData, token);
+          fetchUsers();
+          setEditingUser(null);
+          resetForm();
 
-    setToastMessage("Usuario actualizado correctamente.");
-    setToastType("success");
-  } catch (err) {
-    console.error("Error al actualizar usuario:", err);
-    setError("No se pudo actualizar el usuario.");
-  }
-};
+          setToastMessage("Usuario actualizado correctamente.");
+          setToastType("success");
+        } catch (err) {
+          console.error("Error al actualizar usuario:", err);
+          setError("No se pudo actualizar el usuario.");
+        }
+      };
 
       const handleDeactivateUser = async (id: number) => {
         try {
@@ -185,13 +193,12 @@ const handleUpdateUser = async (e: React.FormEvent) => {
 
       ];
 
-
-
       const resetForm = () => {
         setNombre("");
         setCorreo("");
         setPassword("");
         setTipoUsuarioId(0);
+        setEstado(1);
       };
 
 
@@ -400,18 +407,21 @@ const handleUpdateUser = async (e: React.FormEvent) => {
                             <input className="border-eggshell-creamy border-1 bg-pink-100 text-gray-500  p-2 rounded-md w-full mt-2 mb-2" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
                             <input className="border-eggshell-creamy border-1 bg-pink-100 text-gray-500  p-2 rounded-md w-full mt-2 mb-2" placeholder="Email" value={correo} onChange={(e) => setCorreo(e.target.value)} />
 
-            <select
-  value={tipoUsuarioId}
-  onChange={(e) => setTipoUsuarioId(Number(e.target.value))}
-  className="border-eggshell-creamy border-1 bg-pink-100 text-gray-500  p-2 rounded-md w-full mt-2 mb-2"
->
-  <option value={0} disabled>Seleccioná un tipo</option>
-  {tiposUsuario.map((tipo) => (
-    <option key={tipo.id} value={tipo.id}>
-      {tipo.nombre}
-    </option>
-  ))}
-</select>
+                              <select
+
+                                value={tipoUsuarioId || 0}
+                                onChange={(e) => setTipoUsuarioId(Number(e.target.value))}
+                                className="border-eggshell-creamy border-1 bg-pink-100 text-gray-500 p-2 rounded-md w-full mt-2 mb-2">
+
+                                <option value={0} disabled>Seleccioná un tipo</option>
+                                {tiposUsuario.map((tipo) => (
+                                  <option key={tipo.id} value={tipo.id}>
+                                    {tipo.nombre}
+                                  </option>
+                                ))}
+
+                              </select>
+
 
 
                               {editingUser?.estado === 0 &&(
