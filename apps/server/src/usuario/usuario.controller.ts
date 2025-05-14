@@ -19,6 +19,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { UsuarioConTipo, UsuarioPerfil } from './interfaces/usuario.interface';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -48,6 +49,16 @@ export class UsuarioController {
     @Body() data: UpdateUserDto,
   ): Promise<UsuarioPerfil> {
     return this.usuarioService.updateUser(id, data);
+  }
+
+  // Endpoint para actualizar el perfil propio
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile/update')
+  updateOwnProfile(
+    @User() user: AuthenticatedUser,
+    @Body() data: UpdateProfileDto,
+  ): Promise<UsuarioPerfil> {
+    return this.usuarioService.updateOwnProfile(user.id_usuario, data);
   }
 
   //Endpoint to set inactive
