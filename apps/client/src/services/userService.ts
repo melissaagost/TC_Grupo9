@@ -63,7 +63,7 @@ const userService = {
 
   // PATCH /usuario/profile
   updateOwnProfile: async (data: { nombre: string; correo: string }, token: string) => {
-  const res = await axios.patch(`${API_URL}/usuario/profile`, data, {
+  const res = await axios.patch(`${API_URL}/usuario/profile/update`, data, {
 
     headers: {
 

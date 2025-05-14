@@ -31,7 +31,7 @@ const ViewProfile = () => {
 
         }, [token]);
 
-        if (!user) return <p className="text-center mt-10">Cargando perfil...</p>;
+        if (!user) return <p className="text-center font-urbanist mt-10">Cargando perfil...</p>;
 
     return(
 
