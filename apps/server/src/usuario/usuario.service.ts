@@ -12,6 +12,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UsuarioQueries } from './queries/usuario-queries';
 import { UsuarioConTipo, UsuarioPerfil } from './interfaces/usuario.interface';
 import { UsuarioWithRol } from './interfaces/UsuarioRol.interface';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -116,26 +117,38 @@ export class UsuarioService {
     }
   }
 
-    //para editar perfil propio
-    async updateOwnProfile(id: number, data: Pick<UpdateUserDto, 'nombre' | 'correo'>): Promise<UsuarioPerfil> {
+  async updateOwnProfile(
+    userId: number,
+    data: UpdateProfileDto,
+  ): Promise<UsuarioPerfil> {
+    try {
+      // Obtenemos el usuario actual para mantener los valores que no se actualizarán
+      const currentUser = await this.findProfile(userId);
+
+      // Ejecutamos la actualización manteniendo los valores actuales para los campos no incluidos
       await this.prisma.$executeRawUnsafe(
-        UsuarioQueries.updateProfile,
-        id,
-        data.nombre,
-        data.correo,
+        UsuarioQueries.update,
+        userId,
+        data.nombre || currentUser.nombre,
+        data.correo || currentUser.correo,
+        // Mantenemos el tipo de usuario y estado actual
+        parseInt(currentUser.tipo_usuario === 'administrador' ? '1' : '2'), // Convertimos el tipo a ID
+        currentUser.estado,
       );
 
-      const result = await this.prisma.$queryRawUnsafe<UsuarioPerfil[]>(
-        UsuarioQueries.findProfile,
-        id,
-      );
-
-      if (!result.length) {
-        throw new NotFoundException('No se pudo actualizar el perfil');
+      // Obtenemos el perfil actualizado
+      return await this.findProfile(userId);
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.message.toLowerCase().includes('no encontrado')
+      ) {
+        throw new NotFoundException(error.message);
       }
 
-      return result[0];
+      throw new BadRequestException('Error al actualizar el perfil');
     }
+  }
 
   async setInactive(authUserId: number, targetUserId: number): Promise<void> {
     if (authUserId === targetUserId) {
