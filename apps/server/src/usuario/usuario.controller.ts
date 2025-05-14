@@ -96,18 +96,5 @@ export class UsuarioController {
     return this.usuarioService.findProfile(user.id_usuario);
   }
 
-  @Patch('profile') //para editar perfil propio
-  @UseGuards(JwtAuthGuard)
-  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async updateOwnProfile(
-    @User() user: AuthenticatedUser,
-    @Body() dto: UpdateUserDto,
-  ): Promise<UsuarioPerfil> {
-    return this.usuarioService.updateOwnProfile(user.id_usuario, {
-      nombre: dto.nombre,
-      correo: dto.correo,
-    });
-  }
-
 
 }
