@@ -12,6 +12,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UsuarioQueries } from './queries/usuario-queries';
 import { UsuarioConTipo, UsuarioPerfil } from './interfaces/usuario.interface';
 import { UsuarioWithRol } from './interfaces/UsuarioRol.interface';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -113,6 +114,39 @@ export class UsuarioService {
       }
 
       throw new BadRequestException('Error al actualizar el usuario');
+    }
+  }
+
+  async updateOwnProfile(
+    userId: number,
+    data: UpdateProfileDto,
+  ): Promise<UsuarioPerfil> {
+    try {
+      // Obtenemos el usuario actual para mantener los valores que no se actualizarán
+      const currentUser = await this.findProfile(userId);
+
+      // Ejecutamos la actualización manteniendo los valores actuales para los campos no incluidos
+      await this.prisma.$executeRawUnsafe(
+        UsuarioQueries.update,
+        userId,
+        data.nombre || currentUser.nombre,
+        data.correo || currentUser.correo,
+        // Mantenemos el tipo de usuario y estado actual
+        parseInt(currentUser.tipo_usuario === 'administrador' ? '1' : '2'), // Convertimos el tipo a ID
+        currentUser.estado,
+      );
+
+      // Obtenemos el perfil actualizado
+      return await this.findProfile(userId);
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.message.toLowerCase().includes('no encontrado')
+      ) {
+        throw new NotFoundException(error.message);
+      }
+
+      throw new BadRequestException('Error al actualizar el perfil');
     }
   }
 
