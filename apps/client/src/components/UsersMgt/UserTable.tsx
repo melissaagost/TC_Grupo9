@@ -22,9 +22,11 @@ const UserTable = () => {
 
       const [users, setUsers] = useState<Usuario[]>([]);
 
-
+      //buscador y filtros
       const [searchTerm, setSearchTerm] = useState("");
       const [userTypeFilter, setUserTypeFilter] = useState("all");
+
+      //forms
       const [error, setError] = useState<string | null>(null);
       const [isCreating, setIsCreating] = useState(false);
       const [editingUser, setEditingUser] = useState<Usuario | null>(null);
@@ -225,13 +227,13 @@ const UserTable = () => {
 
         <div className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">
 
-                {toastMessage && (
-                    <Toast
-                        message={toastMessage}
-                        type={toastType}
-                        onClose={() => setToastMessage(null)}
-                    />
-                )}
+          {toastMessage && (
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                onClose={() => setToastMessage(null)}
+            />
+          )}
 
 
             {/*buscador */}
@@ -278,7 +280,7 @@ const UserTable = () => {
             {/*table de gestion */}
             <div className="overflow-x-auto w-full">
 
-              <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-2xl">
+              <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-xl">
 
                       <TableHeader>
                         <th className="py-2">Número</th>

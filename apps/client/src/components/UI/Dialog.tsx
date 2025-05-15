@@ -75,7 +75,7 @@ export const DialogHeader = ({ children }: { children: ReactNode }) => (
 );
 
 export const DialogTitle = ({ children }: { children: ReactNode }) => (
-  <HeadlessDialog.Title className="text-3xl font-raleway text-blood-100 font-semibold">{children}</HeadlessDialog.Title>
+  <HeadlessDialog.Title className="text-2xl font-playfair text-gray-700 font-semibold">{children}</HeadlessDialog.Title>
 );
 
 export const DialogTrigger = ({ children, ...props }: { children: ReactNode } & React.ButtonHTMLAttributes<HTMLButtonElement>) => (

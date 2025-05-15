@@ -223,7 +223,7 @@ const MesasTable = () => {
         </div>
 
         <div className="overflow-x-auto w-full">
-          <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-2xl">
+          <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-xl">
 
 
 
@@ -238,17 +238,15 @@ const MesasTable = () => {
 
 
 
-            <tbody>
-
-
+            <tbody className="text-sm">
               {filteredMesas.map((mesa) => (
-                <tr className='hover:bg-eggshell-300 border-t-1 border-t-gray-300' key={mesa.id_mesa}>
+                <tr  className="border-t border-gray-100 hover:bg-gray-50" key={mesa.id_mesa}>
 
-                  <td className="text-center">{mesa.numero}</td>
-                  <td className="text-center">{mesa.capacidad}</td>
-                  <td className="text-center">{mesa.descripcion}</td>
+                  <td className="px-4 py-2 text-center">{mesa.numero}</td>
+                  <td className="px-4 py-2 text-center">{mesa.capacidad}</td>
+                  <td className="px-4 py-2 text-center">{mesa.descripcion}</td>
 
-                  <td className="text-center">
+                  <td className="px-4 py-2 text-center">
                         {mesa.estado === 0 ? (
                             <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
                             Libre
@@ -264,7 +262,7 @@ const MesasTable = () => {
                   {/*Si la mesa esta ocupada: renderiza boton pagar y boton modif pedido */}
 
 
-                  <td className="font-semibold flex justify-center text-eggshell-whitedove  gap-2 py-2">
+                  <td className="px-4 py-2 font-semibold flex justify-center text-eggshell-whitedove  gap-2">
                     <button onClick={() => marcarLibre(mesa.id_mesa)} className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-green-400 hover:text-green-900 gap-1 inline-flex items-center rounded-md"><BookmarkCheck/>Libre</button>
                     <button onClick={() => marcarOcupado(mesa.id_mesa)} className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-red-400 hover:text-red-800 gap-1 inline-flex items-center rounded-md"><BookmarkX/>Ocupado</button>
                   </td>
@@ -275,10 +273,10 @@ const MesasTable = () => {
                   </td>
 
 
-                  <td className="text-center">
+                  <td className="px-4 py-2 text-center">
 
                         {mesa.estado === 0 ? (
-                          <button className="px-2 py-1 transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
+                          <button className="px-2 py-1  transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
                             <Plus/> Agregar Pedido
                           </button>
                         ) : (

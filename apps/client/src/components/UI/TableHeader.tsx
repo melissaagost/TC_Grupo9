@@ -3,7 +3,7 @@ import React from "react";
 const TableHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <thead>
-      <tr className="lg:text-lg sm:text-base sm:gap-1">
+      <tr className="text-center lg:text-lg sm:text-base text-gray-500">
         {children}
       </tr>
     </thead>

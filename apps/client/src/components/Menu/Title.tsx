@@ -1,8 +1,8 @@
-const Header = () => {
+const Title = () => {
 
     return(
 
-        <div className="mb-5">
+        <div className="mb-5 lg:ml-10">
 
             {/*titulo y descrip */}
             <h1 className="text-4xl font-playfair text-blood-100 font-bold mb-4">Gestión de Menús</h1>
@@ -14,4 +14,4 @@ const Header = () => {
 
 };
 
-export default Header;
+export default Title;
