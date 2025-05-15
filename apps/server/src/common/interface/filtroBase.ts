@@ -9,6 +9,10 @@ export class FiltroBase {
 
   @IsOptional()
   @IsString()
+  busqueda?: string;
+
+  @IsOptional()
+  @IsString()
   ordenCol?: string;
 
   @IsOptional()

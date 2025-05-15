@@ -17,7 +17,8 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/auth/types/authenticatedUser.type';
 import { MetodoPagoGuardarDTO } from './dto/metodoPagoGuardarDTO';
-import { MetodoPagoBuscarTodos } from './interfaces/metodoPagoFind.interface';
+import { FiltroBase } from 'src/common/interface/filtroBase';
+import { PagoGuardarDTO } from './dto/pagoGuardarDTO';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('pago')
@@ -55,7 +56,7 @@ export class PagoController {
   }
 
   @Get('buscar_metodo_pago')
-  async buscar(@Query() query: MetodoPagoBuscarTodos) {
+  async buscar(@Query() query: FiltroBase) {
     try {
       return await this.pagoService.buscarTodosMetosPagoAsync(query);
     } catch (error: unknown) {
@@ -63,6 +64,53 @@ export class PagoController {
         error instanceof Error ? error.message : 'Error desconocido';
       throw new HttpException(
         { message: 'Error al buscar métodos de pago', details: message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // ...existing code...
+
+  @Roles(Role.Administrador, Role.Mozo)
+  @Post('guardar')
+  async guardarPago(@Body() dto: PagoGuardarDTO) {
+    try {
+      return await this.pagoService.guardarPagoAsync(dto);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido';
+      throw new HttpException(
+        { message: 'Error al guardar el pago', details: message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Roles(Role.Administrador, Role.Mozo)
+  @Get('listar')
+  async listarPagos(@Query() query: FiltroBase) {
+    try {
+      return await this.pagoService.listarPagosAsync(query);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido';
+      throw new HttpException(
+        { message: 'Error al listar pagos', details: message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Roles(Role.Administrador)
+  @Patch('cancelar/:id')
+  async cancelarPago(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.pagoService.cancelarPagoAsync(id);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido';
+      throw new HttpException(
+        { message: 'Error al cancelar el pago', details: message },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
