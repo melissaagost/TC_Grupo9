@@ -1,0 +1,262 @@
+{
+  "SELECT \n  n.nspname AS schema,\n  p.proname AS function_name,\n  pg_get_function_arguments(p.oid) AS arguments,\n  t.typname AS return_type\nFROM pg_proc p\nJOIN pg_namespace n ON n.oid = p.pronamespace\nJOIN pg_type t ON t.oid = p.prorettype\nWHERE n.nspname IN ('restaurant', 'public')\n  AND p.prokind = 'f'  -- 'f' para funciones (procedimientos en SQL)\nORDER BY n.nspname, p.proname\n": [
+    {
+      "schema": "public",
+      "function_name": "deshabilitar_metodo_pago",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "public",
+      "function_name": "sp_cancelar_pago",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "public",
+      "function_name": "sp_guardar_metodo_pago",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_nombre character varying DEFAULT NULL::character varying, p_estado integer DEFAULT 1",
+      "return_type": "json"
+    },
+    {
+      "schema": "public",
+      "function_name": "sp_guardar_pago",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_id_pedido integer DEFAULT NULL::integer, p_id_metodo integer DEFAULT NULL::integer, p_estado integer DEFAULT 1",
+      "return_type": "json"
+    },
+    {
+      "schema": "public",
+      "function_name": "sp_listar_metodos_pago",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'nombre'::character varying, p_orden_dir character varying DEFAULT 'ASC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "public",
+      "function_name": "sp_listar_pagos",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'id_pago'::character varying, p_orden_dir character varying DEFAULT 'DESC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "public",
+      "function_name": "sp_listar_reservas",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'id_reserva'::character varying, p_orden_dir character varying DEFAULT 'DESC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_buscar_detalle_pedido_por_id",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_buscar_item_por_id",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_buscar_pedido_por_id",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_cancelar_detalle_pedido",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_cancelar_pedido",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_cancelar_reserva",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_create_menu",
+      "arguments": "p_nombre text, p_descripcion text",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_create_mesa",
+      "arguments": "p_numero bigint, p_capacidad bigint, p_descripcion text, p_id_restaurante bigint",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_create_mesa",
+      "arguments": "p_numero integer, p_capacidad integer, p_descripcion text, p_id_restaurante bigint",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_create_restaurante",
+      "arguments": "p_nombre text, p_direccion text, p_telefono text, p_email text, p_id_menu bigint",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_create_restaurante",
+      "arguments": "p_nombre text, p_direccion text, p_telefono text, p_email text, p_id_menu integer",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_deshabilitar_categoria",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_deshabilitar_item",
+      "arguments": "p_id integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_disable_menu",
+      "arguments": "p_id_menu integer",
+      "return_type": "void"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_disable_menu",
+      "arguments": "p_id_menu bigint",
+      "return_type": "text"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_find_all_mesas",
+      "arguments": "",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_find_menu",
+      "arguments": "p_id_menu bigint",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_find_mesa_by_id",
+      "arguments": "p_id_mesa bigint",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_find_restaurante",
+      "arguments": "p_id_restaurante bigint",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_guardar_categoria",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_nombre character varying DEFAULT NULL::character varying, p_descripcion character varying DEFAULT NULL::character varying, p_estado integer DEFAULT 1",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_guardar_detalle_pedido",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_cliente character varying DEFAULT NULL::character varying, p_direccion character varying DEFAULT NULL::character varying, p_id_pedido integer DEFAULT NULL::integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_guardar_item",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_nombre character varying DEFAULT NULL::character varying, p_descripcion character varying DEFAULT NULL::character varying, p_stock integer DEFAULT 0, p_precio numeric DEFAULT 0, p_estado integer DEFAULT 1, p_id_categoria integer DEFAULT NULL::integer, p_id_menu integer DEFAULT NULL::integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_guardar_pedido",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_cantidad integer DEFAULT 0, p_precio numeric DEFAULT 0, p_id_usuario integer DEFAULT NULL::integer, p_estado integer DEFAULT 1, p_id_mesa integer DEFAULT NULL::integer",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_guardar_pedido_completo",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_id_usuario integer DEFAULT NULL::integer, p_id_mesa integer DEFAULT NULL::integer, p_items jsonb DEFAULT NULL::jsonb",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_guardar_reserva",
+      "arguments": "p_id integer DEFAULT NULL::integer, p_fecha date DEFAULT now(), p_hora time without time zone DEFAULT now(), p_id_mesa integer DEFAULT NULL::integer, p_id_usuario integer DEFAULT NULL::integer, p_estado integer DEFAULT 1",
+      "return_type": "json"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_listar_categorias",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'nombre'::character varying, p_orden_dir character varying DEFAULT 'ASC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_listar_detalles_pedido",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'id_detalle_pedido'::character varying, p_orden_dir character varying DEFAULT 'DESC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_listar_items",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'nombre'::character varying, p_orden_dir character varying DEFAULT 'ASC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_listar_pedido_completo",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'id_pedido'::character varying, p_orden_dir character varying DEFAULT 'DESC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_listar_pedidos",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'id_pedido'::character varying, p_orden_dir character varying DEFAULT 'DESC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_listar_reservas",
+      "arguments": "p_busqueda character varying DEFAULT NULL::character varying, p_estado integer DEFAULT NULL::integer, p_orden_col character varying DEFAULT 'id_reserva'::character varying, p_orden_dir character varying DEFAULT 'DESC'::character varying, p_page_index integer DEFAULT 1, p_page_size integer DEFAULT 10",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_set_estado_libre_mesa",
+      "arguments": "p_id_mesa bigint",
+      "return_type": "void"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_set_estado_ocupado_mesa",
+      "arguments": "p_id_mesa bigint",
+      "return_type": "void"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_update_menu",
+      "arguments": "p_id_menu bigint, p_nombre text, p_descripcion text",
+      "return_type": "text"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_update_mesa",
+      "arguments": "p_id_mesa bigint, p_numero bigint, p_capacidad bigint, p_descripcion text",
+      "return_type": "record"
+    },
+    {
+      "schema": "restaurant",
+      "function_name": "sp_update_restaurante",
+      "arguments": "p_id_restaurante bigint, p_nombre text, p_direccion text, p_telefono text, p_email text, p_id_menu bigint",
+      "return_type": "record"
+    }
+  ]
+}
