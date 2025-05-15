@@ -73,3 +73,22 @@ Pedido maneja los siguientes estados(deberia ser por tabla pero ne):
 - 4 Entregado
 
 - 5 EnMesa
+
+# PARA VOS MELI TE AGREGO LOS DOS TIPOS DE TEMPLATE DE RTAS >
+
+- Listar:
+  {
+  "data" : [...],
+  "total": ...,
+  "pageIndex" : ...,
+  "pageSize": ...
+  }
+
+- Rta Generica
+  {
+  "sp_nombre": {
+  "success": 0 o 1 depende si es error o no,
+  "mensaje": rta del back,
+  "id": de lo q agregaste/cancelaste/deshabilitaste/actualizaste
+  }
+  }
