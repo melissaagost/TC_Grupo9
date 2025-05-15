@@ -42,7 +42,7 @@ const EditProfileC = () => {
           setToastType("error");
           return;
         }
-
+        //msj de confirmacion y deslogueo
       try {
         await userService.updateOwnProfile({ nombre, correo }, token);
 

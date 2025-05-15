@@ -3,6 +3,7 @@ import { getAllMesas, setMesaLibre, setMesaOcupado, updateMesa, createMesa } fro
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../UI/Dialog";
 import Toast from "../UI/Toast";
 import { Plus, SquarePen, BookmarkCheck, BookmarkX } from "lucide-react";
+import TableHeader from "../UI/TableHeader";
 
 
 
@@ -226,16 +227,14 @@ const MesasTable = () => {
 
 
 
-            <thead>
-              <tr className="lg:text-lg sm:text-base sm:gap-2">
+            <TableHeader>
                 <th className="py-2">Número</th>
                 <th className="py-2">Capacidad</th>
                 <th className="py-2">Descripción</th>
                 <th className="py-2">Estado</th>
                 <th className="py-2">Acciones</th>
                 <th className="py-2">Pedido</th>
-              </tr>
-            </thead>
+              </TableHeader>
 
 
 

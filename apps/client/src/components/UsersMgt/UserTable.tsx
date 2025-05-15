@@ -3,6 +3,7 @@ import userService from '../../services/userService';
 
 import { Plus, PenBox, Archive } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../UI/Dialog";
+import TableHeader from "../UI/TableHeader";
 
 import Toast from "../UI/Toast";
 
@@ -279,16 +280,15 @@ const UserTable = () => {
 
               <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-2xl">
 
-                  <thead>
-                      <tr className="lg:text-lg sm:text-base sm:gap-1">
-                          <th className="py-2">Número</th>
-                          <th className="py-2">Nombre</th>
-                          <th className="py-2">E-mail</th>
-                          <th className="py-2">Tipo</th>
-                          <th className="py-2">Estado</th>
-                          <th className="py-2">Acciones</th>
-                      </tr>
-                  </thead>
+                      <TableHeader>
+                        <th className="py-2">Número</th>
+                        <th className="py-2">Nombre</th>
+                        <th className="py-2">E-mail</th>
+                        <th className="py-2">Tipo</th>
+                        <th className="py-2">Estado</th>
+                        <th className="py-2">Acciones</th>
+                      </TableHeader>
+
 
                   <tbody className="text-center text-sm">
 
