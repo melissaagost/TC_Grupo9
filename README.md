@@ -57,3 +57,38 @@ Cuando develop tenga cambios estables y aprobados por el grupo, se puede fusiona
 -Para buscar metodo_pago con estado 0(deshabilitado)> BASE_URL/pago/buscar_metodo_pago?estado=0&ordenCol=nombre&ordenDir=ASC&pageIndex=1&pageSize=10
 
 Los params son para hacer una busqueda completa. Si queres buscar uno especifico tenes que filtrar desde front. Hace una busqueda de 10 elementos entonces no es una consulta pesada. Es para usar paginado, va cambiando el page index y page size
+
+# LOS ESTADOS DE PEDIDO
+
+Pedido maneja los siguientes estados(deberia ser por tabla pero ne):
+
+- 0 cancelado
+
+- 1 Solicitado
+
+- 2 Pagado
+
+- 3 Preparando
+
+- 4 Entregado
+
+- 5 EnMesa
+
+# PARA VOS MELI TE AGREGO LOS DOS TIPOS DE TEMPLATE DE RTAS >
+
+- Listar:
+  {
+  "data" : [...],
+  "total": ...,
+  "pageIndex" : ...,
+  "pageSize": ...
+  }
+
+- Rta Generica
+  {
+  "sp_nombre": {
+  "success": 0 o 1 depende si es error o no,
+  "mensaje": rta del back,
+  "id": de lo q agregaste/cancelaste/deshabilitaste/actualizaste
+  }
+  }
