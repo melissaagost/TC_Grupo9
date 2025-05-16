@@ -11,55 +11,62 @@ import {
 import { CategoriesService } from './categories.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Role } from 'src/auth/types/authenticatedUser.type';
 import { categoria } from '@prisma/client';
 import { Roles } from 'src/common/decorators/role.decorator';
+import { Role } from 'src/auth/types/authenticatedUser.type';
 import { UpdateCategoria } from './dto/UpdateCategorie.dto';
 import { CreateCategoria } from './dto/CreateCategoria.dto';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoria: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
-  // Metodos publicos
+  // Métodos públicos
   @Get()
   findAllCategorias(): Promise<categoria[]> {
-    return this.categoria.findAllCategories();
+    return this.categoriesService.findAllCategories();
   }
 
   @Get(':id')
   findOneCategorie(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<categoria | null> {
-    return this.categoria.findOneCategoria(id);
+    return this.categoriesService.findOneCategoria(id);
   }
 
-  // Metodos privados
+  // Métodos privados (con rol de administrador)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Post()
   createCategoria(@Body() data: CreateCategoria): Promise<categoria> {
-    return this.categoria.createCategorie(data);
+    return this.categoriesService.createCategorie(data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id/update')
-  updateCategoria(@Body() data: UpdateCategoria, @Param('id') id: number) {
-    return this.categoria.updateCategoria(id, data);
+  updateCategoria(
+    @Body() data: UpdateCategoria,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<categoria> {
+    return this.categoriesService.updateCategoria(id, data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id/disable')
-  disableCategoria(@Param() id: number) {
-    return this.categoria.setDisableCategoria(id);
+  disableCategoria(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<categoria> {
+    return this.categoriesService.setDisableCategoria(id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id/enable')
-  enableCategoria(@Param() id: number) {
-    return this.categoria.setEnableCategoria(id);
+  enableCategoria(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<categoria> {
+    return this.categoriesService.setEnableCategoria(id);
   }
 }
