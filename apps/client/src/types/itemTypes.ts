@@ -1,24 +1,29 @@
-export interface Item {
+export interface ItemRowDTO {
   id_item: number;
   nombre: string;
   descripcion: string;
-  precio: number;
   stock: number;
-  estado: number; // 1 o 0
-  id_menu: number;
+  precio: number;
+  estado: number;
   id_categoria: number;
-  categoria: {
-    id: number;
-    nombre: string;
-  };
+  nombre_categoria: string;
+  id_menu: number;
+  total_rows: number;
 }
 
-export interface ItemDTO {
+export interface ItemGuardarDTO {
+  id_item?: number;
   nombre: string;
   descripcion: string;
   precio: number;
   stock: number;
-  estado: number; // 0 o 1
-  id_menu: number;
+  estado: number;
   id_categoria: number;
+  id_menu: number;
+}
+
+
+export interface Paginado<T> {
+  data: T[];
+  total: number;
 }

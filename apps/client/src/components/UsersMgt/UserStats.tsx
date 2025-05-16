@@ -8,6 +8,7 @@ const UserStats = () => {
     total: 0,
     admins: 0,
     users: 0,
+    mozo: 0,
     inactive: 0,
   });
 
@@ -21,9 +22,10 @@ const UserStats = () => {
         const total = data.length;
         const admins = data.filter((u: any) => u.tipo_usuario === "administrador").length;
         const users = data.filter((u: any) => u.tipo_usuario === "usuario").length;
+        const mozo = data.filter((u: any) => u.tipo_usuario === "mozo").length;
         const inactive = data.filter((u: any) => u.estado === 0).length;
 
-        setStats({ total, admins, users, inactive });
+        setStats({ total, admins, users, mozo, inactive });
       } catch (err) {
         console.error("Error fetching user stats:", err);
       }
@@ -56,7 +58,12 @@ const UserStats = () => {
 
           <div>
             <p className="text-xl text-yellow-600 font-semibold">{stats.users}</p>
-            <p className="text-sm text-gray-600">Empleados</p>
+            <p className="text-sm text-gray-600">Cocineros</p>
+          </div>
+
+          <div>
+            <p className="text-xl text-blue-700 font-semibold">{stats.mozo}</p>
+            <p className="text-sm text-gray-600">Mozos</p>
           </div>
 
           <div>

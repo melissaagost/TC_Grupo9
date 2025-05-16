@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import userService from '../../services/userService';
 
@@ -191,6 +192,7 @@ const UserTable = () => {
       const tiposUsuario = [
         { id: 1, nombre: "Administrador" },
         { id: 2, nombre: "Usuario" },
+        { id: 3, nombre: "Mozo" },
 
       ];
 
@@ -252,6 +254,7 @@ const UserTable = () => {
                         { label: "Todos", value: "all" },
                         { label: "Empleados", value: "Usuario" },
                         { label: "Admins", value: "Administrador" },
+                        { label: "Mozos", value: "Mozo" },
                         { label: "Inactivos", value: "inactive" },
                       ].map((filter) => (
 

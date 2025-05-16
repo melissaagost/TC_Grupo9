@@ -1,19 +1,22 @@
-import { Item } from '../../types/itemTypes'
+import { ItemRowDTO, ItemGuardarDTO } from '../../types/itemTypes'
+import { itemService } from '../../services/itemService'
 import { useState, useEffect } from 'react';
 import { Menu } from "../../types/menuTypes";
 import { menuService } from "../../services/menuService";
+import { categoryService } from "../../services/categoryService";
+import { CategoriaDTO} from "../../types/categoryTypes";
+
 import Toast from "../UI/Toast";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { X, Check, Edit2, MoreHorizontal, Plus } from 'lucide-react'
-import { EditItemDialog } from './dialogs/EditProductDialog';
+import { X, Check, Edit2, MoreHorizontal, Plus, LucideEdit } from 'lucide-react'
+import { EditItemDialog } from "./dialogs/EditProductDialog";
 import { CreateItemDialog } from './dialogs/CreateProductDialog';
+import { Link } from "react-router-dom";
 
 
 const MenuItemTable = () => {
 
     const token = localStorage.getItem("token") || "";
-    const [menus, setMenus] = useState<Menu[]>([]);
-    const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
 
     //toast
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -23,45 +26,20 @@ const MenuItemTable = () => {
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [showEditDialog, setShowEditDialog] = useState(false);
 
-
-    const [productos, setProductos] = useState<Item[]>([
-    {
-        id_item: 1,
-        nombre: "Ceviche Mixto",
-        descripcion: "Pescado y mariscos marinados en limón",
-        precio: 16.99,
-        stock: 12,
-        estado: 1,
-        id_menu: 2, // Menú Fin de Semana
-        id_categoria: 1,
-        categoria: {
-        id: 1,
-        nombre: "Entradas",
-        },
-    },
-    {
-        id_item: 2,
-        nombre: "Parrillada para Dos",
-        descripcion: "Selección de carnes a la parrilla con guarniciones",
-        precio: 29.99,
-        stock: 8,
-        estado: 1,
-        id_menu: 2,
-        id_categoria: 2,
-        categoria: {
-        id: 2,
-        nombre: "Platos Principales",
-        },
-    },
-    ]);
-
-
-    //filtra prod/items segun boton selec
-    const productosFiltrados = productos.filter(
-        (item) => item.id_menu === activeMenuId
-    );
-
     //menus
+    const [menus, setMenus] = useState<Menu[]>([]);
+    const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
+
+    //items
+    const [items, setItems] = useState<ItemRowDTO[]>([]);
+    const [itemToEdit, setItemToEdit] = useState<ItemRowDTO | null>(null);
+
+    //categoria
+    const [categories, setCategories] = useState<CategoriaDTO[]>([]);
+    const [filteredCategories, setFilteredCategories] = useState<CategoriaDTO[]>([]);
+
+
+    //listar menus
     useEffect(() => {
     const fetchMenus = async () => {
         const data = await menuService.getAllMenus(token);
@@ -71,6 +49,41 @@ const MenuItemTable = () => {
 
     fetchMenus();
     }, []);
+
+    //listar items
+    useEffect(() => {
+    itemService.listarItems()
+        .then((res) => setItems(res.data)) // ⬅️ acá está el fix
+        .catch((err) => console.error("Error al listar items:", err));
+    }, []);
+
+    //listar categorias
+    const fetchCategories = async () => {
+    const data = await categoryService.getAll();
+    setCategories(data);
+    setFilteredCategories(data);
+    };
+
+    useEffect(() => {
+    fetchCategories();
+    }, []);
+
+    //editar items
+    const openEditItem = (item: ItemRowDTO) => {
+    setItemToEdit(item);
+    setShowEditDialog(true);
+    };
+
+    const fetchItems = async () => {
+    const res = await itemService.listarItems();
+        setItems(res.data);
+    };
+
+    //filtra prod/items segun boton selec
+    const productosFiltrados = activeMenuId !== null
+    ? items.filter((item) => item.id_menu === activeMenuId)
+    : [];
+
 
 
     return (
@@ -89,6 +102,7 @@ const MenuItemTable = () => {
 
             {/*filtro de menu */}
             <div className="flex flex-wrap gap-4 mb-6 bg-eggshell-greekvilla lg:w-120 text-gray-200 p-2 rounded-lg">
+
                 {menus.map((menu) => (
                     <button
                     key={menu.id_menu}
@@ -100,104 +114,123 @@ const MenuItemTable = () => {
                     {menu.nombre}
                     </button>
                 ))}
-                </div>
+
+            </div>
 
                 {/*tabla */}
-                {activeMenuId && (
+                {activeMenuId !== null && (
 
-                <div  className="overflow-x-auto w-full">
+                    <div  className="overflow-x-auto w-full">
 
-                    <h3 className="text-xl font-playfair text-gray-charcoal font-semibold mt-4 mb-2">
-                        Productos de {menus.find((m) => m.id_menu === activeMenuId)?.nombre}
-                    </h3>
+                        <h3 className="text-xl font-playfair text-gray-charcoal font-semibold mt-4 mb-2">
+                            Productos del {menus.find((m) => m.id_menu === activeMenuId)?.nombre}
+                        </h3>
 
-                    <table className="w-full bg-white font-urbanist rounded-xl shadow">
-                        <thead>
-                            <tr className="text-left lg:text-lg sm:text-base text-gray-500">
-                                <th className="px-4 py-2">Nombre</th>
-                                <th className="px-4 py-2">Descripción</th>
-                                <th className="px-4 py-2">Precio</th>
-                                <th className="px-4 py-2">Stock</th>
-                                <th className="px-4 py-2">Categoría</th>
-                                <th className="px-4 py-2">Estado</th>
-                                <th className="px-4 py-2">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-sm">
-                            {productosFiltrados.map((prod) => (
-                            <tr key={prod.id_item} className="border-t border-gray-100 hover:bg-gray-50">
-                                <td className="px-4 py-4 font-semibold">{prod.nombre}</td>
-                                <td className="px-4 py-4">{prod.descripcion}</td>
-                                <td className="px-4 py-4">${prod.precio.toFixed(2)}</td>
-                                <td className="px-4 py-4">{prod.stock}</td>
-                                <td className="px-4 py-4">{prod.categoria.nombre}</td>
-                                <td className="px-4 py-2">
-                                    <span
-                                        className={`px-3 py-1 text-xs font-medium rounded-full ${
-                                        prod.estado
-                                            ? "bg-green-100 text-green-600"
-                                            : "bg-gray-100 text-gray-400"
-                                        }`}
-                                    >
-                                        {prod.estado ? "Activo" : "Inactivo"}
-                                    </span>
-                                </td>
+                        <table className="w-full bg-white font-urbanist rounded-xl shadow">
+                            <thead>
+                                <tr className="text-left lg:text-lg sm:text-base text-gray-500">
+                                    <th className="px-4 py-2">Nombre</th>
+                                    <th className="px-4 py-2">Descripción</th>
+                                    <th className="px-4 py-2">Precio</th>
+                                    <th className="px-4 py-2">Stock</th>
+                                    <th className="px-4 py-2">Categoría</th>
+                                    <th className="px-4 py-2">Estado</th>
+                                    <th className="px-4 py-2">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm">
 
-                                {/*acciones*/}
-                                   <td className="px-4 py-4 relative">
-                                        <DropdownMenu.Root>
-                                            <DropdownMenu.Trigger asChild>
-                                            <button className="ml-6 w-8 h-8 flex items-center justify-center rounded-4xl bg-white text-burgundy hover:bg-cream-100">
-                                                <MoreHorizontal className="w-4 h-4" />
-                                            </button>
-                                            </DropdownMenu.Trigger>
+                            {productosFiltrados.length > 0 ? ( productosFiltrados.map((item) => (
 
-                                            <DropdownMenu.Content
-                                            align="end"
-                                            sideOffset={8}
-                                            className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
-                                            >
-                                            <DropdownMenu.Item
-                                                onClick={() => setShowEditDialog(true)}
-                                                className="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-cream-100 w-full text-left cursor-pointer"
-                                            >
-                                                <Edit2 className="w-4 h-4" />
-                                                Editar
-                                            </DropdownMenu.Item>
+                                <tr key={item.id_item} className="border-t border-gray-100 hover:bg-gray-50">
+                                    <td className="px-4 py-4 font-semibold">{item.nombre}</td>
+                                    <td className="px-4 py-4">{item.descripcion}</td>
+                                    <td className="px-4 py-4">${item.precio}</td>
+                                    <td className="px-4 py-4">{item.stock}</td>
+                                    <td className="px-4 py-4">{item.nombre_categoria}</td>
+                                    <td className="px-4 py-2">
+                                        <span
+                                            className={`px-3 py-1 text-xs font-medium rounded-full ${
+                                            item.estado
+                                                ? "bg-green-100 text-green-600"
+                                                : "bg-gray-100 text-gray-400"
+                                            }`}
+                                        >
+                                            {item.estado ? "Activo" : "Inactivo"}
+                                        </span>
+                                    </td>
 
-                                            <DropdownMenu.Item
+                                    {/*acciones*/}
+                                    <td className="px-4 py-4 relative">
+                                            <DropdownMenu.Root>
+                                                <DropdownMenu.Trigger asChild>
+                                                <button className="ml-6 w-8 h-8 flex items-center justify-center rounded-4xl bg-white text-burgundy hover:bg-cream-100">
+                                                    <MoreHorizontal className="w-4 h-4" />
+                                                </button>
+                                                </DropdownMenu.Trigger>
 
-                                                className="flex items-center gap-2 px-4 py-2 w-full text-left cursor-pointer hover:bg-cream-100"
-                                            >
+                                                <DropdownMenu.Content
+                                                align="end"
+                                                sideOffset={8}
+                                                className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
+                                                >
+                                                <DropdownMenu.Item
+                                                     onClick={() => openEditItem(item)}
+                                                    className="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-cream-100 w-full text-left cursor-pointer"
+                                                >
+                                                    <Edit2 className="w-4 h-4" />
+                                                    Editar
+                                                </DropdownMenu.Item>
 
-                                                <>
-                                                    <X className="w-4 h-4 text-red-500" />
-                                                    <span className="text-red-500">Desactivar</span>
-                                                </>
+                                                <DropdownMenu.Item
 
-                                                <>
-                                                    <Check className="w-4 h-4 text-green-600" />
-                                                    <span className="text-green-600">Activar</span>
-                                                </>
+                                                    className="flex items-center gap-2 px-4 py-2 w-full text-left cursor-pointer hover:bg-cream-100"
+                                                >
 
-                                            </DropdownMenu.Item>
-                                            </DropdownMenu.Content>
-                                        </DropdownMenu.Root>
+                                                    <>
+                                                        <X className="w-4 h-4 text-red-500" />
+                                                        <span className="text-red-500">Desactivar</span>
+                                                    </>
+
+                                                    <>
+                                                        <Check className="w-4 h-4 text-green-600" />
+                                                        <span className="text-green-600">Activar</span>
+                                                    </>
+
+                                                </DropdownMenu.Item>
+                                                </DropdownMenu.Content>
+                                            </DropdownMenu.Root>
+                                            </td>
+
+                                </tr>))
+
+                                ) : (
+
+                                    <tr>
+                                        <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
+                                            No hay productos en este menú
                                         </td>
+                                    </tr>
 
-                            </tr>
+                                )}
 
-                            ))}
+                            </tbody>
 
-                        </tbody>
+                        </table>
 
-                    </table>
-
-                </div>
+                    </div>
 
                 )}
 
+        <div className='lg:inline-flex gap-1'>
             <button onClick={() => setShowCreateDialog(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 ml-0 m-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/>Agregar Producto</button>
+           <Link to="/categories">
+                <button onClick={() => setShowCreateDialog(true)} className="font-semibold  transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 ml-0 m-5 w-58 gap-2 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"><LucideEdit size={'20'}/>Gestionar Categorías</button>
+           </Link>
+        </div>
+
+
+            {/*agregar botn de gestionar categorias */}
 
             <CreateItemDialog
             open={showCreateDialog}
@@ -206,20 +239,43 @@ const MenuItemTable = () => {
                 console.log("Simular creación", item);
                 setShowCreateDialog(false);
             }}
-            categorias={[]} // podés pasar vacío o mock si no hay backend aún
+            categorias={categories.map(cat => ({
+                    id: cat.id_categoria,
+                    nombre: cat.nombre
+                }))}
             id_menu={1}
             />
 
             <EditItemDialog
-            open={showEditDialog}
-            onClose={() => setShowEditDialog(false)}
-            onSave={(item) => {
-                console.log("Simular edición", item);
-                setShowEditDialog(false);
-            }}
-            initialData={null}
-            categorias={[]}
-            />
+                open={showEditDialog}
+                onClose={() => setShowEditDialog(false)}
+                onSave={async (item: ItemGuardarDTO) => {
+                    try {
+
+                    await itemService.guardar(item); // guardar
+                    setToastMessage('Producto editado con éxito.');
+                    setToastType('success');
+                    await fetchItems();              // recargar
+
+                    } catch (error) {
+
+                    console.error("Error al guardar", error);
+                    setToastMessage('Error al actualizar producto.')
+                    setToastType('error');
+
+                    } finally {
+
+                    setShowEditDialog(false);
+
+                    }
+                }}
+                initialData={itemToEdit}
+                categorias={categories.map(cat => ({
+                    id: cat.id_categoria,
+                    nombre: cat.nombre
+                }))}
+                />
+
 
 
         </div>

@@ -1,4 +1,4 @@
-import { Menu, MenuDTO } from "../../../types/menuTypes";
+import { CategoriaDTO, CategoriaActualizarDTO } from "../../types/categoryTypes";
 
 import { useState, useEffect } from "react";
 import {
@@ -6,15 +6,15 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../../components/UI/Dialog";
+} from "../../components/UI/Dialog";
 import * as Switch from "@radix-ui/react-switch";
 
 
 interface DialogEditMenuProps {
   open: boolean;
   onClose: () => void;
-  onSave: (updatedMenu: MenuDTO) => void;
-  initialData: Menu | null; // <-- ajustado aquí
+  onSave: (updatedCategoria: CategoriaDTO) => void;
+  initialData: CategoriaActualizarDTO | null;
 }
 
 export const EditDialog = ({
@@ -35,15 +35,20 @@ export const EditDialog = ({
     }
   }, [initialData]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!initialData) return;
+
     onSave({
-      nombre,
-      descripcion,
-      estado: estado ? 1 : 0,
+        id_categoria: initialData.id_categoria,
+        nombre,
+        descripcion,
+        estado: estado ? 1 : 0,
     });
+
     onClose();
-  };
+    };
+
 
   return (
     <Dialog open={open} onClose={onClose}>

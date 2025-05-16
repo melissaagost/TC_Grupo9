@@ -6,6 +6,7 @@ import EditProfile from '../pages/EditProfile'
 import Tables from '../pages/Tables'
 import Users from '../pages/Users'
 import Menu from '../pages/Menu'
+import Categories from '../pages/Categories'
 
 import Building from '../pages/Building'
 import PrivateRoute from '../components/PrivateRoute'
@@ -71,8 +72,18 @@ const AppRoutes = () => {
       <Route
         path="/menu"
         element={
-          <PrivateRoute allowedUserTypes={['administrador']}>
+          <PrivateRoute allowedUserTypes={['administrador', 'usuario']}>
             <Menu/>
+          </PrivateRoute>
+        }
+      />
+
+
+      <Route
+        path="/categories"
+        element={
+          <PrivateRoute allowedUserTypes={['administrador']}>
+            <Categories/>
           </PrivateRoute>
         }
       />

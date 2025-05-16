@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { MenuDTO } from "../../../types/menuTypes";
+import { CategoriaCrearDTO } from "../../types/categoryTypes";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../UI/Dialog";
+} from "../UI/Dialog";
 import * as Switch from "@radix-ui/react-switch";
 
 
@@ -13,7 +13,7 @@ import * as Switch from "@radix-ui/react-switch";
 interface CreateDialogProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (newMenu: MenuDTO) => void;
+  onCreate: (newCategory: CategoriaCrearDTO) => void;
 }
 
 export const CreateDialog = ({
@@ -59,7 +59,7 @@ export const CreateDialog = ({
             <input
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-               placeholder="Asigne un nombre al menú"
+               placeholder="Asigne un nombre a la categoría"
               className="w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
               required
             />
@@ -71,7 +71,7 @@ export const CreateDialog = ({
             <textarea
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-               placeholder="Ingrese una descripción para el menú"
+               placeholder="Ingrese una descripción para la categoría"
               className="w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-gray-700 resize-none focus:ring-1 focus:ring-blood-300"
               rows={3}
             />
@@ -116,7 +116,7 @@ export const CreateDialog = ({
               Cancelar
             </button>
 
-            <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Crear Menú</button>
+            <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Crear Categoría</button>
 
           </div>
 

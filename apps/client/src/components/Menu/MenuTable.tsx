@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { menuService } from "../../services/menuService";
+import { itemService } from "../../services/itemService";
 import { Menu, MenuDTO } from "../../types/menuTypes";
+import { ItemRowDTO } from '../../types/itemTypes'
+
 
 import Toast from "../UI/Toast";
 import Search  from "../Menu/Search";
@@ -20,6 +23,8 @@ const MenuTable = () => {
     const [menus, setMenus] = useState<Menu[]>([]);
     const [filteredMenus, setFilteredMenus] = useState<Menu[]>([]);
 
+    //items para el conteo
+    const [items, setItems] = useState<ItemRowDTO[]>([]);
 
     //form
     const [nombre, setNombre] = useState("");
@@ -29,16 +34,16 @@ const MenuTable = () => {
 
     //acciones
     const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
-    //editar
+    //editar menu
     const [isEditing, setIsEditing] = useState(false);
     const [menuToEdit, setMenuToEdit] = useState<Menu | null>(null);
-    //crear
+    //crear menu
     const [isCreating, setIsCreating] = useState(false);
 
 
     const token = localStorage.getItem("token") || "";
 
-    //buscar
+    //listar menus
     const fetchMenus = async () => {
     const data = await menuService.getAllMenus(token);
     setMenus(data);
@@ -47,6 +52,13 @@ const MenuTable = () => {
 
     useEffect(() => {
     fetchMenus();
+    }, []);
+
+    //conteo items
+    useEffect(() => {
+    itemService.listarItems()
+        .then((res) => setItems(res.data)) // ⬅️ acá está el fix
+        .catch((err) => console.error("Error al listar items:", err));
     }, []);
 
 
@@ -182,7 +194,9 @@ const MenuTable = () => {
 
                     <tbody className="text-left text-sm">
                        {Array.isArray(menus) ? (
+
                             filteredMenus.map(menu => (
+
                                 <tr className="hover:bg-gray-50 border-t-eggshell-200 border-t-1" key={menu.id_menu}>
 
                                     <td className="px-4 py-4 font-semibold">{menu.nombre}</td>
@@ -194,7 +208,10 @@ const MenuTable = () => {
                                         )}
                                   </td>
 
-                                    {/*productos */}
+                                    <td className="px-4 py-4">
+                                        {items.filter((item) => item.id_menu === menu.id_menu).length || "Sin productos"}
+                                    </td>
+
 
                                     {/*acciones*/}
                                    <td className="px-4 py-4 relative">
