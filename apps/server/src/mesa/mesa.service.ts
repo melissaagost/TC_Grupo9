@@ -97,7 +97,7 @@ export class MesaService {
       await this.prisma.$executeRawUnsafe(MesaQueries.setEstadoReservado, id);
       return { message: 'Mesa reservada exitosamente' };
     } catch (error) {
-      throw new BadRequestException(error || 'Error al ocupar la mesa');
+      throw new BadRequestException(error || 'Error al reservar la mesa');
     }
   }
 }
