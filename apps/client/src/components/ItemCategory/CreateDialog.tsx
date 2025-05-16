@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../UI/Dialog";
-import * as Switch from "@radix-ui/react-switch";
 
 
 
@@ -30,7 +29,6 @@ export const CreateDialog = ({
     onCreate({
       nombre,
       descripcion,
-      estado: estado ? 1 : 0,
     });
     resetForm();
     onClose();
@@ -76,32 +74,6 @@ export const CreateDialog = ({
               rows={3}
             />
           </div>
-
-
-
-          <div>
-            <label className="block  font-semibold text-gray-200 text-md  mb-1">Estado</label>
-
-            <div className="flex items-center gap-2 p-3 border border-eggshell-creamy shadow-sm rounded-md">
-
-              <span className="text-gray-200 text-sm">
-                {estado ? "Activo" : "Inactivo"}
-              </span>
-
-              <Switch.Root
-                checked={estado}
-                onCheckedChange={setEstado}
-                className="ml-auto w-11 h-6 bg-gray-300 rounded-full relative data-[state=checked]:bg-blood-100 transition-colors"
-              >
-                <Switch.Thumb
-                  className="block w-5 h-5 bg-white rounded-full shadow-md transition-transform translate-x-1 data-[state=checked]:translate-x-6"
-                />
-              </Switch.Root>
-
-            </div>
-
-          </div>
-
 
 
           <div className="flex justify-end gap-2 mt-4">

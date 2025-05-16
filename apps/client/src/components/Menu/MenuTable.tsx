@@ -209,7 +209,9 @@ const MenuTable = () => {
                                   </td>
 
                                     <td className="px-4 py-4">
+                                        <span className=" bg-eggshell-greekvilla px-3 py-1 rounded-full text-xs font-semibold">
                                         {items.filter((item) => item.id_menu === menu.id_menu).length || "Sin productos"}
+                                        </span>
                                     </td>
 
 

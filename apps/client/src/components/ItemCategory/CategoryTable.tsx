@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { categoryService } from "../../services/categoryService";
-import { CategoriaDTO,  CategoriaCrearDTO } from "../../types/categoryTypes";
+import { CategoriaDTO,  CategoriaCrearDTO, CategoriaActualizarDTO } from "../../types/categoryTypes";
 import { itemService } from "../../services/itemService";
 import { ItemRowDTO } from '../../types/itemTypes'
+import axios from "axios";
 
 
 import Toast from "../UI/Toast";
@@ -45,12 +46,39 @@ const CategoryTable = () => {
     fetchCategories();
     }, []);
 
+
+
+
     //crear
     const handleCreateCategory = async (newCategory: CategoriaCrearDTO) => {
-    await categoryService.create(newCategory);
-    const refreshed = await categoryService.getAll();
-    setCategories(refreshed);
+    try {
+        await categoryService.create(newCategory);
+
+        const refreshed = await categoryService.getAll();
+        setCategories(refreshed);
+        setFilteredCategories(refreshed);
+        setIsCreating(false); // Cierra el modal si aplica
+
+        setToastType("success");
+        setToastMessage("Categoría creada exitosamente.");
+    } catch (error) {
+        let msg = "Error inesperado al crear la categoría";
+
+        if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+            msg = "No autorizado. Iniciá sesión nuevamente.";
+        } else {
+            const rawMsg = error.response?.data?.message;
+            msg = Array.isArray(rawMsg) ? rawMsg.join(" - ") : rawMsg || msg;
+        }
+        }
+
+        setToastType("error");
+        setToastMessage(msg);
+    }
     };
+
+
 
     //editar
     const openEditCategory = (category: CategoriaDTO) => {
@@ -58,10 +86,37 @@ const CategoryTable = () => {
     setIsEditing(true);
     };
 
-    const handleSaveCategory = async (updatedCategory: CategoriaDTO) => {
-    await categoryService.update(categoryToEdit!.id_categoria, updatedCategory);
-    const refreshed = await categoryService.getAll();
-    setCategories(refreshed);
+    const handleSaveCategory = async (updatedCategory: CategoriaActualizarDTO) => {
+        if (
+            updatedCategory.nombre.trim() === categoryToEdit?.nombre.trim() &&
+            updatedCategory.descripcion.trim() === categoryToEdit?.descripcion.trim()
+        ) {
+            setToastType("info");
+            setToastMessage("No hay cambios para guardar.");
+            return;
+        }
+
+    try {
+        await categoryService.update(categoryToEdit!.id_categoria, updatedCategory);
+
+        if (!updatedCategory.nombre.trim() || !updatedCategory.descripcion.trim()) {
+        setToastType("error");
+        setToastMessage("Todos los campos son obligatorios.");
+        return;
+        }
+
+        const refreshed = await categoryService.getAll();
+        setCategories(refreshed);
+        setFilteredCategories(refreshed);
+
+
+        setIsEditing(false);
+        setToastType("success");
+        setToastMessage("Categoría modificada exitosamente.");
+    } catch (error) {
+        setToastType("error");
+        setToastMessage("Error al modificar la categoría.");
+    }
     };
 
 
@@ -73,28 +128,31 @@ const CategoryTable = () => {
     }, []);
 
     //setear activo/inactivo
-    const toggleEstadoCategory = async (category: CategoriaDTO) => {
-
-
-        try {
-
-            if (category.estado === 1) {
-                await categoryService.disable(category.id_categoria);
-                setToastMessage("Categoría desactivada correctamente");
-            } else {
-                await categoryService.enable(category.id_categoria);
-                setToastMessage("Categoría activada correctamente");
-            }
-
-            const newCategories = await categoryService.getAll();
-            setCategories(newCategories);
-
-        } catch (error) {
-            setToastMessage("Error al actualizar el estado de la categoría");
-            setToastType("error");
-
+   const toggleEstadoCategory = async (category: CategoriaDTO) => {
+    try {
+        if (category.estado === 1) {
+        await categoryService.disable(category.id_categoria);
+        } else {
+        await categoryService.enable(category.id_categoria);
         }
+
+        const newCategories = await categoryService.getAll();
+        setCategories(newCategories);
+        setFilteredCategories(newCategories);
+
+
+        setToastType("success");
+        setToastMessage(
+        category.estado === 1
+            ? "Categoría desactivada correctamente"
+            : "Categoría activada correctamente"
+        );
+    } catch (error) {
+        setToastType("error");
+        setToastMessage("Error al actualizar el estado de la categoría");
+    }
     };
+
 
     //busqueda
     const handleSearch = (term: string) => {
@@ -157,8 +215,10 @@ const CategoryTable = () => {
                                     )}
                                 </td>
 
-                                <td className="px-4 py-4">
+                                <td className="px-4 py-">
+                                    <span className=" bg-eggshell-greekvilla px-3 py-1 rounded-full text-xs font-semibold">
                                     {items.filter((item) => item.id_categoria === category.id_categoria).length || "Sin productos"}
+                                    </span>
                                 </td>
 
                                  {/*acciones*/}

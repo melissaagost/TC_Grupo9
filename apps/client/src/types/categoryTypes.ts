@@ -11,9 +11,6 @@ export interface CategoriaCrearDTO {
 
   nombre: string;
   descripcion: string;
-  estado: number,
 }
 
-export interface CategoriaActualizarDTO extends CategoriaCrearDTO {
-  id_categoria: number;
-}
+export interface CategoriaActualizarDTO extends CategoriaCrearDTO {}
