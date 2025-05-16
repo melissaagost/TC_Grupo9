@@ -45,14 +45,14 @@ export class MenuController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('administrador')
+  @Roles('administrador', 'mozo', 'usuario') //agregar todos los roles
   @Get()
   async findAllMenu(): Promise<menu[]> {
     return await this.menuService.findAllMenu();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('administrador')
+  @Roles('administrador', 'usuario')
   @Patch(':id/disable')
   async disableMenu(
     @Param('id', ParseIntPipe) id: number,

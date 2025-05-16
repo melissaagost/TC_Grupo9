@@ -55,4 +55,11 @@ export class CategoriesController {
   disableCategoria(@Param() id: number) {
     return this.categoria.setDisableCategoria(id);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Administrador)
+  @Patch(':id/enable')
+  enableCategoria(@Param() id: number) {
+    return this.categoria.setEnableCategoria(id);
+  }
 }

@@ -59,4 +59,17 @@ export class CategoriesService {
 
     return updatedCategoria;
   }
+
+    async setEnableCategoria(id: number): Promise<categoria> {
+    const findCategoria = this.findOneCategoria(id);
+    if (findCategoria === null)
+      throw new NotFoundException('No se encuentra categoria');
+
+    const updatedCategoria = this.prisma.categoria.update({
+      where: { id_categoria: id },
+      data: { estado: Estado.ACTIVO },
+    });
+
+    return updatedCategoria;
+  }
 }

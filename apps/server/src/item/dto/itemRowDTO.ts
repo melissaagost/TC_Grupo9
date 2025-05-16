@@ -6,6 +6,7 @@ export class ItemRowDTO {
   precio: number;
   estado: number;
   id_categoria: number;
+  nombre_categoria: string;
   id_menu: number;
   total_rows: number;
 }
