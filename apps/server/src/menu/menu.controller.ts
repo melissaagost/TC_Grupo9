@@ -52,11 +52,20 @@ export class MenuController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('administrador', 'usuario')
+  @Roles('administrador')
   @Patch(':id/disable')
   async disableMenu(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ message: string }> {
     return this.menuService.setDisableMenu(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('administrador')
+  @Patch(':id/enable')
+  async enableMenu(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    return this.menuService.setEnableMenu(id);
   }
 }
