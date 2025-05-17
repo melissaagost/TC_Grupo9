@@ -29,6 +29,15 @@ export class ItemService {
     return result[0];
   }
 
+    async habilitarItemAsync(id: number): Promise<RespuestaGenerica> {
+    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+      ItemQueries.habilitarItem,
+      id,
+    );
+
+    return result[0];
+  }
+
   async listarItemsAsync(filtro: FiltroBase): Promise<Paginado<ItemRowDTO>> {
     const {
       busqueda = null,
