@@ -22,4 +22,8 @@ export const UsuarioQueries = {
   findProfile: `
     SELECT * FROM auth.sp_obtener_perfil_usuario($1::int);
   `,
+  updateProfile: `
+  SELECT auth.sp_update_perfil_usuario($1::int, $2::text, $3::text);
+`,
+
 };

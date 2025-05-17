@@ -63,6 +63,7 @@ export class ItemService {
         precio,
         estado,
         id_categoria,
+        nombre_categoria,
         id_menu,
         total_rows,
       } = row;
@@ -74,6 +75,7 @@ export class ItemService {
         precio,
         estado,
         id_categoria,
+        nombre_categoria,
         id_menu,
         total_rows: Number(total_rows),
       };

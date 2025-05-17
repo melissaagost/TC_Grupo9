@@ -5,4 +5,5 @@ export const MesaQueries = {
   findById: `SELECT * FROM restaurant.sp_find_mesa_by_id($1);`,
   setEstadoOcupado: `SELECT restaurant.sp_set_estado_ocupado_mesa($1);`,
   setEstadoLibre: `SELECT restaurant.sp_set_estado_libre_mesa($1);`,
+  setEstadoReservado: `SELECT restaurant.sp_set_estado_reservado_mesa($1);`,
 };

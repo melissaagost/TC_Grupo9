@@ -52,4 +52,12 @@ export class MesaController {
   ): Promise<{ message: string }> {
     return this.mesaService.setEstadoOcupado(id);
   }
+
+
+  @Patch(':id/reservado')
+  async setEstadoReservado(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    return this.mesaService.setEstadoReservado(id);
+  }
 }

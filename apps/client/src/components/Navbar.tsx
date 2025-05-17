@@ -34,13 +34,16 @@ const Navbar = () => {
           </Link>
 
           {/* Navigation for desktop */}
+          {/* no logueado */}
           <div className="hidden md:flex items-center font-medium gap-8 font-raleway text-base text-gray-700">
 
-          <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
-            <BookOpen size={16} /> Menú
-          </Link>
 
-          {/* no logueado */}
+            {userType !== 'administrador' && userType !== 'usuario' && (
+              <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
+                <BookOpen size={16} /> Menú
+              </Link>
+            )}
+
           {!token && (
             <Link
               to="/auth"
@@ -64,8 +67,14 @@ const Navbar = () => {
 
 
               {/* Cosas que sólo ve el admin */}
+              {(userType === 'administrador' || userType === 'usuario') && (
+                <Link to="/menu" className="flex items-center gap-1 hover:text-blood-100">
+                  <BookOpen size={16} /> Menú
+                </Link>
+              )}
+
               {userType === 'administrador' && (
-                <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
+                <Link to="/users" className="flex items-center gap-1 hover:text-blood-100">
                   <Users size={16} /> Usuarios
                 </Link>
               )}
@@ -109,6 +118,15 @@ const Navbar = () => {
           )}
           </div>
 
+
+
+
+
+
+
+
+
+
           {/* Mobile Menu Button */}
           <button
             className="lg:hidden text-gray-700"
@@ -123,9 +141,12 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden px-6 pb-4 space-y-4 font-raleway text-gray-700">
 
+            {userType !== 'administrador' && userType !== 'usuario' && (
               <Link to="/building" className="flex items-center gap-2">
                 <BookOpen size={18} /> Menú
               </Link>
+            )}
+
 
               {!token && (
               <Link
@@ -150,8 +171,14 @@ const Navbar = () => {
                   <User size={18} /> Perfil
                 </Link>
 
+                {(userType === 'administrador' || userType === 'usuario') &&(
+                <Link to="/menu" className="flex items-center gap-2">
+                  <BookOpen size={18} /> Menú
+                </Link>
+                )}
+
                 {userType === 'administrador' &&(
-                <Link to="/building" className="flex items-center gap-2">
+                <Link to="/users" className="flex items-center gap-2">
                   <Users size={18} /> Usuarios
                 </Link>
                 )}
