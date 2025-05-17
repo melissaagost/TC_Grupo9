@@ -54,10 +54,21 @@ const disableMenu = async (
   return res.data;
 };
 
+  const enableMenu = async (
+    id: number,
+    token: string
+  ): Promise<{ message: string }> => {
+    const res = await axios.patch(`${BASE_URL}/${id}/enable`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  };
+
 export const menuService = {
   getAllMenus,
   getMenuById,
   createMenu,
   updateMenu,
   disableMenu,
+  enableMenu,
 };

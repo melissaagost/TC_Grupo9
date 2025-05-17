@@ -11,5 +11,4 @@ export interface Menu {
 export interface MenuDTO {
   nombre: string;
   descripcion: string;
-  estado: number;
 }

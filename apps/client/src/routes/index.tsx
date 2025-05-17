@@ -13,11 +13,10 @@ import PrivateRoute from '../components/PrivateRoute'
 import PublicRoute from '../components/PublicRoute'
 
 //se envuelve la ruta en el layout que corresponda
+//tipo 1 (admin)
+//tipo 2 (usuario -> cocineros)
+//tipo 3 (mozo)
 
-//usuarios tipo 2 (mozos) pueden acceder a: mesas, menu, reservas
-//usuarios tipo 1 (dueño): abm usuarios del sistema
-//auth = vista login
-//public route para redirigir al usuario logueado
 
 const AppRoutes = () => {
   return (

@@ -3,6 +3,7 @@ import { menuService } from "../../services/menuService";
 import { itemService } from "../../services/itemService";
 import { Menu, MenuDTO } from "../../types/menuTypes";
 import { ItemRowDTO } from '../../types/itemTypes'
+import axios from "axios";
 
 
 import Toast from "../UI/Toast";
@@ -91,10 +92,35 @@ const MenuTable = () => {
 
     //crear
     const handleCreateMenu = async (newMenu: MenuDTO) => {
-    await menuService.createMenu(newMenu, token);
-    const refreshed = await menuService.getAllMenus(token);
-    setMenus(refreshed);
+    // Validación de campos obligatorios
+    if (!newMenu.nombre.trim() || !newMenu.descripcion.trim()) {
+        setToastType("error");
+        setToastMessage("Todos los campos son obligatorios.");
+        return;
+    }
+
+    try {
+        await menuService.createMenu(newMenu, token);
+        const refreshed = await menuService.getAllMenus(token);
+        setMenus(refreshed);
+        setFilteredMenus(refreshed);
+
+        setToastType("success");
+        setToastMessage("Menú creado exitosamente.");
+    } catch (error: any) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setToastType("error");
+        setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
+        } else {
+        const msg = error?.response?.data?.message || "Error al crear el menú.";
+        setToastType("error");
+        setToastMessage(msg);
+        }
+    }
     };
+
+
+
     //editar
     const openEditMenu = (menu: Menu) => {
     setMenuToEdit(menu);
@@ -102,10 +128,37 @@ const MenuTable = () => {
     };
 
     const handleSaveMenu = async (updatedMenu: MenuDTO) => {
-    await menuService.updateMenu(menuToEdit!.id_menu, updatedMenu, token);
-    const refreshed = await menuService.getAllMenus(token);
-    setMenus(refreshed);
+    //campos obligatorios
+    if (!updatedMenu.nombre.trim() || !updatedMenu.descripcion.trim()) {
+        setToastType("error");
+        setToastMessage("Todos los campos son obligatorios.");
+        return;
+    }
+
+    //sin cambios
+    if (
+        updatedMenu.nombre.trim() === menuToEdit?.nombre.trim() &&
+        updatedMenu.descripcion.trim() === menuToEdit?.descripcion.trim()
+    ) {
+        setToastType("info");
+        setToastMessage("No hay cambios para guardar.");
+        return;
+    }
+
+    try {
+        await menuService.updateMenu(menuToEdit!.id_menu, updatedMenu, token);
+        const refreshed = await menuService.getAllMenus(token);
+        setMenus(refreshed);
+        setFilteredMenus(refreshed);
+
+        setToastType("success");
+        setToastMessage("Menú actualizado correctamente.");
+    } catch (error) {
+        setToastType("error");
+        setToastMessage("Ocurrió un error al guardar los cambios.");
+    }
     };
+
 
     const resetForm = () => {
         setNombre("");
@@ -121,21 +174,13 @@ const MenuTable = () => {
 
         try {
             if (menu.estado) {
-            // si está activo, desactivarlo
+
             await menuService.disableMenu(menu.id_menu, token);
             setToastMessage("Menú desactivado correctamente");
+
             } else {
-            //usando updateMenu y dejando los datos igual, solo cambiando estado
-            await menuService.updateMenu(
-                menu.id_menu,
-                {
-                nombre: menu.nombre,
-                descripcion: menu.descripcion,
-                estado: 1,
-                },
-                token
-            );
-            setToastMessage("Menú activado correctamente");
+                await menuService.enableMenu(menu.id_menu, token);
+                setToastMessage("Menú activado correctamente");
             }
 
             setToastType("success");
@@ -143,6 +188,7 @@ const MenuTable = () => {
             // volver a cargar la lista de menús
             const nuevosMenus = await menuService.getAllMenus(token);
             setMenus(nuevosMenus);
+            setFilteredMenus(nuevosMenus);
 
         } catch (error) {
             console.error("Error al cambiar estado del menú", error);
