@@ -1,10 +1,12 @@
 import { ItemRowDTO, ItemGuardarDTO } from '../../types/itemTypes'
 import { itemService } from '../../services/itemService'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Menu } from "../../types/menuTypes";
 import { menuService } from "../../services/menuService";
 import { categoryService } from "../../services/categoryService";
 import { CategoriaDTO} from "../../types/categoryTypes";
+import axios from "axios";
+
 
 import Toast from "../UI/Toast";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -12,6 +14,8 @@ import { X, Check, Edit2, MoreHorizontal, Plus, LucideEdit } from 'lucide-react'
 import { EditItemDialog } from "./dialogs/EditProductDialog";
 import { CreateItemDialog } from './dialogs/CreateProductDialog';
 import { Link } from "react-router-dom";
+import * as Switch from "@radix-ui/react-switch";
+
 
 
 const MenuItemTable = () => {
@@ -33,6 +37,9 @@ const MenuItemTable = () => {
     //items
     const [items, setItems] = useState<ItemRowDTO[]>([]);
     const [itemToEdit, setItemToEdit] = useState<ItemRowDTO | null>(null);
+    const [filteredItems, setFilteredItems] = useState<ItemRowDTO[]>([]);
+    const [mostrarInactivos, setMostrarInactivos] = useState(false);
+
 
     //categoria
     const [categories, setCategories] = useState<CategoriaDTO[]>([]);
@@ -52,10 +59,32 @@ const MenuItemTable = () => {
 
     //listar items
     useEffect(() => {
-    itemService.listarItems()
-        .then((res) => setItems(res.data)) // ⬅️ acá está el fix
-        .catch((err) => console.error("Error al listar items:", err));
-    }, []);
+    const fetchItems = async () => {
+        try {
+        const estado = mostrarInactivos ? 0 : 1; // 👈 clave: cuando está activado, pedimos los inactivos
+        const res = await itemService.listarItems({ estado });
+        setItems(res.data); // o res.data.data si tu respuesta está paginada
+        } catch (err) {
+        console.error("Error al listar items:", err);
+        }
+    };
+
+    fetchItems();
+    }, [mostrarInactivos]);
+
+
+    //recargar items
+    const refreshItems = async () => {
+    try {
+        const estado = mostrarInactivos ? 0 : 1;
+        const res = await itemService.listarItems({ estado });
+        setItems(res.data);
+        setFilteredItems(res.data);
+    } catch (error) {
+        console.error("Error al refrescar items:", error);
+    }
+    };
+
 
     //listar categorias
     const fetchCategories = async () => {
@@ -74,15 +103,55 @@ const MenuItemTable = () => {
     setShowEditDialog(true);
     };
 
-    const fetchItems = async () => {
-    const res = await itemService.listarItems();
-        setItems(res.data);
+    //crear item
+    const handleCreateItem = async (item: ItemGuardarDTO) => {
+        try {
+            await itemService.guardar(item);
+            await refreshItems();
+            setShowCreateDialog(false);
+        } catch (error: any) {
+            const msg = error?.response?.data?.message || "Error al crear el producto.";
+            setToastType("error");
+            setToastMessage(msg);
+        }
     };
 
-    //filtra prod/items segun boton selec
-    const productosFiltrados = activeMenuId !== null
-    ? items.filter((item) => item.id_menu === activeMenuId)
-    : [];
+    //setear activo / inactivo
+    const toggleEstadoItem = async (item: ItemRowDTO) => {
+
+        try {
+            if (item.estado) {
+
+            await itemService.deshabilitar(item.id_item);
+            await refreshItems();
+            setToastMessage("Item desactivado correctamente");
+
+            } else {
+                await itemService.habilitar(item.id_item);
+                await refreshItems();
+                setToastMessage("Menú activado correctamente");
+            }
+
+            setToastType("success");
+
+
+        }catch (error) {
+        const msg =
+            axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : "Error al actualizar el estado del ítem";
+
+            setToastMessage(msg);
+            setToastType("error");
+            console.error("Error al cambiar estado del ítem:", error);
+        }
+    };
+
+    //filtra prod/items activos segun boton selec
+    const productosFiltrados = useMemo(() => {
+    if (activeMenuId === null) return [];
+    return items.filter(item => item.id_menu === activeMenuId);
+    }, [items, activeMenuId]);
 
 
 
@@ -126,6 +195,22 @@ const MenuItemTable = () => {
                             Productos del {menus.find((m) => m.id_menu === activeMenuId)?.nombre}
                         </h3>
 
+
+                       <div className="flex items-center gap-4 mb-4">
+                        <span className="text-sm text-gray-600">Mostrar inactivos</span>
+                        <Switch.Root
+                            checked={mostrarInactivos}
+                            onCheckedChange={setMostrarInactivos}
+                            className="w-11 h-6 bg-gray-300 rounded-full relative data-[state=checked]:bg-blood-100 transition-colors"
+                        >
+                            <Switch.Thumb
+                            className="block w-5 h-5 bg-white rounded-full shadow-md transition-transform translate-x-1 data-[state=checked]:translate-x-6"
+                            />
+                        </Switch.Root>
+                        </div>
+
+
+
                         <table className="w-full bg-white font-urbanist rounded-xl shadow">
                             <thead>
                                 <tr className="text-left lg:text-lg sm:text-base text-gray-500">
@@ -162,45 +247,46 @@ const MenuItemTable = () => {
 
                                     {/*acciones*/}
                                     <td className="px-4 py-4 relative">
-                                            <DropdownMenu.Root>
-                                                <DropdownMenu.Trigger asChild>
-                                                <button className="ml-6 w-8 h-8 flex items-center justify-center rounded-4xl bg-white text-burgundy hover:bg-cream-100">
-                                                    <MoreHorizontal className="w-4 h-4" />
-                                                </button>
-                                                </DropdownMenu.Trigger>
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger asChild>
+                                    <button className="ml-6 w-8 h-8 flex items-center justify-center rounded-4xl bg-white text-burgundy hover:bg-cream-100">
+                                        <MoreHorizontal className="w-4 h-4" />
+                                    </button>
+                                    </DropdownMenu.Trigger>
 
-                                                <DropdownMenu.Content
-                                                align="end"
-                                                sideOffset={8}
-                                                className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
-                                                >
-                                                <DropdownMenu.Item
-                                                     onClick={() => openEditItem(item)}
-                                                    className="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-cream-100 w-full text-left cursor-pointer"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                    Editar
-                                                </DropdownMenu.Item>
+                                    <DropdownMenu.Content
+                                    align="end"
+                                    sideOffset={8}
+                                    className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
+                                    >
+                                    <DropdownMenu.Item
+                                            onClick={() => openEditItem(item)}
+                                        className="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-cream-100 w-full text-left cursor-pointer"
+                                    >
+                                        <Edit2 className="w-4 h-4" />
+                                        Editar
+                                    </DropdownMenu.Item>
 
-                                                <DropdownMenu.Item
+                                    <DropdownMenu.Item
+                                        onClick={() => {toggleEstadoItem(item);}}
+                                        className="flex items-center gap-2 px-4 py-2 w-full text-left cursor-pointer hover:bg-cream-100"
+                                    >
 
-                                                    className="flex items-center gap-2 px-4 py-2 w-full text-left cursor-pointer hover:bg-cream-100"
-                                                >
-
-                                                    <>
-                                                        <X className="w-4 h-4 text-red-500" />
-                                                        <span className="text-red-500">Desactivar</span>
-                                                    </>
-
-                                                    <>
-                                                        <Check className="w-4 h-4 text-green-600" />
-                                                        <span className="text-green-600">Activar</span>
-                                                    </>
-
-                                                </DropdownMenu.Item>
-                                                </DropdownMenu.Content>
-                                            </DropdownMenu.Root>
-                                            </td>
+                                        {item.estado ? (
+                                        <>
+                                            <X className="w-4 h-4 text-red-500" />
+                                            <span className="text-red-500">Desactivar</span>
+                                        </>
+                                        ) : (
+                                        <>
+                                            <Check className="w-4 h-4 text-green-600" />
+                                            <span className="text-green-600">Activar</span>
+                                        </>
+                                        )}
+                                    </DropdownMenu.Item>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
+                                </td>
 
                                 </tr>))
 
@@ -229,44 +315,31 @@ const MenuItemTable = () => {
            </Link>
         </div>
 
-
-            {/*agregar botn de gestionar categorias */}
-
             <CreateItemDialog
-            open={showCreateDialog}
-            onClose={() => setShowCreateDialog(false)}
-            onCreate={(item) => {
-                console.log("Simular creación", item);
-                setShowCreateDialog(false);
-            }}
-            categorias={categories.map(cat => ({
-                    id: cat.id_categoria,
-                    nombre: cat.nombre
+                open={showCreateDialog}
+                onClose={() => setShowCreateDialog(false)}
+                onCreate={handleCreateItem}
+                categorias={categories.map(cat => ({
+                id: cat.id_categoria,
+                nombre: cat.nombre,
                 }))}
-            id_menu={1}
+                id_menu={activeMenuId ?? 1}
+                setToastType={setToastType}
+                setToastMessage={setToastMessage}
             />
+
 
             <EditItemDialog
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)}
                 onSave={async (item: ItemGuardarDTO) => {
                     try {
-
-                    await itemService.guardar(item); // guardar
-                    setToastMessage('Producto editado con éxito.');
-                    setToastType('success');
-                    await fetchItems();              // recargar
-
+                    await itemService.guardar(item);
+                    await refreshItems();
                     } catch (error) {
-
                     console.error("Error al guardar", error);
-                    setToastMessage('Error al actualizar producto.')
-                    setToastType('error');
-
                     } finally {
-
                     setShowEditDialog(false);
-
                     }
                 }}
                 initialData={itemToEdit}
@@ -274,6 +347,8 @@ const MenuItemTable = () => {
                     id: cat.id_categoria,
                     nombre: cat.nombre
                 }))}
+                setToastMessage={setToastMessage}
+                setToastType={setToastType}
                 />
 
 

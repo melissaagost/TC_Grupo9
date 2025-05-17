@@ -1,4 +1,3 @@
-
 import axiosInstance from "./axiosInstance";
 import { ItemGuardarDTO, ItemRowDTO, Paginado } from "../types/itemTypes";
 
@@ -20,6 +19,11 @@ export const itemService = {
 
   deshabilitar: async (id: number) => {
     const response = await axiosInstance.patch(`/item/deshabilitar/${id}`);
+    return response.data;
+  },
+
+    habilitar: async (id: number) => {
+    const response = await axiosInstance.patch(`/item/habilitar/${id}`);
     return response.data;
   }
 };
