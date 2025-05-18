@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Edit, Mail, User, UserCircle2 } from "lucide-react";
+import { Edit, Mail, User} from "lucide-react";
 import { Button } from "../UI/Button";
 import ProfileCard from "../UI/ProfileCard";
 import userService from '../../services/userService';

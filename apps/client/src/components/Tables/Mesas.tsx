@@ -3,6 +3,10 @@ import Toast from "../UI/Toast";
 import { Plus, SquarePen} from "lucide-react";
 import TableHeader from "../UI/TableHeader";
 import { useTableLogic } from "../../hooks/useTableLogic";
+import { TableLayout } from "../UI/Table";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { MoreHorizontal, Edit2, CreditCard } from "lucide-react";
+
 
 const MesasTable = () => {
 
@@ -57,85 +61,106 @@ const MesasTable = () => {
 
         <div className="overflow-x-auto w-full">
 
-          <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-xl">
-
-            <TableHeader>
-                <th className="py-2">Número</th>
-                <th className="py-2">Capacidad</th>
-                <th className="py-2">Descripción</th>
-                <th className="py-2">Estado</th>
-                <th className="py-2">Acciones</th>
-                <th className="py-2">Pedido</th>
-              </TableHeader>
-
-
-
-            <tbody className="text-sm">
-              {filteredMesas.map((mesa) => (
-                <tr  className="border-t border-gray-100 hover:bg-gray-50" key={mesa.id_mesa}>
-
-                  <td className="px-4 py-2 text-center">{mesa.numero}</td>
-                  <td className="px-4 py-2 text-center">{mesa.capacidad}</td>
-                  <td className="px-4 py-2 text-center">{mesa.descripcion}</td>
-
-                  <td className="px-4 py-2 text-center">
-                        {
-                          mesa.estado === 0 ? (
-                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
-                              Libre
-                            </span>
-                          ) : mesa.estado === 1 ? (
-                            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
-                              Ocupado
-                            </span>
-                          ) : (
-                            <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
-                              Reservado
-                            </span>
-                          )
-                        }
-                    </td>
-
-                  {/*Si la mesa esta libre/reservada: renderiza boton agregar pedido */}
-                  {/*Si la mesa esta ocupada: renderiza boton pagar y boton modif pedido */}
-
-
-                  <td className="flex font-semibold justify-center  text-eggshell-whitedove gap-2 py-2">
-                    <button  onClick={() => startEditingMesa(mesa)}
-                    className="px-2 py-1 bg-blue-400 hover:text-blue-900 gap-1 inline-flex items-center transition-all duration-300 hover:-translate-y-1 shadow-md rounded-md  "><SquarePen/>Modificar</button>
-                  </td>
-
-
-                  <td className="px-4 py-2 text-center">
-
-
-                      {(mesa.estado === 0 || mesa.estado === 2 ) ? (
-                          <button className="px-2 py-1  transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
-                            <Plus/> Agregar Pedido
+         <TableLayout
+            title="Listado de Mesas"
+            data={filteredMesas}
+            columns={[
+              {
+                key: "numero",
+                label: "Número",
+                className: "text-center",
+                render: (mesa) => <div >{mesa.numero}</div>,
+              },
+              {
+                key: "capacidad",
+                label: "Capacidad",
+                className: "text-center",
+                render: (mesa) => <div >{mesa.capacidad}</div>,
+              },
+              {
+                key: "descripcion",
+                label: "Descripción",
+                className: "text-center",
+                render: (mesa) => <div >{mesa.descripcion}</div>,
+              },
+              {
+                key: "estado",
+                label: "Estado",
+                className: "text-center",
+                render: (mesa) => (
+                  <div>
+                    {mesa.estado === 0 ? (
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Libre</span>
+                    ) : mesa.estado === 1 ? (
+                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Ocupado</span>
+                    ) : (
+                      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">Reservado</span>
+                    )}
+                  </div>
+                ),
+              },
+              {
+                key: "acciones",
+                label: "Acciones",
+                className: "text-center",
+                render: (mesa) => (
+                  <div className="flex justify-center py-2  text-eggshell-whitedove font-semibold">
+                    <button
+                      onClick={() => startEditingMesa(mesa)}
+                      className="px-2 py-1 bg-blue-400 hover:text-blue-900 gap-1 inline-flex items-center transition-all duration-300 hover:-translate-y-1 shadow-md rounded-md"
+                    >
+                      <SquarePen /> Modificar
+                    </button>
+                  </div>
+                ),
+              },
+              {
+                key: "pedido",
+                label: "Pedido",
+                className: "text-center",
+                render: (mesa) => (
+                  <div>
+                    {(mesa.estado === 0 || mesa.estado === 2) ? (
+                      <button className="px-2 py-1 transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
+                        <Plus /> Agregar Pedido
+                      </button>
+                    ) : (
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger asChild>
+                          <button className="w-8 h-8 lg:ml-45 flex items-center justify-center rounded-4xl bg-white text-burgundy hover:bg-cream-100">
+                            <MoreHorizontal className="w-4 h-4" />
                           </button>
+                        </DropdownMenu.Trigger>
 
-                      ) : (
-                        <div className="gap-1 items-center font-semibold text-white inline-flex">
-                          <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-blood-pay hover:text-blood-300 gap-1 inline-flex items-center rounded-md">
-                            Pagar
-                          </button>
-                          <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-modify hover:text-gray-200 gap-1 inline-flex items-center rounded-md">
-                            Modificar Pedido
-                          </button>
-                        </div>
-                      )}
+                        <DropdownMenu.Content
+                          align="end"
+                          sideOffset={8}
+                          className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
+                        >
+                          <DropdownMenu.Item
+                            onClick={() => console.log("Pagar")}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                          >
+                              <CreditCard/>Pagar
+                          </DropdownMenu.Item>
 
-                  </td>
-
-                </tr>
-              ))}
-
-            </tbody>
-
-          </table>
+                          <DropdownMenu.Item
+                            onClick={() => console.log("Modificar pedido")}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                          >
+                           <Edit2/> Modificar Pedido
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                    )}
+                  </div>
+                ),
+              },
+            ]}
+          />
       </div>
 
-      <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 m-5 w-50 gap-1 inline-flex items-center bg-green-500 text-white rounded-3xl hover:bg-green-600"> <Plus size={'20'}/> Agregar una Mesa</button>
+      <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 mt-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/> Agregar una Mesa</button>
 
       {/*abre formularios */}
 
@@ -179,10 +204,20 @@ const MesasTable = () => {
                     />
 
 
-                      <div className="flex justify-end gap-2 mt-4">
-                        <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Guardar Cambios</button>
-                      </div>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCreating(false);
+                        }}
+                        className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md"
+                      >
+                        Cancelar
+                      </button>
 
+                      <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Agregar Mesa</button>
+
+                    </div>
                 </form>
 
             </DialogContent>
@@ -227,8 +262,20 @@ const MesasTable = () => {
 
                       <div className="flex justify-end gap-2 mt-4">
 
+                            <div className="flex justify-end gap-2 mt-4">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingMesa(false)
+                                }}
+                                className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md"
+                              >
+                                Cancelar
+                              </button>
 
-                      <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Guardar Cambios</button>
+                              <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Guardar Cambios</button>
+
+                            </div>
 
                       </div>
 

@@ -45,7 +45,7 @@ const EditProfileC = () => {
         //msj de confirmacion y deslogueo
       try {
         await userService.updateOwnProfile({ nombre, correo }, token);
-
+        window.location.href = "/profile";
         setToastMessage("Perfil actualizado");
         setToastType("success");
 
