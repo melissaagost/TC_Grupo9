@@ -1,12 +1,6 @@
 import { ItemRowDTO, ItemGuardarDTO } from '../../types/itemTypes'
+import { useMenuItemLogic } from "../../hooks/useMenuItemLogic";
 import { itemService } from '../../services/itemService'
-import { useState, useEffect, useMemo } from 'react';
-import { Menu } from "../../types/menuTypes";
-import { menuService } from "../../services/menuService";
-import { categoryService } from "../../services/categoryService";
-import { CategoriaDTO} from "../../types/categoryTypes";
-import axios from "axios";
-
 
 import Toast from "../UI/Toast";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -20,140 +14,23 @@ import * as Switch from "@radix-ui/react-switch";
 
 const MenuItemTable = () => {
 
-    const token = localStorage.getItem("token") || "";
-
-    //toast
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
-
-    //dialogs
-    const [showCreateDialog, setShowCreateDialog] = useState(false);
-    const [showEditDialog, setShowEditDialog] = useState(false);
-
-    //menus
-    const [menus, setMenus] = useState<Menu[]>([]);
-    const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
-
-    //items
-    const [items, setItems] = useState<ItemRowDTO[]>([]);
-    const [itemToEdit, setItemToEdit] = useState<ItemRowDTO | null>(null);
-    const [filteredItems, setFilteredItems] = useState<ItemRowDTO[]>([]);
-    const [mostrarInactivos, setMostrarInactivos] = useState(false);
-
-
-    //categoria
-    const [categories, setCategories] = useState<CategoriaDTO[]>([]);
-    const [filteredCategories, setFilteredCategories] = useState<CategoriaDTO[]>([]);
-
-
-    //listar menus
-    useEffect(() => {
-    const fetchMenus = async () => {
-        const data = await menuService.getAllMenus(token);
-        setMenus(data);
-        setActiveMenuId(data[0]?.id_menu || null); // selecciona el primero por defecto
-    };
-
-    fetchMenus();
-    }, []);
-
-    //listar items
-    useEffect(() => {
-    const fetchItems = async () => {
-        try {
-        const estado = mostrarInactivos ? 0 : 1; // 👈 clave: cuando está activado, pedimos los inactivos
-        const res = await itemService.listarItems({ estado });
-        setItems(res.data); // o res.data.data si tu respuesta está paginada
-        } catch (err) {
-        console.error("Error al listar items:", err);
-        }
-    };
-
-    fetchItems();
-    }, [mostrarInactivos]);
-
-
-    //recargar items
-    const refreshItems = async () => {
-    try {
-        const estado = mostrarInactivos ? 0 : 1;
-        const res = await itemService.listarItems({ estado });
-        setItems(res.data);
-        setFilteredItems(res.data);
-    } catch (error) {
-        console.error("Error al refrescar items:", error);
-    }
-    };
-
-
-    //listar categorias
-    const fetchCategories = async () => {
-    const data = await categoryService.getAll();
-    setCategories(data);
-    setFilteredCategories(data);
-    };
-
-    useEffect(() => {
-    fetchCategories();
-    }, []);
-
-    //editar items
-    const openEditItem = (item: ItemRowDTO) => {
-    setItemToEdit(item);
-    setShowEditDialog(true);
-    };
-
-    //crear item
-    const handleCreateItem = async (item: ItemGuardarDTO) => {
-        try {
-            await itemService.guardar(item);
-            await refreshItems();
-            setShowCreateDialog(false);
-        } catch (error: any) {
-            const msg = error?.response?.data?.message || "Error al crear el producto.";
-            setToastType("error");
-            setToastMessage(msg);
-        }
-    };
-
-    //setear activo / inactivo
-    const toggleEstadoItem = async (item: ItemRowDTO) => {
-
-        try {
-            if (item.estado) {
-
-            await itemService.deshabilitar(item.id_item);
-            await refreshItems();
-            setToastMessage("Item desactivado correctamente");
-
-            } else {
-                await itemService.habilitar(item.id_item);
-                await refreshItems();
-                setToastMessage("Menú activado correctamente");
-            }
-
-            setToastType("success");
-
-
-        }catch (error) {
-        const msg =
-            axios.isAxiosError(error) && error.response?.data?.message
-            ? error.response.data.message
-            : "Error al actualizar el estado del ítem";
-
-            setToastMessage(msg);
-            setToastType("error");
-            console.error("Error al cambiar estado del ítem:", error);
-        }
-    };
-
-    //filtra prod/items activos segun boton selec
-    const productosFiltrados = useMemo(() => {
-    if (activeMenuId === null) return [];
-    return items.filter(item => item.id_menu === activeMenuId);
-    }, [items, activeMenuId]);
-
-
+    const {
+    token,
+    toastMessage, setToastMessage,
+    toastType, setToastType,
+    showCreateDialog, setShowCreateDialog,
+    showEditDialog, setShowEditDialog,
+    menus, activeMenuId, setActiveMenuId,
+    items, itemToEdit, setItemToEdit,
+    filteredItems, setFilteredItems,
+    mostrarInactivos, setMostrarInactivos,
+    categories, filteredCategories,
+    openEditItem,
+    handleCreateItem,
+    toggleEstadoItem,
+    refreshItems,
+    productosFiltrados
+    } = useMenuItemLogic();
 
     return (
         <div className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">

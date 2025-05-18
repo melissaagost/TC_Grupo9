@@ -1,144 +1,32 @@
-import { useEffect, useState } from "react";
-import { getAllMesas, updateMesa, createMesa } from "../../services/tableService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../UI/Dialog";
 import Toast from "../UI/Toast";
 import { Plus, SquarePen} from "lucide-react";
 import TableHeader from "../UI/TableHeader";
-
-
+import { useTableLogic } from "../../hooks/useTableLogic";
 
 const MesasTable = () => {
 
-    const [mesas, setMesas] = useState<any[]>([]);
+  const {
+  mesas, setMesas,
+  searchTerm, setSearchTerm,
+  numero, setNumero,
+  capacidad, setCapacidad,
+  descripcion, setDescripcion,
+  idRestaurante, setIdRestaurante,
+  editingMesa, setEditingMesa,
+  isCreating, setIsCreating,
+  editNumero, setEditNumero,
+  editCapacidad, setEditCapacidad,
+  editDescripcion, setEditDescripcion,
+  toastMessage, setToastMessage,
+  toastType, setToastType,
+  fetchMesas,
+  handleCreateMesa,
+  handleUpdateMesa,
+  startEditingMesa,
+  filteredMesas
+} = useTableLogic();
 
-    useEffect(() => {
-        fetchMesas();
-    }, []);
-
-    const fetchMesas = async () => {
-        try {
-        const data = await getAllMesas();
-        setMesas(data);
-        } catch (error) {
-        console.error('Error fetching mesas:', error);
-        }
-    };
-
-
-    const [numero, setNumero] = useState<number>(0);
-    const [capacidad, setCapacidad] = useState<number>(0);
-    const [descripcion, setDescripcion] = useState<string>("");
-    const [idRestaurante, setIdRestaurante] = useState<number>(1); // ajustar si hubiera mas rest.
-
-
-    const handleCreateMesa = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // VALIDACIÓN antes de crear
-        if (numero <= 0 || capacidad <= 0 || descripcion.trim() === "") {
-          setToastMessage("Por favor completa todos los campos antes de crear");
-          setToastType("info");
-          return;
-        }
-
-        try {
-          await createMesa({
-            numero,
-            capacidad,
-            descripcion,
-            id_restaurante: idRestaurante,
-          });
-
-          console.log("Mesa creada correctamente");
-          setIsCreating(false); // cerrar modal
-          fetchMesas(); // refrescar tabla
-
-          // limpiar form
-          setNumero(0);
-          setCapacidad(0);
-          setDescripcion("");
-
-          setToastMessage("Mesa creada exitosamente");
-          setToastType("success");
-
-        } catch (error) {
-          console.error("Error al crear mesa", error);
-          setToastMessage("Error al crear mesa");
-          setToastType("error");
-        }
-      };
-
-
-    const handleUpdateMesa = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!editingMesa) return;
-
-        // VALIDACIÓN: No hubo cambios
-        if (
-          editingMesa.numero === editNumero &&
-          editingMesa.capacidad === editCapacidad &&
-          editingMesa.descripcion === editDescripcion
-        ) {
-          setToastMessage("No hay cambios para guardar");
-          setToastType("info");
-          return;
-        }
-
-        try {
-          await updateMesa(editingMesa.id_mesa, {
-            numero: editNumero,
-            capacidad: editCapacidad,
-            descripcion: editDescripcion,
-            id_restaurante: 1, // ya sabemos que siempre es 1
-          });
-
-          console.log("Mesa actualizada correctamente");
-          setToastMessage("Mesa actualizada correctamente");
-          setToastType("success");
-
-          fetchMesas(); // refresca la lista
-          setEditingMesa(null); // cierra modal
-        } catch (error) {
-          console.error("Error al actualizar mesa", error);
-          setToastMessage("Error al actualizar mesa");
-          setToastType("error");
-        }
-      };
-
-
-      const startEditingMesa = (mesa: any) => {
-        setEditingMesa(mesa);
-        setEditNumero(mesa.numero);
-        setEditCapacidad(mesa.capacidad);
-        setEditDescripcion(mesa.descripcion);
-      };
-
-      const [searchTerm, setSearchTerm] = useState("");
-      const filteredMesas = mesas.filter((mesa) => {
-        const search = searchTerm.toLowerCase();
-        const numero = mesa.numero.toString();
-        const descripcion = mesa.descripcion.toLowerCase();
-        const estado = mesa.estado === 0 ? "libre" : mesa.estado === 1 ? "ocupado" : mesa.estado === 2 ? "reservado" : "desconocido";
-
-
-        return (
-          numero.includes(search) ||
-          descripcion.includes(search) ||
-          estado.includes(search)
-        );
-      });
-
-
-    //estados
-    const [editingMesa, setEditingMesa] = useState<any | null>(null);
-
-    const [isCreating, setIsCreating] = useState(false);
-    const [editNumero, setEditNumero] = useState<number>(0);
-    const [editCapacidad, setEditCapacidad] = useState<number>(0);
-    const [editDescripcion, setEditDescripcion] = useState<string>("");
-
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
 
   return (
     <div className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">

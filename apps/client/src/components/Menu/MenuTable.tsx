@@ -1,9 +1,4 @@
-import { useEffect, useState } from "react";
-import { menuService } from "../../services/menuService";
-import { itemService } from "../../services/itemService";
-import { Menu, MenuDTO } from "../../types/menuTypes";
-import { ItemRowDTO } from '../../types/itemTypes'
-import axios from "axios";
+import { useMenuLogic } from "../../hooks/useMenuLogic";
 
 
 import Toast from "../UI/Toast";
@@ -16,190 +11,27 @@ import { Edit2, X, Check, MoreHorizontal, Plus } from "lucide-react";
 
 const MenuTable = () => {
 
-    //toast
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
-
-    //menus
-    const [menus, setMenus] = useState<Menu[]>([]);
-    const [filteredMenus, setFilteredMenus] = useState<Menu[]>([]);
-
-    //items para el conteo
-    const [items, setItems] = useState<ItemRowDTO[]>([]);
-
-    //form
-    const [nombre, setNombre] = useState("");
-    const [descripcion, setDescripcion] = useState("");
-    const [estado, setEstado] = useState(false);
-
-
-    //acciones
-    const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
-    //editar menu
-    const [isEditing, setIsEditing] = useState(false);
-    const [menuToEdit, setMenuToEdit] = useState<Menu | null>(null);
-    //crear menu
-    const [isCreating, setIsCreating] = useState(false);
-
-
-    const token = localStorage.getItem("token") || "";
-
-    //listar menus
-    const fetchMenus = async () => {
-    const data = await menuService.getAllMenus(token);
-    setMenus(data);
-    setFilteredMenus(data);
-    };
-
-    useEffect(() => {
-    fetchMenus();
-    }, []);
-
-    //conteo items
-    useEffect(() => {
-    itemService.listarItems()
-        .then((res) => setItems(res.data)) // ⬅️ acá está el fix
-        .catch((err) => console.error("Error al listar items:", err));
-    }, []);
-
-
-    const handleSearch = (term: string) => {
-    const lower = term.toLowerCase();
-    const filtered = menus.filter((menu) =>
-        menu.nombre.toLowerCase().includes(lower) ||
-        menu.descripcion.toLowerCase().includes(lower)
-    );
-    setFilteredMenus(filtered);
-    };
-
-
-
-    //listar menus
-    useEffect(() => {
-    const fetchMenus = async () => {
-        try {
-        const data = await menuService.getAllMenus(token);
-        setMenus(data);
-        } catch (error) {
-        console.error("Error al cargar menús", error);
-        setToastMessage("Hubo un error al cargar los menús.");
-        setToastType("error");
-        }
-    };
-
-    fetchMenus();
-    }, []);
-
-    //crear
-    const handleCreateMenu = async (newMenu: MenuDTO) => {
-    // Validación de campos obligatorios
-    if (!newMenu.nombre.trim() || !newMenu.descripcion.trim()) {
-        setToastType("error");
-        setToastMessage("Todos los campos son obligatorios.");
-        return;
-    }
-
-    try {
-        await menuService.createMenu(newMenu, token);
-        const refreshed = await menuService.getAllMenus(token);
-        setMenus(refreshed);
-        setFilteredMenus(refreshed);
-
-        setToastType("success");
-        setToastMessage("Menú creado exitosamente.");
-    } catch (error: any) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-        setToastType("error");
-        setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
-        } else {
-        const msg = error?.response?.data?.message || "Error al crear el menú.";
-        setToastType("error");
-        setToastMessage(msg);
-        }
-    }
-    };
-
-
-
-    //editar
-    const openEditMenu = (menu: Menu) => {
-    setMenuToEdit(menu);
-    setIsEditing(true);
-    };
-
-    const handleSaveMenu = async (updatedMenu: MenuDTO) => {
-    //campos obligatorios
-    if (!updatedMenu.nombre.trim() || !updatedMenu.descripcion.trim()) {
-        setToastType("error");
-        setToastMessage("Todos los campos son obligatorios.");
-        return;
-    }
-
-    //sin cambios
-    if (
-        updatedMenu.nombre.trim() === menuToEdit?.nombre.trim() &&
-        updatedMenu.descripcion.trim() === menuToEdit?.descripcion.trim()
-    ) {
-        setToastType("info");
-        setToastMessage("No hay cambios para guardar.");
-        return;
-    }
-
-    try {
-        await menuService.updateMenu(menuToEdit!.id_menu, updatedMenu, token);
-        const refreshed = await menuService.getAllMenus(token);
-        setMenus(refreshed);
-        setFilteredMenus(refreshed);
-
-        setToastType("success");
-        setToastMessage("Menú actualizado correctamente.");
-    } catch (error) {
-        setToastType("error");
-        setToastMessage("Ocurrió un error al guardar los cambios.");
-    }
-    };
-
-
-    const resetForm = () => {
-        setNombre("");
-        setDescripcion("");
-        setEstado(false);
-    };
-
-
-    //setear activo / inactivo
-    const toggleEstadoMenu = async (menu: Menu) => {
-
-        const token = localStorage.getItem("token") || "";
-
-        try {
-            if (menu.estado) {
-
-            await menuService.disableMenu(menu.id_menu, token);
-            setToastMessage("Menú desactivado correctamente");
-
-            } else {
-                await menuService.enableMenu(menu.id_menu, token);
-                setToastMessage("Menú activado correctamente");
-            }
-
-            setToastType("success");
-
-            // volver a cargar la lista de menús
-            const nuevosMenus = await menuService.getAllMenus(token);
-            setMenus(nuevosMenus);
-            setFilteredMenus(nuevosMenus);
-
-        } catch (error) {
-            console.error("Error al cambiar estado del menú", error);
-            setToastMessage("Error al actualizar el estado del menú");
-            setToastType("error");
-
-        } finally {
-            setActiveMenuId(null); // cerrar menú de opciones si estaba abierto
-        }
-    };
-
+   const {
+    token,
+    toastMessage, setToastMessage,
+    toastType, setToastType,
+    menus, setMenus,
+    filteredMenus, setFilteredMenus,
+    items, setItems,
+    nombre, setNombre,
+    descripcion, setDescripcion,
+    estado, setEstado,
+    activeMenuId, setActiveMenuId,
+    isEditing, setIsEditing,
+    menuToEdit, setMenuToEdit,
+    isCreating, setIsCreating,
+    handleSearch,
+    handleCreateMenu,
+    openEditMenu,
+    handleSaveMenu,
+    resetForm,
+    toggleEstadoMenu
+    } = useMenuLogic();
 
 
     return (

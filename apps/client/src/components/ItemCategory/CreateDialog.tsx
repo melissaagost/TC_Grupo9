@@ -46,7 +46,7 @@ export const CreateDialog = ({
       <DialogContent>
 
         <DialogHeader>
-          <DialogTitle>Crear Menú</DialogTitle>
+          <DialogTitle>Crear Categoría</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
