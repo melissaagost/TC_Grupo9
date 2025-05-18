@@ -1,6 +1,7 @@
 // src/hooks/useTableLogic.ts
 import { useEffect, useState } from "react";
 import { getAllMesas, updateMesa, createMesa } from "../services/tableService";
+import axios from "axios";
 
 export const useTableLogic = () => {
   const [mesas, setMesas] = useState<any[]>([]);
@@ -24,6 +25,10 @@ export const useTableLogic = () => {
       const data = await getAllMesas();
       setMesas(data);
     } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setToastType("error");
+        setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
+      }
       console.error("Error fetching mesas:", error);
     }
   };

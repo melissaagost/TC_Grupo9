@@ -35,7 +35,7 @@ const AppRoutes = () => {
       <Route
         path="/profile"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+          <PrivateRoute allowedUserTypes={['usuario', 'administrador', 'mozo']}>
             <Profile />
           </PrivateRoute>
         }
@@ -44,7 +44,7 @@ const AppRoutes = () => {
       <Route
         path="/profile/edit"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+          <PrivateRoute allowedUserTypes={['usuario', 'administrador', 'mozo']}>
             <EditProfile />
           </PrivateRoute>
         }
@@ -53,7 +53,7 @@ const AppRoutes = () => {
       <Route
         path="/tables"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+          <PrivateRoute allowedUserTypes={['mozo', 'administrador']}>
             <Tables />
           </PrivateRoute>
         }

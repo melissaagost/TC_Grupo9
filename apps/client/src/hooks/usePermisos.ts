@@ -9,7 +9,7 @@ export function usePermisos() {
     const rol = userType;
     if (!rol) return false;
 
-    if (rol === "admin") return true;
+    if (rol === "administrador") return true;
 
     return permisosPorRol[rol]?.includes(permiso) ?? false;
   };

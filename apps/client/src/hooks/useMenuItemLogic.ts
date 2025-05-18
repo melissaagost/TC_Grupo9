@@ -46,6 +46,10 @@ export const useMenuItemLogic = () => {
         const res = await itemService.listarItems({ estado });
         setItems(res.data);
       } catch (err) {
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+        setToastType("error");
+        setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
+      }
         console.error("Error al listar items:", err);
       }
     };

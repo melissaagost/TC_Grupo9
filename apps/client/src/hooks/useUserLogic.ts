@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import userService from "../services/userService";
+import axios from "axios";
 
 interface Usuario {
   id_usuario: number;
@@ -44,6 +45,10 @@ export const useUserLogic = () => {
       const data = await userService.getAllUsers(token);
       setUsers(data);
     } catch (err) {
+       if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setToastType("error");
+        setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
+      }
       console.error("Error fetching users:", err);
       setError("No se pudieron obtener los usuarios.");
     }

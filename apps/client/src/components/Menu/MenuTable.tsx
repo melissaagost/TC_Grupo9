@@ -1,4 +1,6 @@
 import { useMenuLogic } from "../../hooks/useMenuLogic";
+import { usePermisos } from "../../hooks/usePermisos";
+import { Menu } from "../../types/menuTypes"
 
 import Toast from "../UI/Toast";
 import Search  from "../Menu/Search";
@@ -9,6 +11,8 @@ import { Edit2, X, Check, MoreHorizontal, Plus } from "lucide-react";
 import { TableLayout } from "../UI/Table";
 
 const MenuTable = () => {
+
+    const { tienePermiso } = usePermisos();
 
    const {
     token,
@@ -83,10 +87,10 @@ const MenuTable = () => {
                         </span>
                         ),
                     },
-                    {
+                   ...(tienePermiso("editar_menu") ? [ {
                         key: "acciones",
                         label: "Acciones",
-                        render: (menu) => (
+                        render: (menu: Menu) => (
                         <DropdownMenu.Root>
                             <DropdownMenu.Trigger asChild>
                             <button className="ml-6 w-8 h-8 flex items-center justify-center rounded-4xl bg-white text-burgundy hover:bg-cream-100">
@@ -128,13 +132,16 @@ const MenuTable = () => {
                         </DropdownMenu.Root>
                         ),
                     },
-                    ]}
-                />
+                     ] : [])
+                 ]}
+            />
 
             </div>
 
 
-            <button    onClick={() => {resetForm(); setIsCreating(true);}} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 ml-0 m-5 w-40 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/>Crear Menú</button>
+            {tienePermiso("crear_menu") &&
+                <button    onClick={() => {resetForm(); setIsCreating(true);}} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 ml-0 m-5 w-40 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/>Crear Menú</button>
+            }
 
             {/*dialogo para crear */}
             <CreateDialog

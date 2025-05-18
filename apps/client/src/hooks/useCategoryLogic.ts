@@ -56,7 +56,7 @@ export const useCategoryLogic = () => {
       let msg = "Error inesperado al crear la categoría";
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
-          msg = "No autorizado. Iniciá sesión nuevamente.";
+          msg = "Sesión expirada. Iniciá sesión nuevamente.";
         } else {
           const rawMsg = error.response?.data?.message;
           msg = Array.isArray(rawMsg) ? rawMsg.join(" - ") : rawMsg || msg;

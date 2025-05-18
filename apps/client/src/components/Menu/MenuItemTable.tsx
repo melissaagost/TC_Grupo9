@@ -1,6 +1,7 @@
 import { ItemRowDTO, ItemGuardarDTO } from '../../types/itemTypes'
 import { useMenuItemLogic } from "../../hooks/useMenuItemLogic";
 import { itemService } from '../../services/itemService'
+import { usePermisos } from "../../hooks/usePermisos";
 
 import Toast from "../UI/Toast";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -14,6 +15,8 @@ import { TableLayout } from "../UI/Table";
 
 
 const MenuItemTable = () => {
+
+    const { tienePermiso } = usePermisos();
 
     const {
     token,
@@ -120,6 +123,7 @@ const MenuItemTable = () => {
                             sideOffset={8}
                             className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                         >
+                            {tienePermiso("editar_producto") &&
                             <DropdownMenu.Item
                             onClick={() => openEditItem(item)}
                             className="flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-cream-100 w-full text-left cursor-pointer"
@@ -127,6 +131,7 @@ const MenuItemTable = () => {
                             <Edit2 className="w-4 h-4" />
                             Editar
                             </DropdownMenu.Item>
+                            }
                             <DropdownMenu.Item
                             onClick={() => toggleEstadoItem(item)}
                             className="flex items-center gap-2 px-4 py-2 w-full text-left cursor-pointer hover:bg-cream-100"
@@ -153,13 +158,14 @@ const MenuItemTable = () => {
             )}
 
 
+        {tienePermiso("añadir_producto") &&
         <div className='lg:inline-flex gap-1'>
             <button onClick={() => setShowCreateDialog(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 ml-0 m-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/>Agregar Producto</button>
            <Link to="/categories">
                 <button onClick={() => setShowCreateDialog(true)} className="font-semibold  transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 ml-0 m-5 w-58 gap-2 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"><LucideEdit size={'20'}/>Gestionar Categorías</button>
            </Link>
         </div>
-
+        }
             <CreateItemDialog
                 open={showCreateDialog}
                 onClose={() => setShowCreateDialog(false)}
