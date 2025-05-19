@@ -7,6 +7,7 @@ import Tables from '../pages/Tables'
 import Users from '../pages/Users'
 import Menu from '../pages/Menu'
 import Categories from '../pages/Categories'
+import Orders from '../pages/Orders'
 
 import Building from '../pages/Building'
 import PrivateRoute from '../components/PrivateRoute'
@@ -14,7 +15,7 @@ import PublicRoute from '../components/PublicRoute'
 
 //se envuelve la ruta en el layout que corresponda
 //tipo 1 (admin)
-//tipo 2 (cocineros)
+//tipo 2 (cocinero)
 //tipo 3 (mozo)
 
 
@@ -83,6 +84,15 @@ const AppRoutes = () => {
         element={
           <PrivateRoute allowedUserTypes={['administrador']}>
             <Categories/>
+          </PrivateRoute>
+        }
+      />
+
+        <Route
+        path="/orders"
+        element={
+          <PrivateRoute allowedUserTypes={['administrador', 'mozo', 'cocinero']}>
+            <Orders/>
           </PrivateRoute>
         }
       />

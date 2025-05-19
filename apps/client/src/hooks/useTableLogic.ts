@@ -1,7 +1,18 @@
 // src/hooks/useTableLogic.ts
 import { useEffect, useState } from "react";
-import { getAllMesas, updateMesa, createMesa } from "../services/tableService";
+import { getAllMesas, updateMesa, createMesa, getMesasConPedido } from "../services/tableService";
 import axios from "axios";
+
+interface MesaConPedidoRaw {
+  id_mesa: number;
+  numero: number;
+  capacidad: number;
+  descripcion: string;
+  estado_mesa: number;
+  id_pedido: number | null;
+  estado_pedido: number | null;
+}
+
 
 export const useTableLogic = () => {
   const [mesas, setMesas] = useState<any[]>([]);
@@ -20,10 +31,43 @@ export const useTableLogic = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
 
-  const fetchMesas = async () => {
+  // const fetchMesas = async () => {
+  //   try {
+  //     const data = await getAllMesas();
+  //     setMesas(data);
+  //   } catch (error) {
+  //       if (axios.isAxiosError(error) && error.response?.status === 401) {
+  //       setToastType("error");
+  //       setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
+  //     }
+  //     console.error("Error fetching mesas:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchMesas();
+  // }, []);
+
+    const fetchMesas = async () => {
     try {
-      const data = await getAllMesas();
-      setMesas(data);
+     const response = await getMesasConPedido();
+
+   const mesasFormateadas = (response as MesaConPedidoRaw[]).map((m) => ({
+    id_mesa: m.id_mesa,
+    numero: m.numero,
+    capacidad: m.capacidad,
+    descripcion: m.descripcion,
+    estado: m.estado_mesa,
+    pedido: m.id_pedido
+      ? {
+          id_pedido: m.id_pedido,
+          estado: m.estado_pedido,
+        }
+      : null,
+  }));
+
+  setMesas(mesasFormateadas);
+
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
         setToastType("error");
@@ -36,6 +80,8 @@ export const useTableLogic = () => {
   useEffect(() => {
     fetchMesas();
   }, []);
+
+
 
   const handleCreateMesa = async (e: React.FormEvent) => {
     e.preventDefault();

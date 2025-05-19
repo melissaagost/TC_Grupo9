@@ -9,7 +9,6 @@ import { EditDialog } from "../Menu/dialogs/EditDialog";
 import { CreateDialog } from "../Menu/dialogs/CreateDialog";
 import { Edit2, X, Check, MoreHorizontal, Plus } from "lucide-react";
 import { TableLayout } from "../UI/Table";
-
 const MenuTable = () => {
 
     const { tienePermiso } = usePermisos();
