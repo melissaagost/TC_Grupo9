@@ -60,7 +60,7 @@ const UserTable = () => {
                     <div className="flex flex-wrap gap-4 mb-6 bg-eggshell-greekvilla lg:w-102 text-gray-200 p-2 rounded-lg">
                       {[
                         { label: "Todos", value: "all" },
-                        { label: "Empleados", value: "Usuario" },
+                        { label: "Empleados", value: "Cocinero" },
                         { label: "Admins", value: "Administrador" },
                         { label: "Mozos", value: "Mozo" },
                         { label: "Inactivos", value: "inactive" },

@@ -36,7 +36,7 @@ export const useUserLogic = () => {
 
   const tiposUsuario = [
     { id: 1, nombre: "Administrador" },
-    { id: 2, nombre: "Usuario" },
+    { id: 2, nombre: "Cocinero" },
     { id: 3, nombre: "Mozo" },
   ];
 

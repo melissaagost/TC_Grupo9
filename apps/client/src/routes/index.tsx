@@ -14,7 +14,7 @@ import PublicRoute from '../components/PublicRoute'
 
 //se envuelve la ruta en el layout que corresponda
 //tipo 1 (admin)
-//tipo 2 (usuario -> cocineros)
+//tipo 2 (cocineros)
 //tipo 3 (mozo)
 
 
@@ -35,7 +35,7 @@ const AppRoutes = () => {
       <Route
         path="/profile"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador', 'mozo']}>
+          <PrivateRoute allowedUserTypes={['cocinero', 'administrador', 'mozo']}>
             <Profile />
           </PrivateRoute>
         }
@@ -44,7 +44,7 @@ const AppRoutes = () => {
       <Route
         path="/profile/edit"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador', 'mozo']}>
+          <PrivateRoute allowedUserTypes={['cocinero', 'administrador', 'mozo']}>
             <EditProfile />
           </PrivateRoute>
         }
@@ -71,7 +71,7 @@ const AppRoutes = () => {
       <Route
         path="/menu"
         element={
-          <PrivateRoute allowedUserTypes={['administrador', 'usuario']}>
+          <PrivateRoute allowedUserTypes={['administrador', 'cocinero']}>
             <Menu/>
           </PrivateRoute>
         }

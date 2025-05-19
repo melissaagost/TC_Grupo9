@@ -38,7 +38,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center font-medium gap-8 font-raleway text-base text-gray-700">
 
 
-            {userType !== 'administrador' && userType !== 'usuario' && (
+            {userType !== 'administrador' && userType !== 'cocinero' && (
               <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
                 <BookOpen size={16} /> Menú
               </Link>
@@ -67,7 +67,7 @@ const Navbar = () => {
 
 
               {/* Cosas que sólo ve el admin */}
-              {(userType === 'administrador' || userType === 'usuario') && (
+              {(userType === 'administrador' || userType === 'cocinero') && (
                 <Link to="/menu" className="flex items-center gap-1 hover:text-blood-100">
                   <BookOpen size={16} /> Menú
                 </Link>
@@ -141,7 +141,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden px-6 pb-4 space-y-4 font-raleway text-gray-700">
 
-            {userType !== 'administrador' && userType !== 'usuario' && (
+            {userType !== 'administrador' && userType !== 'cocinero' && (
               <Link to="/building" className="flex items-center gap-2">
                 <BookOpen size={18} /> Menú
               </Link>
@@ -171,7 +171,7 @@ const Navbar = () => {
                   <User size={18} /> Perfil
                 </Link>
 
-                {(userType === 'administrador' || userType === 'usuario') &&(
+                {(userType === 'administrador' || userType === 'cocinero') &&(
                 <Link to="/menu" className="flex items-center gap-2">
                   <BookOpen size={18} /> Menú
                 </Link>
