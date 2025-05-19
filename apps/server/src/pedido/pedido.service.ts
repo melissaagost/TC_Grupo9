@@ -29,6 +29,20 @@ export class PedidoService {
     return result[0];
   }
 
+  async actualizarEstadoPedidoAsync(
+    id_pedido: number,
+    nuevo_estado: number,
+  ): Promise<RespuestaGenerica> {
+    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+      PedidoQueries.actualizarEstadoPedido,
+      id_pedido,
+      nuevo_estado
+    );
+
+    return result[0];
+  }
+
+
   async guardarPedidoCompletoAsync(
     data: PedidoCompletoGuardarDTO,
   ): Promise<RespuestaGenerica> {

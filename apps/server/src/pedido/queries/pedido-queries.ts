@@ -11,6 +11,14 @@ export const PedidoQueries = {
       );
     `,
 
+  actualizarEstadoPedido: `
+  SELECT * FROM restaurant.actualizar_estado_pedido(
+    $1::INTEGER, -- p_id
+    $2::INTEGER, -- p_nuevo_estado
+  );
+`,
+
+
   guardarPedidoCompleto: `
       SELECT * FROM restaurant.sp_guardar_pedido_completo(
         $1::INTEGER,
