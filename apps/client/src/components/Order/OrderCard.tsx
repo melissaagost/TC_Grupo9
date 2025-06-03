@@ -50,6 +50,7 @@ const OrderCard = ({ showOrderActionToast }: OrderCardProps) => {
     'en mesa': 'bg-green-200 text-green-700 hover:bg-green-300',
   }
 
+    //cocinero marca pedido 'en preparacion'
   const handleActualizarEstado = (id: number, nuevoEstado: number) => {
     if (isNaN(id)) {
       showOrderActionToast('ID de pedido inválido para actualizar.', 'error')

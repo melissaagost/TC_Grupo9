@@ -62,6 +62,16 @@ const MesasTable = () => {
     setIsModalOpen(true);
   };
 
+
+  //resetea modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setPedidoExistente(null);
+    setMesaSeleccionada("");
+    setOrden([]);
+  };
+
+
   //cancelar pedido
   const handleCancelar = (id: number) => {
      if (isNaN(id)) {
@@ -85,14 +95,14 @@ const MesasTable = () => {
     });
   };
 
-  //cambiar pedido a en prep, en mesa
+  //cambiar pedido  'en mesa'
   const handleActualizarEstado = (id: number, nuevoEstado: number) => {
       if (isNaN(id)) {
         showOrderToast("ID de pedido inválido para actualizar estado.", "error");
         console.error("ID inválido:", id);
         return;
     }
-    actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, {
+    actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, { //error aca
       onSuccess: (response) => {
         if (response.data.success) {
           showOrderToast(response.data.message || "Estado actualizado", "success");
@@ -106,12 +116,6 @@ const MesasTable = () => {
     });
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setPedidoExistente(null);
-    setMesaSeleccionada("");
-    setOrden([]);
-  };
 
 
   //acciones de mesa
@@ -330,6 +334,7 @@ const estadosPedidoTexto: Record<number, string> = {
                           className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                         >
                           <DropdownMenu.Item
+                            onClick={() => handleModificarPedido(mesa)} //abre NewOrderModal
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                           >
                             <Edit2 /> Modificar Pedido
@@ -366,6 +371,7 @@ const estadosPedidoTexto: Record<number, string> = {
                               <Check /> Marcar En Mesa
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
+                              onClick={() => handleModificarPedido(mesa)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
@@ -396,6 +402,7 @@ const estadosPedidoTexto: Record<number, string> = {
                               <CreditCard/> Pagar
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
+                              onClick={() => handleModificarPedido(mesa)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
