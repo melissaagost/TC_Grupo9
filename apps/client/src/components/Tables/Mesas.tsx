@@ -14,15 +14,14 @@ import { PedidoCompletoGuardarDTO, PedidoRowDTO } from "../../types/orderTypes";
 // Define the MesaConPedido interface based on useTableLogic structure
 interface MesaConPedido {
   id_mesa: number;
-  numero: string | number; // numero can be string or number
+  numero: string | number;
   capacidad: number;
   descripcion: string;
   estado: number; // estado de la mesa (libre, ocupada, etc.)
-  pedido?: { // pedido es opcional
+  pedido?: {
     id_pedido: number;
-    estado: number | null; // estado del pedido (solicitado, en preparación, etc.)
-    // puedes añadir otros campos del pedido si son necesarios aquí
-  } | null; // pedido puede ser un objeto o null
+    estado: number | null;
+  } | null;
 }
 
 const MesasTable = () => {
@@ -72,14 +71,16 @@ const MesasTable = () => {
     }
     cancelarPedido.mutate(id, {
       onSuccess: (response) => {
-        if (response.data.success) {
-          showOrderToast(response.data.message || "Pedido cancelado", "success");
+        const result = response.data.sp_cancelar_pedido;
+        if (result && result.success === 1) {
+          showOrderToast(result.message || "Pedido cancelado", "success");
         } else {
-          showOrderToast(response.data.message || "No se pudo cancelar el pedido", "error");
+          showOrderToast(result?.message || "No se pudo cancelar el pedido", "error");
         }
       },
       onError: (error: any) => {
-        showOrderToast(error?.response?.data?.message || error.message || "Error al cancelar el pedido", "error");
+        const backendError = error?.response?.data?.sp_cancelar_pedido?.message || error?.response?.data?.message;
+        showOrderToast(backendError || error.message || "Error al cancelar el pedido", "error");
       }
     });
   };
@@ -428,7 +429,7 @@ const estadosPedidoTexto: Record<number, string> = {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onPedidoGuardado={() => {
-            // fetchMesas(); // Consider if fetchMesas is still needed here or if react-query handles cache invalidation
+            fetchMesas();
            }}
           pedidoExistente={pedidoExistente}
           showOrderToast={showOrderToast}

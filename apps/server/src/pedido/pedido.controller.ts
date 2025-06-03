@@ -56,7 +56,7 @@ export class PedidoController {
     }
   }
 
-  @Roles('administrador', 'mozo')
+  @Roles('administrador', 'mozo', 'cocinero')
   @Patch('actualizar/:id')
   async actualizarEstadoPedido(
     @Param('id', ParseIntPipe) id: number,

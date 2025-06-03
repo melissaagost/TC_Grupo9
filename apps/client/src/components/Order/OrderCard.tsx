@@ -3,10 +3,12 @@ import  { usePermisos } from '../../hooks/usePermisos'
 import { useOrderLogic } from "../../hooks/useOrderLogic";
 import { useState, useMemo } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Toast from "../UI/Toast";
 
-const OrderCard = () => {
+interface OrderCardProps {
+  showOrderActionToast: (message: string, type: "success" | "error" | "info") => void;
+}
 
+const OrderCard = ({ showOrderActionToast }: OrderCardProps) => {
 
   const { userType } = useAuth(); //"cocinero", "mozo", "gestor", etc.
 
@@ -16,15 +18,9 @@ const OrderCard = () => {
         listarPedidos,
         pedidosAgrupados,
         actualizarEstado,
-         toastMessage, setToastMessage,
-         toastType,
     } = useOrderLogic();
 
-
-
     const [estadoSeleccionado, setEstadoSeleccionado] = useState<number | null>(null); // null = todos
-
-
 
    const estados = [
     { id: null, label: "Todas las Mesas" },
@@ -51,8 +47,6 @@ const OrderCard = () => {
     return pedidos;
     }, [userType, estadoSeleccionado, pedidosAgrupados]);
 
-
-
     const estadoClasses: Record<string, string> = {
     "cancelado": "bg-red-100 text-red-500 hover:bg-red-200",
     "solicitado": "bg-yellow-200 text-yellow-800 hover:bg-yellow-300",
@@ -61,35 +55,33 @@ const OrderCard = () => {
     "en mesa": "bg-green-200 text-green-700 hover:bg-green-300",
     };
 
-
-
     const handleActualizarEstado = (id: number, nuevoEstado: number) => {
-
       if (isNaN(id)) {
-      console.error("ID inválido:", id);
-      return;
+        showOrderActionToast("ID de pedido inválido para actualizar.", "error");
+        console.error("ID inválido:", id);
+        return;
       }
 
-      actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } });
+      actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, {
+        onSuccess: (response) => {
+          if (response.data.success) {
+            showOrderActionToast(response.data.message || "Estado actualizado con éxito", "success");
+          } else {
+            showOrderActionToast(response.data.message || "No se pudo actualizar el estado", "error");
+          }
+        },
+        onError: (error: any) => {
+          showOrderActionToast(error?.response?.data?.message || error.message || "Error al actualizar el estado", "error");
+        }
+      });
     };
-
 
     if (listarPedidos.isLoading) return <div>Cargando pedidos...</div>;
     if (listarPedidos.isError) return <div>Error al cargar pedidos</div>;
 
-
 return (
     <>
-      {toastMessage && (
-        <Toast
-            message={toastMessage}
-            type={toastType}
-            onClose={() => setToastMessage(null)}
-        />
-        )}
-
-
-        {tienePermiso("filtrar_pedidos") &&
+      {tienePermiso("filtrar_pedidos") &&
             <div  className="flex flex-wrap gap-4 mt-2 mb-2 bg-eggshell-greekvilla md:w-188 lg:w-188 text-gray-200 p-2 rounded-lg">
                     {estados.map((estado) => (
                         <button
