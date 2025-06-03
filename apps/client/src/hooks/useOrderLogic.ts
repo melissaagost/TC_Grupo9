@@ -158,6 +158,7 @@ export const useOrderLogic = () => {
         }
       }
 
+      //si el pedido ya existe carga datos y guarda los que se modifiquen
       const esEdicion = pedidoExistente && pedidoExistente.id_pedido;
 
       const payload: PedidoCompletoGuardarDTO = {
