@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, BookOpen, Users, LogIn, LogOut, User, Menu, X, Utensils } from "lucide-react";
+import { Calendar, BookOpen, Users, LogIn, LogOut, User, Menu, X, Utensils, UserCircle2  } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -38,7 +38,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center font-medium gap-8 font-raleway text-base text-gray-700">
 
 
-            {userType !== 'administrador' && userType !== 'usuario' && (
+            {userType !== 'administrador' && userType !== 'cocinero' && (
               <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
                 <BookOpen size={16} /> Menú
               </Link>
@@ -67,7 +67,7 @@ const Navbar = () => {
 
 
               {/* Cosas que sólo ve el admin */}
-              {(userType === 'administrador' || userType === 'usuario') && (
+              {(userType === 'administrador' || userType === 'cocinero') && (
                 <Link to="/menu" className="flex items-center gap-1 hover:text-blood-100">
                   <BookOpen size={16} /> Menú
                 </Link>
@@ -85,7 +85,7 @@ const Navbar = () => {
 
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center gap-2 px-4 py-2 bg-transparent border-1 border-to-blood-300 rounded-lg  text-gray-700 hover:bg-blood-500 hover:text-white">
+                    className="flex items-center gap-2 px-4 py-2 bg-transparent border-1 border-to-blood-300 rounded-lg  text-gray-700 hover:bg-blood-300 hover:text-white">
                     <User size={20} />
                     <span>Mi cuenta</span>
                   </button>
@@ -95,9 +95,9 @@ const Navbar = () => {
                     <div className="absolute  left mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
                       <Link
                         to="/profile"
-                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        className="inline-flex gap-1 px-4 py-2 text-gray-700 hover:bg-gray-100"
                         onClick={() => setDropdownOpen(false)}>
-                        Perfil
+                        <UserCircle2/>Perfil
                       </Link>
 
                       <button
@@ -141,7 +141,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden px-6 pb-4 space-y-4 font-raleway text-gray-700">
 
-            {userType !== 'administrador' && userType !== 'usuario' && (
+            {userType !== 'administrador' && userType !== 'cocinero' && (
               <Link to="/building" className="flex items-center gap-2">
                 <BookOpen size={18} /> Menú
               </Link>
@@ -171,7 +171,7 @@ const Navbar = () => {
                   <User size={18} /> Perfil
                 </Link>
 
-                {(userType === 'administrador' || userType === 'usuario') &&(
+                {(userType === 'administrador' || userType === 'cocinero') &&(
                 <Link to="/menu" className="flex items-center gap-2">
                   <BookOpen size={18} /> Menú
                 </Link>

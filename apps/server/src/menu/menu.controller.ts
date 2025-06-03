@@ -45,7 +45,7 @@ export class MenuController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('administrador', 'mozo', 'usuario') //agregar todos los roles
+  //@Roles('administrador', 'mozo', 'usuario') -> para que los clientes puedan ver
   @Get()
   async findAllMenu(): Promise<menu[]> {
     return await this.menuService.findAllMenu();

@@ -11,6 +11,12 @@ export const ItemQueries = {
       );
     `,
 
+      habilitarItem: `
+      SELECT * FROM restaurant.sp_habilitar_item(
+        $1::INTEGER
+      );
+    `,
+
   guardarItem: `
       SELECT * FROM restaurant.sp_guardar_item(
         $1::INTEGER,

@@ -65,6 +65,20 @@ export class ItemController {
     }
   }
 
+    @Patch('habilitar/:id')
+    async habilitarItem(@Param('id', ParseIntPipe) id: number) {
+      try {
+        return this.itemService.habilitarItemAsync(id);
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : 'Error desconocido';
+        throw new HttpException(
+          { message: 'Error al habilitar item', details: message },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+
   @Post('guardar')
   async guardarItem(@Body() data: ItemGuardarDTO) {
     try {

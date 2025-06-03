@@ -14,7 +14,7 @@ const CallToAction = () => {
           {/* Left content */}
           <div className="text-white max-w-xl space-y-6">
 
-            <h2 className="text-6xl md:text-5xl font-playfair font-bold leading-tight">
+            <h2 className="text-6xl  font-playfair font-bold leading-tight">
               Eleva la gestión de tu restaurante
             </h2>
 
@@ -22,7 +22,7 @@ const CallToAction = () => {
             Simplifica las reservas, optimiza la gestión del menú y fortalezca las relaciones con los clientes con nuestra plataforma de gestión de restaurantes todo en uno.
             </p>
 
-            <div className="flex gap-4 font-raleway">
+            <div className="flex gap-4 font-urbanist">
 
                 <button className="bg-gold-mustard text-blood-700 font-semibold px-6 py-3 rounded-md flex items-center gap-2 hover:bg-gold-after transition-all duration-300 hover:-translate-y-1 shadow-md">
                   Empieza <ArrowRight size={16} />

@@ -7,6 +7,7 @@ import Tables from '../pages/Tables'
 import Users from '../pages/Users'
 import Menu from '../pages/Menu'
 import Categories from '../pages/Categories'
+import Orders from '../pages/Orders'
 
 import Building from '../pages/Building'
 import PrivateRoute from '../components/PrivateRoute'
@@ -14,7 +15,7 @@ import PublicRoute from '../components/PublicRoute'
 
 //se envuelve la ruta en el layout que corresponda
 //tipo 1 (admin)
-//tipo 2 (usuario -> cocineros)
+//tipo 2 (cocinero)
 //tipo 3 (mozo)
 
 
@@ -35,7 +36,7 @@ const AppRoutes = () => {
       <Route
         path="/profile"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+          <PrivateRoute allowedUserTypes={['cocinero', 'administrador', 'mozo']}>
             <Profile />
           </PrivateRoute>
         }
@@ -44,7 +45,7 @@ const AppRoutes = () => {
       <Route
         path="/profile/edit"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+          <PrivateRoute allowedUserTypes={['cocinero', 'administrador', 'mozo']}>
             <EditProfile />
           </PrivateRoute>
         }
@@ -53,7 +54,7 @@ const AppRoutes = () => {
       <Route
         path="/tables"
         element={
-          <PrivateRoute allowedUserTypes={['usuario', 'administrador']}>
+          <PrivateRoute allowedUserTypes={['mozo', 'administrador']}>
             <Tables />
           </PrivateRoute>
         }
@@ -71,7 +72,7 @@ const AppRoutes = () => {
       <Route
         path="/menu"
         element={
-          <PrivateRoute allowedUserTypes={['administrador', 'usuario']}>
+          <PrivateRoute allowedUserTypes={['administrador', 'cocinero']}>
             <Menu/>
           </PrivateRoute>
         }
@@ -83,6 +84,15 @@ const AppRoutes = () => {
         element={
           <PrivateRoute allowedUserTypes={['administrador']}>
             <Categories/>
+          </PrivateRoute>
+        }
+      />
+
+        <Route
+        path="/orders"
+        element={
+          <PrivateRoute allowedUserTypes={['administrador', 'mozo', 'cocinero']}>
+            <Orders/>
           </PrivateRoute>
         }
       />

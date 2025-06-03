@@ -1,160 +1,176 @@
-import { useEffect, useState } from "react";
-import { getAllMesas, updateMesa, createMesa } from "../../services/tableService";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../UI/Dialog";
+import { useState, useEffect } from "react";
+import CreateDialog from "./CreateDialog";
+import EditDialog from "./EditDialog";
 import Toast from "../UI/Toast";
 import { Plus, SquarePen} from "lucide-react";
-import TableHeader from "../UI/TableHeader";
+import { useTableLogic } from "../../hooks/useTableLogic";
+import { TableLayout } from "../UI/Table";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { MoreHorizontal, Edit2, CreditCard, Check, X } from "lucide-react";
+import NewOrderModal from "../Order/NewOrder/NewOrderModal";
+import { useOrderLogic } from "../../hooks/useOrderLogic";
+import { PedidoCompletoGuardarDTO, PedidoRowDTO } from "../../types/orderTypes";
 
-
+// Define the MesaConPedido interface based on useTableLogic structure
+interface MesaConPedido {
+  id_mesa: number;
+  numero: string | number;
+  capacidad: number;
+  descripcion: string;
+  estado: number; // estado de la mesa (libre, ocupada, etc.)
+  pedido?: {
+    id_pedido: number;
+    estado: number | null;
+  } | null;
+}
 
 const MesasTable = () => {
 
-    const [mesas, setMesas] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orderToastMessage, setOrderToastMessage] = useState<string | null>(null);
+  const [orderToastType, setOrderToastType] = useState<"success" | "error" | "info">("info");
 
-    useEffect(() => {
-        fetchMesas();
-    }, []);
+  const showOrderToast = (message: string, type: "success" | "error" | "info") => {
+    setOrderToastMessage(message);
+    setOrderToastType(type);
+  };
 
-    const fetchMesas = async () => {
-        try {
-        const data = await getAllMesas();
-        setMesas(data);
-        } catch (error) {
-        console.error('Error fetching mesas:', error);
+  const {
+    actualizarEstado,
+    cancelarPedido,
+    pedidoExistente, setPedidoExistente,
+    cargarPedidoPorId,
+    setMesaSeleccionada,
+    setOrden,
+  } = useOrderLogic();
+
+  //modificar pedido
+  const handleModificarPedido = async (mesa: MesaConPedido) => {
+    setMesaSeleccionada(mesa.id_mesa.toString());
+
+    if (mesa.pedido?.id_pedido) {
+      const result = await cargarPedidoPorId(mesa.pedido.id_pedido);
+      if (result.pedido) {
+        setPedidoExistente(result.pedido);
+      }
+      if (result.toast) {
+        showOrderToast(result.toast.message, result.toast.type);
+      }
+    } else {
+      setPedidoExistente(null);
+    }
+    setIsModalOpen(true);
+  };
+
+  //cancelar pedido
+  const handleCancelar = (id: number) => {
+     if (isNaN(id)) {
+      showOrderToast("ID de pedido inválido para cancelar.", "error");
+      console.error("ID inválido:", id);
+      return;
+    }
+    cancelarPedido.mutate(id, {
+      onSuccess: (response) => {
+        const result = response.data.sp_cancelar_pedido;
+        if (result && result.success === 1) {
+          showOrderToast(result.message || "Pedido cancelado", "success");
+        } else {
+          showOrderToast(result?.message || "No se pudo cancelar el pedido", "error");
         }
-    };
+      },
+      onError: (error: any) => {
+        const backendError = error?.response?.data?.sp_cancelar_pedido?.message || error?.response?.data?.message;
+        showOrderToast(backendError || error.message || "Error al cancelar el pedido", "error");
+      }
+    });
+  };
 
-
-    const [numero, setNumero] = useState<number>(0);
-    const [capacidad, setCapacidad] = useState<number>(0);
-    const [descripcion, setDescripcion] = useState<string>("");
-    const [idRestaurante, setIdRestaurante] = useState<number>(1); // ajustar si hubiera mas rest.
-
-
-    const handleCreateMesa = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // VALIDACIÓN antes de crear
-        if (numero <= 0 || capacidad <= 0 || descripcion.trim() === "") {
-          setToastMessage("Por favor completa todos los campos antes de crear");
-          setToastType("info");
-          return;
+  //cambiar pedido a en prep, en mesa
+  const handleActualizarEstado = (id: number, nuevoEstado: number) => {
+      if (isNaN(id)) {
+        showOrderToast("ID de pedido inválido para actualizar estado.", "error");
+        console.error("ID inválido:", id);
+        return;
+    }
+    actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, {
+      onSuccess: (response) => {
+        if (response.data.success) {
+          showOrderToast(response.data.message || "Estado actualizado", "success");
+        } else {
+          showOrderToast(response.data.message || "No se pudo actualizar el estado", "error");
         }
+      },
+      onError: (error: any) => {
+         showOrderToast(error?.response?.data?.message || error.message || "Error al actualizar el estado", "error");
+      }
+    });
+  };
 
-        try {
-          await createMesa({
-            numero,
-            capacidad,
-            descripcion,
-            id_restaurante: idRestaurante,
-          });
-
-          console.log("Mesa creada correctamente");
-          setIsCreating(false); // cerrar modal
-          fetchMesas(); // refrescar tabla
-
-          // limpiar form
-          setNumero(0);
-          setCapacidad(0);
-          setDescripcion("");
-
-          setToastMessage("Mesa creada exitosamente");
-          setToastType("success");
-
-        } catch (error) {
-          console.error("Error al crear mesa", error);
-          setToastMessage("Error al crear mesa");
-          setToastType("error");
-        }
-      };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setPedidoExistente(null);
+    setMesaSeleccionada("");
+    setOrden([]);
+  };
 
 
-    const handleUpdateMesa = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!editingMesa) return;
+  //acciones de mesa
+  const {
+  marcarMesaLibre,
+  marcarMesaOcupada,
+  mesas,
+  searchTerm, setSearchTerm,
+  estadoFiltro, setEstadoFiltro,
+  numero, setNumero,
+  capacidad, setCapacidad,
+  descripcion, setDescripcion,
+  editingMesa, setEditingMesa,
+  isCreating, setIsCreating,
+  editNumero, setEditNumero,
+  editCapacidad, setEditCapacidad,
+  editDescripcion, setEditDescripcion,
+  toastMessage, setToastMessage,
+  toastType,
+  fetchMesas,
+  handleCreateMesa,
+  handleUpdateMesa,
+  startEditingMesa,
+  filteredMesas
+} = useTableLogic();
 
-        // VALIDACIÓN: No hubo cambios
-        if (
-          editingMesa.numero === editNumero &&
-          editingMesa.capacidad === editCapacidad &&
-          editingMesa.descripcion === editDescripcion
-        ) {
-          setToastMessage("No hay cambios para guardar");
-          setToastType("info");
-          return;
-        }
+const estadosUnicos = Array.from(
+  new Set(
+    mesas
+      .filter((m) => m.pedido != null) // solo las que tienen pedido
+      .map((m) => m.pedido.estado)
+  )
+);
 
-        try {
-          await updateMesa(editingMesa.id_mesa, {
-            numero: editNumero,
-            capacidad: editCapacidad,
-            descripcion: editDescripcion,
-            id_restaurante: 1, // ya sabemos que siempre es 1
-          });
-
-          console.log("Mesa actualizada correctamente");
-          setToastMessage("Mesa actualizada correctamente");
-          setToastType("success");
-
-          fetchMesas(); // refresca la lista
-          setEditingMesa(null); // cierra modal
-        } catch (error) {
-          console.error("Error al actualizar mesa", error);
-          setToastMessage("Error al actualizar mesa");
-          setToastType("error");
-        }
-      };
-
-
-      const startEditingMesa = (mesa: any) => {
-        setEditingMesa(mesa);
-        setEditNumero(mesa.numero);
-        setEditCapacidad(mesa.capacidad);
-        setEditDescripcion(mesa.descripcion);
-      };
-
-      const [searchTerm, setSearchTerm] = useState("");
-      const filteredMesas = mesas.filter((mesa) => {
-        const search = searchTerm.toLowerCase();
-        const numero = mesa.numero.toString();
-        const descripcion = mesa.descripcion.toLowerCase();
-        const estado = mesa.estado === 0 ? "libre" : mesa.estado === 1 ? "ocupado" : mesa.estado === 2 ? "reservado" : "desconocido";
+const estadosPedidoTexto: Record<number, string> = {
+  //0: "cancelado", si se quiere agregar este filtro hay que agregarlo como condicion en la tabla
+  1: "Solicitado",
+  //2: "pagado",
+  3: "En Preparación",
+  5: "En Mesa",
+};
 
 
-        return (
-          numero.includes(search) ||
-          descripcion.includes(search) ||
-          estado.includes(search)
-        );
-      });
-
-
-    //estados
-    const [editingMesa, setEditingMesa] = useState<any | null>(null);
-
-    const [isCreating, setIsCreating] = useState(false);
-    const [editNumero, setEditNumero] = useState<number>(0);
-    const [editCapacidad, setEditCapacidad] = useState<number>(0);
-    const [editDescripcion, setEditDescripcion] = useState<string>("");
-
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
 
   return (
     <div className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">
 
-        {toastMessage && (
-        <Toast
-            message={toastMessage}
-            type={toastType}
-            onClose={() => setToastMessage(null)}
-        />
-        )}
+      {/*validaciones de pedidos */}
+     {orderToastMessage && (
+        <Toast type={orderToastType} message={orderToastMessage} onClose={() => setOrderToastMessage(null)} />
+      )}
 
+      {/*validaciones de mesas */}
+     {toastMessage && (
+        <Toast type={toastType} message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
 
       <h1 className="text-4xl font-playfair text-blood-100 font-bold mb-4">Gestión de Mesas</h1>
       <h3 className="text-lg font-urbanist  text-gray-700 font-light mb-4">Administra las mesas de tu restaurante</h3>
-
 
       <div className="mb-4">
 
@@ -163,194 +179,286 @@ const MesasTable = () => {
                 placeholder="Buscar mesa..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className=" md:w-90 border  bg-white border-gray-300  rounded-xl p-2 w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blood-200"
+                className=" md:w-132 border  bg-white border-gray-300  rounded-xl p-2 lg:w-132 mb-1 focus:outline-none focus:ring-2 focus:ring-blood-200"
             />
+        </div>
+
+        {/*filtro segun el estado del pedido asociado a una emsa (ignorando los pagados y cancelados pq la mesa se considera libre) */}
+        <div >
+
+          <h3>Filtrar por estado del pedido:</h3>
+
+          <div  className="flex flex-wrap gap-4 mt-2 mb-2 bg-eggshell-greekvilla md:w-132 lg:w-132 text-gray-200 p-2 rounded-lg">
+
+            <button onClick={() => setEstadoFiltro(null)}
+              className="px-4 py-1 rounded-md text-sm font-semibold transition bg-eggshell-whitedove text-charcoal-800 shadow text-charcoal-400 hover:text-charcoal-600"
+              >
+              Todas las Mesas
+            </button>
+
+            {estadosUnicos.map((estado) => (
+
+              <button key={estado} onClick={() =>  setEstadoFiltro(estado)}
+             className={`px-4 py-1 rounded-md text-sm font-semibold transition ${
+
+                  estadoFiltro === estado
+                    ? "bg-eggshell-whitedove text-charcoal-800 shadow"
+                    : "text-charcoal-400 hover:text-charcoal-600"
+
+                }`}
+             >
+                {estadosPedidoTexto[estado] ?? `Estado ${estado}`}
+
+              </button>
+            ))}
+
+          </div>
+
         </div>
 
         <div className="overflow-x-auto w-full">
 
-          <table className="min-w-full  font-urbanist table-auto bg-white shadow-2xl rounded-xl">
+         <TableLayout
+            title="Listado de Mesas"
+            data={filteredMesas}
+            columns={[
+              {
+                key: "numero",
+                label: "Número",
+                className: "text-center",
+                render: (mesa) => <div >{mesa.numero}</div>,
+              },
+              {
+                key: "capacidad",
+                label: "Capacidad",
+                className: "text-center",
+                render: (mesa) => <div >{mesa.capacidad} personas</div>,
+              },
+              {
+                key: "descripcion",
+                label: "Descripción",
+                className: "text-center",
+                render: (mesa) => <div >{mesa.descripcion}</div>,
+              },
+              {
+                key: "estado",
+                label: "Estado",
+                className: "text-center",
+                render: (mesa) => (
+                  <div>
+                    {mesa.estado === 0 ? (
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Libre</span>
+                    ) : mesa.estado === 1 ? (
+                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Ocupado</span>
+                    ) : (
+                      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">Reservado</span>
+                    )}
+                  </div>
+                ),
+              },
+              {
+                key: "acciones",
+                label: "Acciones",
+                className: "text-center",
+                render: (mesa) => (
+                  <div className="flex justify-center py-2  text-eggshell-whitedove font-semibold">
+                    <button
+                      onClick={() => startEditingMesa(mesa)}
+                      className="px-2 py-1 bg-blue-400 hover:text-blue-900 gap-1 inline-flex items-center transition-all duration-300 hover:-translate-y-1 shadow-md rounded-md"
+                    >
+                      <SquarePen /> Modificar
+                    </button>
+                  </div>
+                ),
+              },
+              {
+                key: "pedido",
+                label: "Pedido",
+                className: "text-center",
+                render: (mesa) => {
+                  const estadoMesa = mesa.estado;
+                  const pedido = mesa.pedido;
+                  const estadoPedido = pedido?.estado;
 
-            <TableHeader>
-                <th className="py-2">Número</th>
-                <th className="py-2">Capacidad</th>
-                <th className="py-2">Descripción</th>
-                <th className="py-2">Estado</th>
-                <th className="py-2">Acciones</th>
-                <th className="py-2">Pedido</th>
-              </TableHeader>
+                  if (estadoMesa === 2) {
+                    // Mesa reservada
+                    return (
+                      <div className="flex flex-col items-center gap-2">
+                        <button
+                          onClick={() => marcarMesaOcupada.mutate(mesa.id_mesa)}
+                          className="bg-yellow-300 text-white px-2 py-1 rounded-md"
+                        >
+                          Ocupar Mesa
+                        </button>
+                        <button
+                          onClick={() => marcarMesaLibre.mutate(mesa.id_mesa)}
+                          className="bg-green-400 text-white px-2 py-1 rounded-md"
+                        >
+                          Liberar Mesa
+                        </button>
+                      </div>
+                    );
+                  }
 
+                  if (estadoMesa === 1) {
+                    // Mesa ocupada
+                    if (!pedido) {
+                      return (
+                        <button
+                          onClick={() => setIsModalOpen(true)}
+                          className="px-2 py-1 text-white font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md"
+                        >
+                          <Plus /> Agregar Pedido
+                        </button>
+                      );
+                    }
 
+                    // Con pedido solicitado
+                    console.log("Estado de pedido:", estadoPedido);
 
-            <tbody className="text-sm">
-              {filteredMesas.map((mesa) => (
-                <tr  className="border-t border-gray-100 hover:bg-gray-50" key={mesa.id_mesa}>
-
-                  <td className="px-4 py-2 text-center">{mesa.numero}</td>
-                  <td className="px-4 py-2 text-center">{mesa.capacidad}</td>
-                  <td className="px-4 py-2 text-center">{mesa.descripcion}</td>
-
-                  <td className="px-4 py-2 text-center">
-                        {
-                          mesa.estado === 0 ? (
-                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
-                              Libre
-                            </span>
-                          ) : mesa.estado === 1 ? (
-                            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">
-                              Ocupado
-                            </span>
-                          ) : (
-                            <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
-                              Reservado
-                            </span>
-                          )
-                        }
-                    </td>
-
-                  {/*Si la mesa esta libre/reservada: renderiza boton agregar pedido */}
-                  {/*Si la mesa esta ocupada: renderiza boton pagar y boton modif pedido */}
-
-
-                  <td className="flex font-semibold justify-center  text-eggshell-whitedove gap-2 py-2">
-                    <button  onClick={() => startEditingMesa(mesa)}
-                    className="px-2 py-1 bg-blue-400 hover:text-blue-900 gap-1 inline-flex items-center transition-all duration-300 hover:-translate-y-1 shadow-md rounded-md  "><SquarePen/>Modificar</button>
-                  </td>
-
-
-                  <td className="px-4 py-2 text-center">
-
-
-                      {(mesa.estado === 0 || mesa.estado === 2 ) ? (
-                          <button className="px-2 py-1  transition-all text-white duration-300 font-semibold hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md">
-                            <Plus/> Agregar Pedido
+                  if (estadoPedido === 1) {
+                    return (
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger asChild>
+                          <button className="w-8 h-8 ml-30 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
+                            <MoreHorizontal className="w-4 h-4" />
                           </button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content
+                          align="end"
+                          sideOffset={8}
+                          className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
+                        >
+                          <DropdownMenu.Item
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                          >
+                            <Edit2 /> Modificar Pedido
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Item
+                            onClick={() => handleCancelar(pedido.id_pedido)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-cream-100 cursor-pointer"
+                          >
+                            <X/> Cancelar Pedido
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                    );
+                  }
 
-                      ) : (
-                        <div className="gap-1 items-center font-semibold text-white inline-flex">
-                          <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-blood-pay hover:text-blood-300 gap-1 inline-flex items-center rounded-md">
-                            Pagar
-                          </button>
-                          <button className="px-2 py-1 transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-modify hover:text-gray-200 gap-1 inline-flex items-center rounded-md">
-                            Modificar Pedido
-                          </button>
-                        </div>
-                      )}
+                    // Con pedido en preparación
+                    if (estadoPedido === 3) {
+                      return (
+                        <DropdownMenu.Root>
+                          <DropdownMenu.Trigger asChild>
+                            <button className="w-8 h-8 ml-30 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+                          </DropdownMenu.Trigger>
+                          <DropdownMenu.Content
+                            align="end"
+                            sideOffset={8}
+                            className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
+                          >
+                            <DropdownMenu.Item
+                              onClick={() => handleActualizarEstado(pedido.id_pedido, 5)}
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                            >
+                              <Check /> Marcar En Mesa
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                            >
+                              <Edit2 /> Modificar Pedido
+                            </DropdownMenu.Item>
+                          </DropdownMenu.Content>
+                        </DropdownMenu.Root>
+                      );
+                    }
 
-                  </td>
+                    // Con pedido en mesa
+                    if (estadoPedido === 5) {
+                      return (
+                        <DropdownMenu.Root>
+                          <DropdownMenu.Trigger asChild>
+                            <button className="w-8 h-8  ml-30 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+                          </DropdownMenu.Trigger>
+                          <DropdownMenu.Content
+                            align="end"
+                            sideOffset={8}
+                            className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
+                          >
+                            <DropdownMenu.Item
+                              onClick={() => console.log("Pagar")}
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                            >
+                              <CreditCard/> Pagar
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
+                            >
+                              <Edit2 /> Modificar Pedido
+                            </DropdownMenu.Item>
+                          </DropdownMenu.Content>
+                        </DropdownMenu.Root>
+                      );
+                    }
+                  }
 
-                </tr>
-              ))}
+                  // Mesa libre u otros casos
+                  return (
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="px-2 py-1 text-white font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md"
+                    >
+                      <Plus /> Agregar Pedido
+                    </button>
+                  );
+                }
+              }
 
-            </tbody>
-
-          </table>
+            ]}
+          />
       </div>
 
-      <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 m-5 w-50 gap-1 inline-flex items-center bg-green-500 text-white rounded-3xl hover:bg-green-600"> <Plus size={'20'}/> Agregar una Mesa</button>
+      <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 mt-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/> Agregar una Mesa</button>
 
-      {/*abre formularios */}
+      {isModalOpen && (
+        <NewOrderModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onPedidoGuardado={() => {
+            fetchMesas();
+           }}
+          pedidoExistente={pedidoExistente}
+          showOrderToast={showOrderToast}
+        />
+      )}
 
-        {/*form de creacion */}
-        <Dialog open={isCreating} onClose={() => setIsCreating(false)}>
+      <CreateDialog
+        open={isCreating}
+        numero={numero}
+        capacidad={capacidad}
+        descripcion={descripcion}
+        setNumero={setNumero}
+        setCapacidad={setCapacidad}
+        setDescripcion={setDescripcion}
+        onClose={() => setIsCreating(false)}
+        onSubmit={handleCreateMesa}
+      />
 
-            <DialogContent>
-
-                <DialogHeader><DialogTitle>Crear Nueva Mesa</DialogTitle></DialogHeader>
-
-                <form onSubmit={handleCreateMesa}>
-
-                    <label className="block text-md font-semibold text-gray-200 mt-2 mb-1">Número de Mesa</label>
-                    <input
-                        type="text"
-                        placeholder="Número de Mesa"
-                        value={numero}
-                        onChange={(e) => setNumero(Number(e.target.value))}
-                        className="mt-2 w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-sm text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
-
-                        />
-
-                    <label className="block text-md font-semibold text-gray-200 mt-2 mb-1">Capacidad</label>
-                    <input
-                        type="text"
-                        placeholder="Capacidad"
-                        value={capacidad}
-                        onChange={(e) => setCapacidad(Number(e.target.value))}
-                        className="mt-2 w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-sm text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
-
-                    />
-
-                    <label className="block text-md font-semibold text-gray-200 mt-2 mb-1">Ubicación</label>
-                    <input
-                        type="text"
-                        placeholder="Descripción"
-                        value={descripcion}
-                        onChange={(e) => setDescripcion(e.target.value)}
-                        className="mt-2 w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-sm text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
-
-                    />
-
-
-                      <div className="flex justify-end gap-2 mt-4">
-                        <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Guardar Cambios</button>
-                      </div>
-
-                </form>
-
-            </DialogContent>
-
-        </Dialog>
-
-
-
-        {/*dialog patra editar mesa */}
-        <Dialog open={!!editingMesa} onClose={() => setEditingMesa(null)}>
-
-            <DialogContent>
-
-                <DialogHeader><DialogTitle>Editar Mesa</DialogTitle></DialogHeader>
-
-                <form onSubmit={handleUpdateMesa}>
-
-                    <label className="block text-md font-semibold text-gray-200 mt-2 mb-1">Número de Mesa</label>
-                    <input
-                        type="text"
-                        value={editNumero}
-                        onChange={(e) => setEditNumero(Number(e.target.value))}
-                        className="mt-2 w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-sm text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
-
-                    />
-
-                    <label className="block text-md font-semibold text-gray-200 mt-3 mb-1">Capacidad</label>
-                    <input
-                        type="text"
-                        value={editCapacidad}
-                        onChange={(e) => setEditCapacidad(Number(e.target.value))}
-                        className="mt-2 w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-sm text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
-                      />
-
-                    <label className="block text-md font-semibold text-gray-200 mt-3  mb-1">Ubicación</label>
-                    <input
-                        type="text"
-                        value={editDescripcion}
-                        onChange={(e) => setEditDescripcion(e.target.value)}
-                        className="mt-2 w-full shadow-sm border border-eggshell-creamy rounded-md px-3 py-2 text-sm text-gray-800 outline-none focus:ring-1 focus:ring-blood-300"
-                      />
-
-                      <div className="flex justify-end gap-2 mt-4">
-
-
-                      <button type="submit" className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md">Guardar Cambios</button>
-
-                      </div>
-
-                </form>
-
-            </DialogContent>
-
-        </Dialog>
-
-
+      <EditDialog
+        open={!!editingMesa}
+        editNumero={editNumero}
+        editCapacidad={editCapacidad}
+        editDescripcion={editDescripcion}
+        setEditNumero={setEditNumero}
+        setEditCapacidad={setEditCapacidad}
+        setEditDescripcion={setEditDescripcion}
+        onClose={() => setEditingMesa(null)}
+        onSubmit={handleUpdateMesa}
+      />
 
     </div>
 
@@ -359,3 +467,9 @@ const MesasTable = () => {
 };
 
 export default MesasTable;
+
+
+
+  //si esta reservado(mesa estado 2) -> opciones ocupar(mesa estado 1)/liberar(mesa estado 0) */}
+  //si esta ocupado(mesa estado 1) -> agregar pedido(pedido estado 1)  y modificar -> si el pedido esta "en preparacoion" entonces ofrecer opcion marcar en pedido mesa(pedido estado 5) */}
+  //si esta "en mesa"(pedido estado 5) ofrecer opcion de pago y modificar. condicion: mesa ocupada(mesa estado 1) && pedido "en mesa"(pedido estado 5)

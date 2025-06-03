@@ -21,7 +21,7 @@ const StartTrial = () => {
                 </div>
 
                 {/* Botones */}
-                <div className="flex flex-col md:flex-row justify-center items-center gap-6">
+                <div className="flex flex-col md:flex-row font-urbanist justify-center items-center gap-6">
 
                     <button className="bg-blood-100 hover:bg-blood-400 text-eggshell-whitedove font-semibold px-8 py-3 rounded-md flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:-translate-y-1">
                         Empezar Prueba Gratis <ArrowRight size={16} />

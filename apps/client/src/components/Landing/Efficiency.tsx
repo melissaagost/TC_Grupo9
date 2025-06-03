@@ -40,7 +40,7 @@ const Efficiency = () => {
                             </li>
                         </ul>
 
-                        <button className="mt-8 bg-gold-mustard hover:bg-gold-after font-raleway text-gray-900 font-semibold py-3 px-6 rounded-md transition-colors">
+                        <button className="mt-8 bg-gold-mustard font-urbanist hover:bg-gold-after font-raleway text-gray-900 font-semibold py-3 px-6 rounded-md transition-colors">
                             Explorar todas las Funcionalidades
                         </button>
 

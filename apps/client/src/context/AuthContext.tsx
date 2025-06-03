@@ -7,6 +7,9 @@ interface AuthContextType {
   setUserType: (userType: string | null) => void
   idRestaurante: number | null
   setIdRestaurante: (id: number | null) => void
+  idUsuario: number | null;
+setIdUsuario: (id: number | null) => void;
+userName?: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,6 +19,9 @@ const AuthContext = createContext<AuthContextType>({
   setUserType: () => {},
   idRestaurante: null,
   setIdRestaurante: () => {},
+   idUsuario: null,
+  setIdUsuario: () => {},
+   userName: null,
 })
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -25,6 +31,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const storedId = localStorage.getItem('idRestaurante')
     return storedId ? parseInt(storedId) : null
   })
+
+  const [idUsuario, setIdUsuario] = useState<number | null>(() => {
+  const stored = localStorage.getItem('idUsuario');
+  return stored ? parseInt(stored) : null;
+});
+
 
   useEffect(() => {
     if (token) {
@@ -50,9 +62,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [idRestaurante])
 
+  useEffect(() => {
+  if (idUsuario !== null) {
+    localStorage.setItem('idUsuario', idUsuario.toString());
+  } else {
+    localStorage.removeItem('idUsuario');
+  }
+}, [idUsuario]);
+
   return (
     <AuthContext.Provider
-      value={{ token, setToken, userType, setUserType, idRestaurante, setIdRestaurante }}
+      value={{ token, setToken, userType, setUserType, idRestaurante, setIdRestaurante, idUsuario, setIdUsuario }}
     >
       {children}
     </AuthContext.Provider>

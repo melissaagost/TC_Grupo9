@@ -26,18 +26,52 @@ export class PedidoService {
       id,
     );
 
+
+    // Obtener la mesa asociada al pedido
+    const pedido = await this.prisma.pedido.findUnique({
+      where: { id_pedido: id },
+      select: { id_mesa: true },
+    });
+
+    //Actualizar la mesa a estado libre (0)
+    if (pedido?.id_mesa) {
+      await this.prisma.mesa.update({
+        where: { id_mesa: pedido.id_mesa },
+        data: { estado: 0 },
+      });
+    }
+
     return result[0];
   }
+
+  async actualizarEstadoPedidoAsync(
+    id_pedido: number,
+    nuevo_estado: number,
+  ): Promise<RespuestaGenerica> {
+   const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+  `
+  SELECT * FROM restaurant.actualizar_estado_pedido(
+    ${id_pedido}::INTEGER,
+    ${nuevo_estado}::INTEGER
+  );
+  `
+);
+
+
+    return result[0];
+  }
+
 
   async guardarPedidoCompletoAsync(
     data: PedidoCompletoGuardarDTO,
   ): Promise<RespuestaGenerica> {
     const { id_pedido, id_usuario, id_mesa, items } = data;
 
+
     // Convertir el array de items a formato JSONB
     const itemsJsonb = JSON.stringify(items);
 
-    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+    const result = await this.prisma.$queryRawUnsafe<{ result: RespuestaGenerica }[]>(
       PedidoQueries.guardarPedidoCompleto,
       id_pedido ?? null,
       id_usuario,
@@ -45,7 +79,14 @@ export class PedidoService {
       itemsJsonb,
     );
 
-    return result[0];
+    // Cambiar estado de la mesa a "ocupada" (1)
+   await this.prisma.mesa.update({
+      where: { id_mesa },
+      data: { estado: 1 },
+    });
+
+
+    return result[0].result;
   }
 
   async listarPedidoCompletoAsync(

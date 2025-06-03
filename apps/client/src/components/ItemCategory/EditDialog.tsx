@@ -50,7 +50,7 @@ export const EditDialog = ({
     <Dialog open={open} onClose={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Editar Menú</DialogTitle>
+          <DialogTitle>Editar Categoría</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">

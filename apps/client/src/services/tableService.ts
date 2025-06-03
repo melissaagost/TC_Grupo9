@@ -12,6 +12,11 @@ export const getMesaById = async (id: number) => {
   return response.data;
 };
 
+export const getMesasConPedido = async () => {
+  const response = await axios.get(`${API_URL}/con-pedido`);
+  return response.data; // o response.data.data si tu controller usa `{ data: mesas }`
+};
+
 export const createMesa = async (mesa: {
   numero: number;
   capacidad: number;
@@ -39,5 +44,10 @@ export const setMesaLibre = async (id: number) => {
 
 export const setMesaOcupado = async (id: number) => {
   const response = await axios.patch(`${API_URL}/${id}/ocupado`);
+  return response.data;
+};
+
+export const setMesaReservado = async (id: number) => {
+  const response = await axios.patch(`${API_URL}/${id}/reservado`);
   return response.data;
 };

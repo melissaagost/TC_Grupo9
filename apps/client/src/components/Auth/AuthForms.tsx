@@ -17,7 +17,7 @@ const AuthForms = () => {
   const [showPassword, setShowPassword] = useState(false)
 
   const navigate = useNavigate()
-  const { setToken, setUserType, setIdRestaurante } = useAuth() // ⬅️ También el id_restaurante
+  const { setToken, setUserType, setIdRestaurante, setIdUsuario } = useAuth()
 
    //toast
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -37,12 +37,17 @@ const AuthForms = () => {
 
 
         if (decoded?.rol) {
-          setUserType(decoded.rol); // "administrador" o "usuario"
+          setUserType(decoded.rol);
         }
 
         if (decoded?.id_restaurante !== undefined) {
           setIdRestaurante(decoded.id_restaurante);
         }
+
+        if (decoded?.sub) {
+          setIdUsuario(decoded.sub);
+        }
+
 
         console.log('Login exitoso ✅');
         navigate('/');

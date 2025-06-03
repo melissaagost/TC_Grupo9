@@ -47,6 +47,30 @@ export class MesaService {
     }
   }
 
+    //obtener mesas que tengan pedidos
+   async obtenerMesasConPedidoActivo() {
+    return await this.prisma.$queryRawUnsafe(`
+      SELECT
+        m.id_mesa,
+        m.numero,
+        m.capacidad,
+        m.descripcion,
+        m.estado AS estado_mesa,
+        p.id_pedido,
+        p.estado AS estado_pedido
+      FROM restaurant.mesa m
+      LEFT JOIN LATERAL (
+        SELECT p.id_pedido, p.estado
+        FROM restaurant.pedido p
+        WHERE p.id_mesa = m.id_mesa
+          AND p.estado NOT IN (0, 2) -- Excluir cancelado y pagado
+        ORDER BY p.id_pedido DESC
+        LIMIT 1
+      ) p ON true
+      ORDER BY m.numero;
+    `);
+  }
+
   async findAllMesa(): Promise<mesa[]> {
     try {
       const mesas = await this.prisma.$queryRawUnsafe<mesa[]>(
@@ -100,4 +124,6 @@ export class MesaService {
       throw new BadRequestException(error || 'Error al reservar la mesa');
     }
   }
+
+
 }
