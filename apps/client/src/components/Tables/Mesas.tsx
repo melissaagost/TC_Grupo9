@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CreateDialog from "./CreateDialog";
 import EditDialog from "./EditDialog";
 import Toast from "../UI/Toast";
@@ -9,11 +9,32 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, Edit2, CreditCard, Check, X } from "lucide-react";
 import NewOrderModal from "../Order/NewOrder/NewOrderModal";
 import { useOrderLogic } from "../../hooks/useOrderLogic";
+import { PedidoCompletoGuardarDTO, PedidoRowDTO } from "../../types/orderTypes";
 
+// Define the MesaConPedido interface based on useTableLogic structure
+interface MesaConPedido {
+  id_mesa: number;
+  numero: string | number; // numero can be string or number
+  capacidad: number;
+  descripcion: string;
+  estado: number; // estado de la mesa (libre, ocupada, etc.)
+  pedido?: { // pedido es opcional
+    id_pedido: number;
+    estado: number | null; // estado del pedido (solicitado, en preparación, etc.)
+    // puedes añadir otros campos del pedido si son necesarios aquí
+  } | null; // pedido puede ser un objeto o null
+}
 
 const MesasTable = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orderToastMessage, setOrderToastMessage] = useState<string | null>(null);
+  const [orderToastType, setOrderToastType] = useState<"success" | "error" | "info">("info");
+
+  const showOrderToast = (message: string, type: "success" | "error" | "info") => {
+    setOrderToastMessage(message);
+    setOrderToastType(type);
+  };
 
   const {
     actualizarEstado,
@@ -22,42 +43,66 @@ const MesasTable = () => {
     cargarPedidoPorId,
     setMesaSeleccionada,
     setOrden,
-    toastMessage: orderToastMessage,
-    toastType: orderToastType,
-    setToastMessage: setOrderToastMessage,
   } = useOrderLogic();
 
   //modificar pedido
+  const handleModificarPedido = async (mesa: MesaConPedido) => {
+    setMesaSeleccionada(mesa.id_mesa.toString());
 
-//   const handleModificarPedido = async (mesa: MesaConPedido) => {
-//   setMesaSeleccionada(mesa.id_mesa.toString());
-
-//   if (mesa.pedido?.id_pedido) {
-//     const pedido = await cargarPedidoPorId(mesa.pedido.id_pedido);
-//     if (pedido) setPedidoExistente(pedido);
-//   } else {
-//     setPedidoExistente(null);
-//   }
-
-//   setIsModalOpen(true);
-// };
+    if (mesa.pedido?.id_pedido) {
+      const result = await cargarPedidoPorId(mesa.pedido.id_pedido);
+      if (result.pedido) {
+        setPedidoExistente(result.pedido);
+      }
+      if (result.toast) {
+        showOrderToast(result.toast.message, result.toast.type);
+      }
+    } else {
+      setPedidoExistente(null);
+    }
+    setIsModalOpen(true);
+  };
 
   //cancelar pedido
   const handleCancelar = (id: number) => {
      if (isNaN(id)) {
+      showOrderToast("ID de pedido inválido para cancelar.", "error");
       console.error("ID inválido:", id);
       return;
     }
-    cancelarPedido.mutate(id);
+    cancelarPedido.mutate(id, {
+      onSuccess: (response) => {
+        if (response.data.success) {
+          showOrderToast(response.data.message || "Pedido cancelado", "success");
+        } else {
+          showOrderToast(response.data.message || "No se pudo cancelar el pedido", "error");
+        }
+      },
+      onError: (error: any) => {
+        showOrderToast(error?.response?.data?.message || error.message || "Error al cancelar el pedido", "error");
+      }
+    });
   };
 
   //cambiar pedido a en prep, en mesa
   const handleActualizarEstado = (id: number, nuevoEstado: number) => {
       if (isNaN(id)) {
-      console.error("ID inválido:", id);
-      return;
+        showOrderToast("ID de pedido inválido para actualizar estado.", "error");
+        console.error("ID inválido:", id);
+        return;
     }
-    actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } });
+    actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, {
+      onSuccess: (response) => {
+        if (response.data.success) {
+          showOrderToast(response.data.message || "Estado actualizado", "success");
+        } else {
+          showOrderToast(response.data.message || "No se pudo actualizar el estado", "error");
+        }
+      },
+      onError: (error: any) => {
+         showOrderToast(error?.response?.data?.message || error.message || "Error al actualizar el estado", "error");
+      }
+    });
   };
 
   const handleCloseModal = () => {
@@ -115,7 +160,7 @@ const estadosPedidoTexto: Record<number, string> = {
 
       {/*validaciones de pedidos */}
      {orderToastMessage && (
-        <Toast type={orderToastType} message={orderToastMessage} onClose={() => setOrderToastMessage("")} />
+        <Toast type={orderToastType} message={orderToastMessage} onClose={() => setOrderToastMessage(null)} />
       )}
 
       {/*validaciones de mesas */}
@@ -284,8 +329,6 @@ const estadosPedidoTexto: Record<number, string> = {
                           className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                         >
                           <DropdownMenu.Item
-                            //onClick={() => handleModificarPedido(mesa)}
-
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                           >
                             <Edit2 /> Modificar Pedido
@@ -322,8 +365,6 @@ const estadosPedidoTexto: Record<number, string> = {
                               <Check /> Marcar En Mesa
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
-                              //onClick={() => handleModificarPedido(mesa)}
-
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
@@ -354,8 +395,6 @@ const estadosPedidoTexto: Record<number, string> = {
                               <CreditCard/> Pagar
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
-                              //onClick={() => handleModificarPedido(mesa)}
-
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
@@ -384,12 +423,17 @@ const estadosPedidoTexto: Record<number, string> = {
 
       <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 mt-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/> Agregar una Mesa</button>
 
-      <NewOrderModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onPedidoGuardado={fetchMesas}
-        //pedidoExistente={pedidoExistente}
-      />
+      {isModalOpen && (
+        <NewOrderModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onPedidoGuardado={() => {
+            // fetchMesas(); // Consider if fetchMesas is still needed here or if react-query handles cache invalidation
+           }}
+          pedidoExistente={pedidoExistente}
+          showOrderToast={showOrderToast}
+        />
+      )}
 
       <CreateDialog
         open={isCreating}

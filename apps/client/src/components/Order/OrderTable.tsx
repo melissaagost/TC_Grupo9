@@ -7,22 +7,22 @@ const OrderTable = () => {
     //  const [open, setOpen] = useState(true);
       const { tienePermiso } = usePermisos();
 
-     const {
-        toastMessage, setToastMessage,
-        toastType,
-     } = useOrderLogic();
+    //  const {
+    //     toastMessage, setToastMessage,
+    //     toastType,
+    //  } = useOrderLogic();
 
     return (
 
         <div  className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">
 
-             {toastMessage && (
+             {/* {toastMessage && (
                     <Toast
                         message={toastMessage}
                         type={toastType}
                         onClose={() => setToastMessage(null)}
                     />
-            )}
+            )} */}
 
 
             <h1 className="text-4xl font-playfair text-blood-100 font-bold mb-4">Gestión de Pedidos</h1>

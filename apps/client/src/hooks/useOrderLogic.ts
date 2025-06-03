@@ -23,11 +23,9 @@ export const useOrderLogic = () => {
   const { idUsuario } = useAuth();
 
   const [isSaving, setIsSaving] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
   const [mesaSeleccionada, setMesaSeleccionada] = useState("");
   const [orden, setOrden] = useState<ItemOrden[]>([]);
-  const [pedidoExistente, setPedidoExistente] = useState<PedidoRowDTO | null>(null);
+  const [pedidoExistente, setPedidoExistente] = useState<PedidoCompletoGuardarDTO | null>(null);
 
 
   // LISTAR PEDIDOS
@@ -72,18 +70,9 @@ export const useOrderLogic = () => {
     mutationFn: ({ id, data }: { id: number; data: ActualizarEstadoDTO }) =>
     orderService.actualizarEstado({ id, data }),
     onSuccess: (response) => {
-      if (response.data.success) {
-        setToastMessage(response.data.message || "Estado actualizado");
-        setToastType('success');
-        queryClient.invalidateQueries({ queryKey: ["pedidos"] });
-      } else {
-        setToastMessage(response.data.message || "No se pudo actualizar el estado");
-        setToastType('error')
-      }
+      queryClient.invalidateQueries({ queryKey: ["pedidos"] });
     },
     onError: () => {
-      setToastMessage("Error al actualizar el estado");
-      setToastType('error');
     },
   });
 
@@ -91,18 +80,9 @@ export const useOrderLogic = () => {
   const cancelarPedido = useMutation({
     mutationFn: (id: number) => orderService.cancelar(id),
     onSuccess: (response) => {
-      if (response.data.success) {
-        setToastMessage(response.data.message || "Pedido cancelado");
-        setToastType('success')
-        queryClient.invalidateQueries({ queryKey: ["pedidos"] });
-      } else {
-        setToastMessage(response.data.message || "No se pudo cancelar el pedido");
-        setToastType('error');
-      }
+      queryClient.invalidateQueries({ queryKey: ["pedidos"] });
     },
     onError: () => {
-      setToastMessage("Error al cancelar el pedido");
-      setToastType('error')
     },
   });
 
@@ -144,19 +124,17 @@ export const useOrderLogic = () => {
   };
 
   //obtener pedido existente
-  const cargarPedidoPorId = async (id_pedido: number): Promise<PedidoCompletoGuardarDTO | null> => {
+  const cargarPedidoPorId = async (id_pedido: number): Promise<{ pedido: PedidoCompletoGuardarDTO | null; toast?: { message: string; type: 'error' } }> => {
     try {
       const pedido = await orderService.getById(id_pedido);
-      return pedido;
+      return { pedido };
     } catch (error) {
-      setToastMessage("Error al cargar el pedido.");
-      setToastType("error");
-      return null;
+      return { pedido: null, toast: { message: "Error al cargar el pedido.", type: 'error' } };
     }
   };
 
   //crear / modificar pedido
-  const guardarOrden = async (onPedidoGuardado?: () => void) => {
+  const guardarOrden = async (onPedidoGuardado?: () => void): Promise<{ success: boolean; message: string; type: 'success' | 'error'; id?: number | null } | undefined> => {
 
     if (isSaving) return;
 
@@ -164,19 +142,19 @@ export const useOrderLogic = () => {
       setIsSaving(true);
 
       if (!mesaSeleccionada || orden.length === 0) {
-        throw new Error("Debe seleccionar una mesa y agregar al menos un producto.");
+        return { success: false, message: "Debe seleccionar una mesa y agregar al menos un producto.", type: 'error' };
       }
 
       if (idUsuario == null) {
-        throw new Error("Usuario no autenticado.");
+        return { success: false, message: "Usuario no autenticado.", type: 'error' };
       }
 
       for (const item of orden) {
         if (!item.id || isNaN(parseInt(item.id))) {
-          throw new Error("Uno de los ítems no tiene un ID válido.");
+          return { success: false, message: "Uno de los ítems no tiene un ID válido.", type: 'error' };
         }
         if (!item.cantidad || item.cantidad <= 0) {
-          throw new Error(`Cantidad inválida para el producto: ${item.nombre}`);
+          return { success: false, message: `Cantidad inválida para el producto: ${item.nombre}`, type: 'error' };
         }
       }
 
@@ -196,32 +174,22 @@ export const useOrderLogic = () => {
       const { success, message, id } = response.data;
 
       if (!success) {
-        setToastMessage(message || "No se pudo guardar el pedido.");
-        setToastType("error");
-        return;
+        return { success: false, message: message || "No se pudo guardar el pedido.", type: 'error' };
       }
-
-
-      setToastMessage(message || (esEdicion ? "Pedido modificado con éxito" : ""));
-      setToastType("success");
 
       onPedidoGuardado?.();
 
-      return response.data;
+      return { success: true, message: message || (esEdicion ? "Pedido modificado con éxito" : "Pedido guardado con éxito"), type: 'success', id };
 
     } catch (error: any) {
       console.log(error);
-      setToastMessage(
-        error?.response?.data?.mensaje || error.message || "Error inesperado al guardar el pedido."
-      );
-      setToastType("error");
+      return { success: false, message: error?.response?.data?.mensaje || error.message || "Error inesperado al guardar el pedido.", type: 'error' };
     } finally {
       setIsSaving(false);
     }
   };
 
   return {
-    //crearPedido,
     pedidoExistente, setPedidoExistente,
     cargarPedidoPorId,
     listarPedidos,
@@ -229,8 +197,6 @@ export const useOrderLogic = () => {
     pedidosAgrupados,
     actualizarEstado,
     cancelarPedido,
-    toastMessage, setToastMessage,
-    toastType, setToastType,
     mesaSeleccionada, setMesaSeleccionada,
     orden, setOrden,
     addItem,
@@ -238,11 +204,7 @@ export const useOrderLogic = () => {
     decreaseItem,
     removeItem,
     setMesa,
-     isSaving,
+    isSaving,
     guardarOrden
   };
-  {
-
-}
-
 };

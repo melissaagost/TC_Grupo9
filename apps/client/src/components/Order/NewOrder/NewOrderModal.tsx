@@ -7,16 +7,17 @@ import { itemService } from "../../../services/itemService";
 import { ItemRowDTO } from "../../../types/itemTypes";
 import { getAllMesas } from "../../../services/tableService";
 import { PedidoCompletoGuardarDTO } from "../../../types/orderTypes";
-import Toast from "../../UI/Toast";
+// import Toast from "../../UI/Toast"; // Toast will be displayed by Mesas.tsx
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onPedidoGuardado?: () => void;
-   pedidoExistente?: PedidoCompletoGuardarDTO | null;
+  pedidoExistente?: PedidoCompletoGuardarDTO | null;
+  showOrderToast: (message: string, type: "success" | "error" | "info") => void; // Added prop
 };
 
- const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
+ const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado: onPedidoGuardadoProp, pedidoExistente: pedidoExistenteProp, showOrderToast }: Props) => {
 
 
   const [search, setSearch] = useState("");
@@ -33,22 +34,33 @@ type Props = {
     decreaseItem,
     setMesa,
     isSaving,
-    guardarOrden,
-    pedidoExistente, setPedidoExistente,
-    toastMessage, setToastMessage,
-    toastType,
+    guardarOrden, // This now returns { success, message, type }
+    pedidoExistente, setPedidoExistente, // from useOrderLogic, will be initialized by prop
+    // toastMessage, setToastMessage, // No longer using local toast state for rendering here
+    // toastType,
   } = useOrderLogic();
 
-  //cargar pedido existente
-  // useEffect(() => {
-  //   if (pedidoExistente) {
-  //     setMesaSeleccionada(pedidoExistente.id_mesa.toString());
-  //     setOrden(pedidoExistente.items);
-  //   } else {
-  //     setMesaSeleccionada("");
-  //     setOrden([]);
-  //   }
-  // }, [pedidoExistente]);
+  //cargar pedido existente que viene de las props
+   useEffect(() => {
+    if (pedidoExistenteProp && items.length > 0) { // Ensure menu items (this.items) are loaded
+      setMesaSeleccionada(pedidoExistenteProp.id_mesa.toString());
+      const ordenItems = pedidoExistenteProp.items.map(pedidoItem => {
+        const menuItem = items.find(i => i.id_item === pedidoItem.id_item);
+        return {
+          id: pedidoItem.id_item.toString(),
+          cantidad: pedidoItem.cantidad,
+          nombre: menuItem?.nombre || "Ítem no encontrado", // Fallback
+          precio: menuItem?.precio || 0, // Fallback
+        };
+      });
+      setOrden(ordenItems);
+      setPedidoExistente(pedidoExistenteProp); // Set the hook's state
+    } else if (!pedidoExistenteProp) { // Handles nullifying if prop becomes null (e.g. closing and reopening for new)
+      setMesaSeleccionada("");
+      setOrden([]);
+      setPedidoExistente(null);
+    }
+  }, [pedidoExistenteProp, items, setMesaSeleccionada, setOrden, setPedidoExistente]); // Added items to dependency array
 
   //Cargar ítems activos
   useEffect(() => {
@@ -90,16 +102,22 @@ type Props = {
   );
 
   const handleGuardar = async () => {
-    const res = await guardarOrden(onPedidoGuardado);
+    const res = await guardarOrden(onPedidoGuardadoProp);
 
-    if (res?.success) {
-      setMesaSeleccionada("");
-      setOrden([]);
-      setPedidoExistente(null);
-      onClose();
+    if (res?.message && res?.type) {
+      showOrderToast(res.message, res.type);
     }
 
-
+    if (res?.success) {
+      // Reset local state for next time modal opens clean for a NEW order
+      // If it was an edit, onClose might be enough if parent fetches fresh data.
+      // However, if user reopens to create new after edit, local state should be clean.
+      setMesaSeleccionada("");
+      setOrden([]);
+      setPedidoExistente(null); // Clear the hook's pedidoExistente state
+      onClose(); // Close modal
+    }
+    // If !res.success, the toast is shown, and the modal remains open for corrections.
   };
 
   //para que al 'descartar cambios' se borre el pedido existente
@@ -114,9 +132,9 @@ type Props = {
   return (
     <Transition appear show={isOpen} as={Fragment}>
 
-        {toastMessage && (
+        {/* {toastMessage && ( // Removed: Toast is now handled by Mesas.tsx
           <Toast type={toastType} message={toastMessage} onClose={() => setToastMessage("")} />
-        )}
+        )} */}
 
       <Dialog as="div" className="relative z-10" open={isOpen} onClose={onClose}>
         <div className="fixed inset-0" /> {/* bg-black/25 backdrop-blur-sm */}
@@ -126,7 +144,7 @@ type Props = {
           <div className="flex min-h-full items-center justify-center p-6">
             <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-xl bg-eggshell-whitedove p-6 shadow-xl transition-all">
               <Dialog.Title className="text-xl font-playfair font-semibold mb-4">
-                {pedidoExistente ? `Editar Pedido #${pedidoExistente.id_pedido}` : "Nueva Orden"}
+                {pedidoExistenteProp ? `Editar Pedido #${pedidoExistenteProp.id_pedido}` : "Nueva Orden"}
               </Dialog.Title>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
