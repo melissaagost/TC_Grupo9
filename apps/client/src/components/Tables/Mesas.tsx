@@ -330,6 +330,7 @@ const estadosPedidoTexto: Record<number, string> = {
                           className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                         >
                           <DropdownMenu.Item
+                            onClick={() => handleModificarPedido(mesa)}
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                           >
                             <Edit2 /> Modificar Pedido
@@ -366,6 +367,7 @@ const estadosPedidoTexto: Record<number, string> = {
                               <Check /> Marcar En Mesa
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
+                              onClick={() => handleModificarPedido(mesa)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
@@ -396,6 +398,7 @@ const estadosPedidoTexto: Record<number, string> = {
                               <CreditCard/> Pagar
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
+                              onClick={() => handleModificarPedido(mesa)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
