@@ -85,7 +85,7 @@ const MesasTable = () => {
     });
   };
 
-  //cambiar pedido a en prep, en mesa
+  //cambiar pedido  'en mesa'
   const handleActualizarEstado = (id: number, nuevoEstado: number) => {
       if (isNaN(id)) {
         showOrderToast("ID de pedido inválido para actualizar estado.", "error");
