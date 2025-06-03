@@ -1,5 +1,3 @@
-import NewOrderModal from "./NewOrder/NewOrderModal";
-import { useState } from "react";
 import { useOrderLogic } from "../../hooks/useOrderLogic";
 import OrderCard from "./OrderCard";
 import Toast from "../UI/Toast";
@@ -10,20 +8,8 @@ const OrderTable = () => {
       const { tienePermiso } = usePermisos();
 
      const {
-        crearPedido,
-        listarPedidos,
-        actualizarEstado,
-        cancelarPedido,
         toastMessage, setToastMessage,
         toastType,
-        mesaSeleccionada,
-        orden,
-        addItem,
-        increaseItem,
-        decreaseItem,
-        removeItem,
-        setMesa,
-        guardarOrden,
      } = useOrderLogic();
 
     return (

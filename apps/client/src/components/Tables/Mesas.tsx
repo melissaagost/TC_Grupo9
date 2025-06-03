@@ -24,7 +24,7 @@ const MesasTable = () => {
     setOrden,
     toastMessage: orderToastMessage,
     toastType: orderToastType,
-  setToastMessage: setOrderToastMessage,
+    setToastMessage: setOrderToastMessage,
   } = useOrderLogic();
 
   //modificar pedido
@@ -113,10 +113,12 @@ const estadosPedidoTexto: Record<number, string> = {
   return (
     <div className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">
 
-     {toastMessage && (
+      {/*validaciones de pedidos */}
+     {orderToastMessage && (
         <Toast type={orderToastType} message={orderToastMessage} onClose={() => setOrderToastMessage("")} />
       )}
 
+      {/*validaciones de mesas */}
      {toastMessage && (
         <Toast type={toastType} message={toastMessage} onClose={() => setToastMessage("")} />
       )}
@@ -383,7 +385,6 @@ const estadosPedidoTexto: Record<number, string> = {
       <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 mt-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/> Agregar una Mesa</button>
 
       <NewOrderModal
-
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onPedidoGuardado={fetchMesas}

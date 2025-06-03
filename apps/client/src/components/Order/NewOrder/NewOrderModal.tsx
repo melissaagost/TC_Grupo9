@@ -7,6 +7,7 @@ import { itemService } from "../../../services/itemService";
 import { ItemRowDTO } from "../../../types/itemTypes";
 import { getAllMesas } from "../../../services/tableService";
 import { PedidoCompletoGuardarDTO } from "../../../types/orderTypes";
+import Toast from "../../UI/Toast";
 
 type Props = {
   isOpen: boolean;
@@ -15,7 +16,7 @@ type Props = {
    pedidoExistente?: PedidoCompletoGuardarDTO | null;
 };
 
-const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
+ const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
 
 
   const [search, setSearch] = useState("");
@@ -34,8 +35,8 @@ const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
     isSaving,
     guardarOrden,
     pedidoExistente, setPedidoExistente,
-    // toastMessage, setToastMessage,
-    // toastType,
+    toastMessage, setToastMessage,
+    toastType,
   } = useOrderLogic();
 
   //cargar pedido existente
@@ -101,9 +102,21 @@ const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
 
   };
 
+  //para que al 'descartar cambios' se borre el pedido existente
+  const handleDescartarCambios = () => {
+    setMesaSeleccionada("");
+    setOrden([]);
+    setPedidoExistente(null);
+    onClose();
+  };
+
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
+
+        {toastMessage && (
+          <Toast type={toastType} message={toastMessage} onClose={() => setToastMessage("")} />
+        )}
 
       <Dialog as="div" className="relative z-10" open={isOpen} onClose={onClose}>
         <div className="fixed inset-0" /> {/* bg-black/25 backdrop-blur-sm */}
@@ -156,7 +169,7 @@ const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
               {/* Footer */}
               <div className="mt-4 flex justify-end space-x-2 border-t font-urbanist border-t-eggshell-creamy pt-4">
                 <button
-                  onClick={onClose}
+                  onClick={handleDescartarCambios}
                   className="bg-blood-100 hover:bg-blood-300 text-white py-1 px-4 rounded-md"
                 >
                   Descartar Cambios

@@ -23,7 +23,7 @@ export const useOrderLogic = () => {
   const { idUsuario } = useAuth();
 
   const [isSaving, setIsSaving] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | "">("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
   const [mesaSeleccionada, setMesaSeleccionada] = useState("");
   const [orden, setOrden] = useState<ItemOrden[]>([]);
@@ -210,6 +210,7 @@ export const useOrderLogic = () => {
       return response.data;
 
     } catch (error: any) {
+      console.log(error);
       setToastMessage(
         error?.response?.data?.mensaje || error.message || "Error inesperado al guardar el pedido."
       );
