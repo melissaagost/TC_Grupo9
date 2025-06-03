@@ -3,10 +3,13 @@ export const permisosPorRol: Record<string, string[]> = {
   cocinero: [ //usuario = cocinero
     "ver_menu",
     "setear_estado",
+    "marcar_en_preparacion"
   ],
   mozo: [
     "ver_menu",
     "crear_pedido",
+    "eliminar_pedido_historial",
+    "filtrar_pedidos"
   ],
   admin: [
     // todos los permisos por defecto, se pueden definir algunos explícitos

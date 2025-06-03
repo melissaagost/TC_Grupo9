@@ -20,12 +20,12 @@ export const PedidoQueries = {
 
 
   guardarPedidoCompleto: `
-      SELECT * FROM restaurant.sp_guardar_pedido_completo(
+      SELECT  restaurant.sp_guardar_pedido_completo(
         $1::INTEGER,
         $2::INTEGER,
         $3::INTEGER,
         $4::JSONB
-      );
+      ) AS result;
     `,
 
   listarPedidoCompleto: `

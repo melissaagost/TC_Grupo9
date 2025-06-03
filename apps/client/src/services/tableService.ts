@@ -46,3 +46,8 @@ export const setMesaOcupado = async (id: number) => {
   const response = await axios.patch(`${API_URL}/${id}/ocupado`);
   return response.data;
 };
+
+export const setMesaReservado = async (id: number) => {
+  const response = await axios.patch(`${API_URL}/${id}/reservado`);
+  return response.data;
+};

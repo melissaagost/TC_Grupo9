@@ -6,30 +6,48 @@ import { useOrderLogic } from "../../../hooks/useOrderLogic";
 import { itemService } from "../../../services/itemService";
 import { ItemRowDTO } from "../../../types/itemTypes";
 import { getAllMesas } from "../../../services/tableService";
+import { PedidoCompletoGuardarDTO } from "../../../types/orderTypes";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onPedidoGuardado?: () => void;
+   pedidoExistente?: PedidoCompletoGuardarDTO | null;
 };
 
-const NewOrderModal = ({ isOpen, onClose }: Props) => {
+const NewOrderModal = ({ isOpen, onClose, onPedidoGuardado }: Props) => {
 
 
-
-const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
   const [items, setItems] = useState<ItemRowDTO[]>([]);
-  const [mesas, setMesas] = useState<any[]>([]); // podés reemplazar `any` por tu tipo Mesa
+  const [mesas, setMesas] = useState<any[]>([]);
+
 
   const {
-    mesaSeleccionada,
-    orden,
+    mesaSeleccionada, setMesaSeleccionada,
+    orden, setOrden,
     addItem,
     removeItem,
     increaseItem,
     decreaseItem,
     setMesa,
+    isSaving,
     guardarOrden,
+    pedidoExistente, setPedidoExistente,
+    // toastMessage, setToastMessage,
+    // toastType,
   } = useOrderLogic();
+
+  //cargar pedido existente
+  // useEffect(() => {
+  //   if (pedidoExistente) {
+  //     setMesaSeleccionada(pedidoExistente.id_mesa.toString());
+  //     setOrden(pedidoExistente.items);
+  //   } else {
+  //     setMesaSeleccionada("");
+  //     setOrden([]);
+  //   }
+  // }, [pedidoExistente]);
 
   //Cargar ítems activos
   useEffect(() => {
@@ -71,24 +89,31 @@ const [search, setSearch] = useState("");
   );
 
   const handleGuardar = async () => {
-    const res = await guardarOrden();
-    if (res.exito) {
-      console.log("Pedido creado con éxito");
+    const res = await guardarOrden(onPedidoGuardado);
+
+    if (res?.success) {
+      setMesaSeleccionada("");
+      setOrden([]);
+      setPedidoExistente(null);
       onClose();
-    } else {
-      console.error("Error:", res.mensaje);
     }
+
+
   };
+
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
-        <div className="fixed inset-0 bg-black/25 backdrop-blur-sm" />
+
+      <Dialog as="div" className="relative z-10" open={isOpen} onClose={onClose}>
+        <div className="fixed inset-0" /> {/* bg-black/25 backdrop-blur-sm */}
         <div className="fixed inset-0 overflow-y-auto">
+
+
           <div className="flex min-h-full items-center justify-center p-6">
             <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-xl bg-eggshell-whitedove p-6 shadow-xl transition-all">
               <Dialog.Title className="text-xl font-playfair font-semibold mb-4">
-                Nueva Orden
+                {pedidoExistente ? `Editar Pedido #${pedidoExistente.id_pedido}` : "Nueva Orden"}
               </Dialog.Title>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -138,10 +163,14 @@ const [search, setSearch] = useState("");
                 </button>
                 <button
                   onClick={handleGuardar}
-                  className="bg-blood-100 hover:bg-blood-300 text-white py-2 px-4 rounded-md"
+                  disabled={isSaving}
+                  className={`bg-blood-100 hover:bg-blood-300 text-white py-2 px-4 rounded-md transition ${
+                    isSaving ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
-                  Guardar Orden
+                  {isSaving ? "Guardando..." : "Guardar Orden"}
                 </button>
+
               </div>
             </Dialog.Panel>
           </div>

@@ -1,6 +1,7 @@
 // src/hooks/useTableLogic.ts
 import { useEffect, useState } from "react";
-import { getAllMesas, updateMesa, createMesa, getMesasConPedido } from "../services/tableService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getAllMesas, updateMesa, createMesa, getMesasConPedido, setMesaLibre, setMesaOcupado, setMesaReservado } from "../services/tableService";
 import axios from "axios";
 
 interface MesaConPedidoRaw {
@@ -15,7 +16,11 @@ interface MesaConPedidoRaw {
 
 
 export const useTableLogic = () => {
+
+  const queryClient = useQueryClient();
+
   const [mesas, setMesas] = useState<any[]>([]);
+  const [estadoFiltro, setEstadoFiltro] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [numero, setNumero] = useState<number>(0);
   const [capacidad, setCapacidad] = useState<number>(0);
@@ -30,23 +35,6 @@ export const useTableLogic = () => {
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
-
-  // const fetchMesas = async () => {
-  //   try {
-  //     const data = await getAllMesas();
-  //     setMesas(data);
-  //   } catch (error) {
-  //       if (axios.isAxiosError(error) && error.response?.status === 401) {
-  //       setToastType("error");
-  //       setToastMessage("Sesión expirada. Por favor, iniciá sesión nuevamente.");
-  //     }
-  //     console.error("Error fetching mesas:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchMesas();
-  // }, []);
 
     const fetchMesas = async () => {
     try {
@@ -148,25 +136,101 @@ export const useTableLogic = () => {
     setEditDescripcion(mesa.descripcion);
   };
 
-  const filteredMesas = mesas.filter((mesa) => {
-    const search = searchTerm.toLowerCase();
-    const numero = mesa.numero.toString();
-    const descripcion = mesa.descripcion.toLowerCase();
-    const estado =
-      mesa.estado === 0 ? "libre" :
-      mesa.estado === 1 ? "ocupado" :
-      mesa.estado === 2 ? "reservado" : "desconocido";
+  // const filteredMesas = mesas.filter((mesa) => {
+  //   const search = searchTerm.toLowerCase();
+  //   const numero = mesa.numero.toString();
+  //   const descripcion = mesa.descripcion.toLowerCase();
+  //   const estado =
+  //     mesa.estado === 0 ? "libre" :
+  //     mesa.estado === 1 ? "ocupado" :
+  //     mesa.estado === 2 ? "reservado" : "desconocido";
 
-    return (
-      numero.includes(search) ||
-      descripcion.includes(search) ||
-      estado.includes(search)
-    );
+  //   return (
+  //     numero.includes(search) ||
+  //     descripcion.includes(search) ||
+  //     estado.includes(search)
+  //   );
+  // });
+
+  const mesasFiltradas = estadoFiltro === null
+  ? mesas
+  : mesas.filter((m) => m.pedido?.estado === estadoFiltro);
+
+const filteredMesas = mesasFiltradas.filter((mesa) => {
+  const search = searchTerm.toLowerCase();
+  const numero = mesa.numero.toString();
+  const descripcion = mesa.descripcion.toLowerCase();
+  const estado = mesa.estado === 0
+    ? "libre"
+    : mesa.estado === 1
+    ? "ocupado"
+    : mesa.estado === 2
+    ? "reservado"
+    : "desconocido";
+
+  return (
+    numero.includes(search) ||
+    descripcion.includes(search) ||
+    estado.includes(search)
+  );
+});
+
+
+  //filtra segun el estado del pedido
+  // const mesasFiltradas = estadoFiltro === null
+  //   ? mesas: mesas.filter(m => m.pedido?.estado === estadoFiltro);
+
+  // MESA LIBRE
+  const marcarMesaLibre = useMutation({
+    mutationFn: (id: number) => setMesaLibre(id),
+    onSuccess: (res) => {
+      setToastMessage(res.mensaje || "Mesa marcada como libre");
+      setToastType("success");
+      queryClient.invalidateQueries({ queryKey: ["mesas"] });
+    },
+    onError: () => {
+      setToastMessage("Error al marcar mesa como libre");
+      setToastType("error");
+    },
   });
 
+  //  MESA OCUPADO
+  const marcarMesaOcupada = useMutation({
+    mutationFn: (id: number) => setMesaOcupado(id),
+    onSuccess: (res) => {
+      setToastMessage(res.mensaje || "Mesa marcada como ocupada");
+      setToastType("success");
+      queryClient.invalidateQueries({ queryKey: ["mesas"] });
+    },
+    onError: () => {
+      setToastMessage("Error al marcar mesa como ocupada");
+      setToastType("error");
+    },
+  });
+
+  //  MESA RESERVADA
+  const marcarMesaReservada = useMutation({
+    mutationFn: (id: number) => setMesaReservado(id),
+    onSuccess: (res) => {
+      setToastMessage(res.mensaje || "Mesa marcada como reservada");
+      setToastType("success");
+      queryClient.invalidateQueries({ queryKey: ["mesas"] });
+    },
+    onError: () => {
+      setToastMessage("Error al marcar mesa como reservada");
+      setToastType("error");
+    },
+  });
+
+
   return {
+    marcarMesaLibre,
+    marcarMesaOcupada,
+    marcarMesaReservada,
     mesas, setMesas,
     searchTerm, setSearchTerm,
+    estadoFiltro, setEstadoFiltro,
+    mesasFiltradas,
     numero, setNumero,
     capacidad, setCapacidad,
     descripcion, setDescripcion,

@@ -1,30 +1,90 @@
+import { useState } from "react";
 import CreateDialog from "./CreateDialog";
 import EditDialog from "./EditDialog";
 import Toast from "../UI/Toast";
 import { Plus, SquarePen} from "lucide-react";
-import TableHeader from "../UI/TableHeader";
 import { useTableLogic } from "../../hooks/useTableLogic";
 import { TableLayout } from "../UI/Table";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal, Edit2, CreditCard, Utensils, Check, X } from "lucide-react";
+import { MoreHorizontal, Edit2, CreditCard, Check, X } from "lucide-react";
+import NewOrderModal from "../Order/NewOrder/NewOrderModal";
+import { useOrderLogic } from "../../hooks/useOrderLogic";
 
 
 const MesasTable = () => {
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
-  mesas, setMesas,
+    actualizarEstado,
+    cancelarPedido,
+    pedidoExistente, setPedidoExistente,
+    cargarPedidoPorId,
+    setMesaSeleccionada,
+    setOrden,
+    toastMessage: orderToastMessage,
+    toastType: orderToastType,
+  setToastMessage: setOrderToastMessage,
+  } = useOrderLogic();
+
+  //modificar pedido
+
+//   const handleModificarPedido = async (mesa: MesaConPedido) => {
+//   setMesaSeleccionada(mesa.id_mesa.toString());
+
+//   if (mesa.pedido?.id_pedido) {
+//     const pedido = await cargarPedidoPorId(mesa.pedido.id_pedido);
+//     if (pedido) setPedidoExistente(pedido);
+//   } else {
+//     setPedidoExistente(null);
+//   }
+
+//   setIsModalOpen(true);
+// };
+
+  //cancelar pedido
+  const handleCancelar = (id: number) => {
+     if (isNaN(id)) {
+      console.error("ID inválido:", id);
+      return;
+    }
+    cancelarPedido.mutate(id);
+  };
+
+  //cambiar pedido a en prep, en mesa
+  const handleActualizarEstado = (id: number, nuevoEstado: number) => {
+      if (isNaN(id)) {
+      console.error("ID inválido:", id);
+      return;
+    }
+    actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setPedidoExistente(null);
+    setMesaSeleccionada("");
+    setOrden([]);
+  };
+
+
+  //acciones de mesa
+  const {
+  marcarMesaLibre,
+  marcarMesaOcupada,
+  mesas,
   searchTerm, setSearchTerm,
+  estadoFiltro, setEstadoFiltro,
   numero, setNumero,
   capacidad, setCapacidad,
   descripcion, setDescripcion,
-  idRestaurante, setIdRestaurante,
   editingMesa, setEditingMesa,
   isCreating, setIsCreating,
   editNumero, setEditNumero,
   editCapacidad, setEditCapacidad,
   editDescripcion, setEditDescripcion,
   toastMessage, setToastMessage,
-  toastType, setToastType,
+  toastType,
   fetchMesas,
   handleCreateMesa,
   handleUpdateMesa,
@@ -32,17 +92,34 @@ const MesasTable = () => {
   filteredMesas
 } = useTableLogic();
 
+const estadosUnicos = Array.from(
+  new Set(
+    mesas
+      .filter((m) => m.pedido != null) // solo las que tienen pedido
+      .map((m) => m.pedido.estado)
+  )
+);
+
+const estadosPedidoTexto: Record<number, string> = {
+  //0: "cancelado", si se quiere agregar este filtro hay que agregarlo como condicion en la tabla
+  1: "Solicitado",
+  //2: "pagado",
+  3: "En Preparación",
+  5: "En Mesa",
+};
+
+
 
   return (
     <div className=" font-raleway flex flex-col lg:px-10 lg:py-0  py-10 px-0">
 
-        {toastMessage && (
-        <Toast
-            message={toastMessage}
-            type={toastType}
-            onClose={() => setToastMessage(null)}
-        />
-        )}
+     {toastMessage && (
+        <Toast type={orderToastType} message={orderToastMessage} onClose={() => setOrderToastMessage("")} />
+      )}
+
+     {toastMessage && (
+        <Toast type={toastType} message={toastMessage} onClose={() => setToastMessage("")} />
+      )}
 
       <h1 className="text-4xl font-playfair text-blood-100 font-bold mb-4">Gestión de Mesas</h1>
       <h3 className="text-lg font-urbanist  text-gray-700 font-light mb-4">Administra las mesas de tu restaurante</h3>
@@ -54,8 +131,41 @@ const MesasTable = () => {
                 placeholder="Buscar mesa..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className=" md:w-90 border  bg-white border-gray-300  rounded-xl p-2 w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blood-200"
+                className=" md:w-132 border  bg-white border-gray-300  rounded-xl p-2 lg:w-132 mb-1 focus:outline-none focus:ring-2 focus:ring-blood-200"
             />
+        </div>
+
+        {/*filtro segun el estado del pedido asociado a una emsa (ignorando los pagados y cancelados pq la mesa se considera libre) */}
+        <div >
+
+          <h3>Filtrar por estado del pedido:</h3>
+
+          <div  className="flex flex-wrap gap-4 mt-2 mb-2 bg-eggshell-greekvilla md:w-132 lg:w-132 text-gray-200 p-2 rounded-lg">
+
+            <button onClick={() => setEstadoFiltro(null)}
+              className="px-4 py-1 rounded-md text-sm font-semibold transition bg-eggshell-whitedove text-charcoal-800 shadow text-charcoal-400 hover:text-charcoal-600"
+              >
+              Todas las Mesas
+            </button>
+
+            {estadosUnicos.map((estado) => (
+
+              <button key={estado} onClick={() =>  setEstadoFiltro(estado)}
+             className={`px-4 py-1 rounded-md text-sm font-semibold transition ${
+
+                  estadoFiltro === estado
+                    ? "bg-eggshell-whitedove text-charcoal-800 shadow"
+                    : "text-charcoal-400 hover:text-charcoal-600"
+
+                }`}
+             >
+                {estadosPedidoTexto[estado] ?? `Estado ${estado}`}
+
+              </button>
+            ))}
+
+          </div>
+
         </div>
 
         <div className="overflow-x-auto w-full">
@@ -127,13 +237,13 @@ const MesasTable = () => {
                     return (
                       <div className="flex flex-col items-center gap-2">
                         <button
-                          onClick={() => console.log("Ocupar mesa")}
+                          onClick={() => marcarMesaOcupada.mutate(mesa.id_mesa)}
                           className="bg-yellow-300 text-white px-2 py-1 rounded-md"
                         >
                           Ocupar Mesa
                         </button>
                         <button
-                          onClick={() => console.log("Liberar mesa")}
+                          onClick={() => marcarMesaLibre.mutate(mesa.id_mesa)}
                           className="bg-green-400 text-white px-2 py-1 rounded-md"
                         >
                           Liberar Mesa
@@ -147,7 +257,7 @@ const MesasTable = () => {
                     if (!pedido) {
                       return (
                         <button
-                          onClick={() => console.log("Agregar pedido")}
+                          onClick={() => setIsModalOpen(true)}
                           className="px-2 py-1 text-white font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md"
                         >
                           <Plus /> Agregar Pedido
@@ -172,13 +282,14 @@ const MesasTable = () => {
                           className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                         >
                           <DropdownMenu.Item
-                            onClick={() => console.log("Modificar pedido")}
+                            //onClick={() => handleModificarPedido(mesa)}
+
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                           >
                             <Edit2 /> Modificar Pedido
                           </DropdownMenu.Item>
                           <DropdownMenu.Item
-                            onClick={() => console.log("Cancelar pedido")}
+                            onClick={() => handleCancelar(pedido.id_pedido)}
                             className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-cream-100 cursor-pointer"
                           >
                             <X/> Cancelar Pedido
@@ -193,7 +304,7 @@ const MesasTable = () => {
                       return (
                         <DropdownMenu.Root>
                           <DropdownMenu.Trigger asChild>
-                            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
+                            <button className="w-8 h-8 ml-30 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
                           </DropdownMenu.Trigger>
@@ -203,13 +314,14 @@ const MesasTable = () => {
                             className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                           >
                             <DropdownMenu.Item
-                              onClick={() => console.log("Marcar En Mesa")}
+                              onClick={() => handleActualizarEstado(pedido.id_pedido, 5)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Check /> Marcar En Mesa
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
-                              onClick={() => console.log("Modificar pedido")}
+                              //onClick={() => handleModificarPedido(mesa)}
+
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
@@ -224,7 +336,7 @@ const MesasTable = () => {
                       return (
                         <DropdownMenu.Root>
                           <DropdownMenu.Trigger asChild>
-                            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
+                            <button className="w-8 h-8  ml-30 flex items-center justify-center rounded-full bg-white text-burgundy hover:bg-cream-100">
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
                           </DropdownMenu.Trigger>
@@ -240,7 +352,8 @@ const MesasTable = () => {
                               <CreditCard/> Pagar
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
-                              onClick={() => console.log("Modificar pedido")}
+                              //onClick={() => handleModificarPedido(mesa)}
+
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <Edit2 /> Modificar Pedido
@@ -254,7 +367,7 @@ const MesasTable = () => {
                   // Mesa libre u otros casos
                   return (
                     <button
-                      onClick={() => console.log("Agregar pedido")}
+                      onClick={() => setIsModalOpen(true)}
                       className="px-2 py-1 text-white font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md bg-gold-order hover:text-orange-700 gap-1 inline-flex items-center rounded-md"
                     >
                       <Plus /> Agregar Pedido
@@ -268,6 +381,14 @@ const MesasTable = () => {
       </div>
 
       <button  onClick={() => setIsCreating(true)} className="font-semibold transition-all duration-300 hover:-translate-y-1 shadow-md px-4 py-2 mt-5 w-50 gap-1 inline-flex items-center bg-blood-100 text-white rounded-3xl hover:bg-blood-300"> <Plus size={'20'}/> Agregar una Mesa</button>
+
+      <NewOrderModal
+
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onPedidoGuardado={fetchMesas}
+        //pedidoExistente={pedidoExistente}
+      />
 
       <CreateDialog
         open={isCreating}
