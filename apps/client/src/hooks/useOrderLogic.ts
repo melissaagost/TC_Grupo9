@@ -86,7 +86,7 @@ export const useOrderLogic = () => {
     },
   });
 
-  //NEW ORDER MODAL actions
+  //NEW ORDER MODAL ACTIONS
     const addItem = (item: { id: string; precio: number; nombre: string }) => {
     setOrden((prev) => {
       const found = prev.find((i) => i.id === item.id);
@@ -122,6 +122,13 @@ export const useOrderLogic = () => {
   const setMesa = (id: string) => {
     setMesaSeleccionada(id);
   };
+
+
+
+
+
+
+
 
   //obtener pedido existente
   const cargarPedidoPorId = async (id_pedido: number): Promise<{ pedido: PedidoCompletoGuardarDTO | null; toast?: { message: string; type: 'error' } }> => {

@@ -285,7 +285,7 @@ const estadosPedidoTexto: Record<number, string> = {
                   const estadoPedido = pedido?.estado;
 
                   if (estadoMesa === 2) {
-                    // Mesa reservada
+                    // Mesa reservada -> ambas funciones deberian refrescar tablas
                     return (
                       <div className="flex flex-col items-center gap-2">
                         <button
