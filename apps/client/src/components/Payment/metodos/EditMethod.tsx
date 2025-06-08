@@ -1,4 +1,4 @@
-import {Dialog} from "../../../components/UI/Dialog";
+import {Dialog, DialogHeader, DialogTitle} from "../../../components/UI/Dialog";
 import MethodsForm from "./MethodsForm";
 import { MetodoPagoGuardarDTO } from "../../../types/paymentTypes";
 
@@ -12,7 +12,9 @@ interface Props {
 
 const EditMethod = ({ open, onClose, onSave, initialData, onToast }: Props) => (
   <Dialog open={open} onClose={onClose}>
-    <h2 className="text-lg font-semibold mb-4">Editar método de pago</h2>
+    <DialogHeader>
+      <DialogTitle>Editar Método de Pago</DialogTitle>
+    </DialogHeader>
     {initialData && <MethodsForm mode="edit" onSubmit={onSave} initialValues={initialData} onToast={onToast}/>}
   </Dialog>
 );

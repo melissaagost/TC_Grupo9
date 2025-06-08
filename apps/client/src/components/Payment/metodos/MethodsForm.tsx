@@ -1,7 +1,6 @@
 //form que se usa en create y edit
 import { useState } from "react";
 import { MetodoPagoGuardarDTO } from "../../../types/paymentTypes";
-import clsx from "clsx";
 
 interface MethodsFormProps {
   initialValues?: MetodoPagoGuardarDTO;
@@ -48,30 +47,28 @@ const MethodsForm = ({ initialValues, onSubmit, mode, onToast }: MethodsFormProp
   return (
     <form
       onSubmit={handleSubmit}
-      className={clsx(
-        "space-y-4 p-4 rounded-xl shadow-md",
-        mode === "create" ? "bg-green-50" : "bg-blue-50"
-      )}
+      className="flex flex-col gap-4 mt-4 font-urbanist"
+
     >
       <div>
-        <label className="block text-sm font-medium text-gray-700">Nombre</label>
+        <label className="font-semibold text-gray-200 text-md mb-1 block">Nombre</label>
         <input
           name="nombre"
           type="text"
           value={form.nombre}
           onChange={handleChange}
           required
-          className="w-full mt-1 px-3 py-2 border rounded"
+          className="w-full shadow-md border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Estado</label>
+        <label className="font-semibold text-gray-200 text-md mb-1 block">Estado</label>
         <select
           name="estado"
           value={form.estado}
           onChange={handleChange}
-          className="w-full mt-1 px-3 py-2 border rounded"
+          className="w-full shadow-md border font-urbanist border-gray-300 rounded-md px-3 py-2"
         >
           <option value={1}>Activo</option>
           <option value={0}>Inactivo</option>
@@ -80,15 +77,12 @@ const MethodsForm = ({ initialValues, onSubmit, mode, onToast }: MethodsFormProp
 
       <button
         type="submit"
-        className={clsx(
-          "px-4 py-2 rounded font-semibold",
-          mode === "create"
-            ? "bg-green-500 text-white hover:bg-green-600"
-            : "bg-blue-500 text-white hover:bg-blue-600"
-        )}
+        className="bg-blood-100 hover:bg-blood-300 text-white px-4 py-2 rounded-md"
       >
-        {mode === "create" ? "Crear método" : "Guardar cambios"}
+        {mode === "create" ? "Agregar método" : "Guardar cambios"}
       </button>
+
+
     </form>
   );
 };
