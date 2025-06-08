@@ -1,27 +1,35 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import { useOrderLogic } from '../../hooks/useOrderLogic'
+import { PedidoCompletoGuardarDTO } from '../../types/orderTypes'
 
-interface PedidoModalProps {
+interface OrderDetailsProps {
   open: boolean
   onClose: () => void
   idPedido: number | null
 }
 
-export default function PedidoModal({ open, onClose, idPedido }: PedidoModalProps) {
+export default function OrderDetails({ open, onClose, idPedido }: OrderDetailsProps) {
   const { cargarPedidoPorId } = useOrderLogic()
-  const [pedido, setPedido] = useState<any>(null)
+const [pedido, setPedido] = useState<PedidoCompletoGuardarDTO | null>(null);
 
-useEffect(() => {
+
+  useEffect(() => {
   const fetchPedido = async () => {
     if (idPedido !== null) {
-      const pedido = await cargarPedidoPorId(idPedido); // 👈 directamente el objeto
+      const { pedido, toast } = await cargarPedidoPorId(idPedido);
       console.log('Pedido cargado:', pedido);
-      setPedido(pedido); // 👈 seteás directo
+      if (pedido) {
+        setPedido(pedido);
+      } else {
+        console.error(toast?.message);
+      }
     }
   };
+
   fetchPedido();
 }, [idPedido]);
+
 
 
   return (

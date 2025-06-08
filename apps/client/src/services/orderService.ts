@@ -35,7 +35,8 @@ interface ActualizarEstadoSpecificResponse {
 const API_URL = "pedido";
 
 export const orderService = {
-    getById: async (id_pedido: number): Promise<PedidoCompletoGuardarDTO> => {
+
+  getById: async (id_pedido: number): Promise<PedidoCompletoGuardarDTO> => {
     const response = await axiosInstance.get(`pedido/buscar/${id_pedido}`);
     const rows: PedidoRowDTO[] = response.data;
 
@@ -52,7 +53,7 @@ export const orderService = {
       id_usuario,
       items,
     };
-  },
+},
 
   cancelar: (id: number) =>
     axiosInstance.patch<CancelarPedidoSpecificResponse>(`${API_URL}/cancelar/${id}`),
