@@ -130,6 +130,18 @@ export class PagoService {
     return result[0];
   };
 
+  habilitarMetodoPagoAsync = async (
+    id: number,
+  ): Promise<RespuestaGenerica> => {
+    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+      MetodoPagoQueries.habilitarMetodoPago,
+      id,
+    );
+
+    return result[0];
+  };
+
+
   buscarTodosMetosPagoAsync = async (
     params: FiltroBase,
   ): Promise<Paginado<FiltroBase>> => {
