@@ -36,7 +36,7 @@ const API_URL = "pedido";
 
 export const orderService = {
     getById: async (id_pedido: number): Promise<PedidoCompletoGuardarDTO> => {
-    const response = await axiosInstance.get(`/api/pedidos/${id_pedido}`);
+    const response = await axiosInstance.get(`pedido/buscar/${id_pedido}`);
     const rows: PedidoRowDTO[] = response.data;
 
     const { id_mesa, id_usuario, id_pedido: pedidoId } = rows[0];

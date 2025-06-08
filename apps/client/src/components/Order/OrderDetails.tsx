@@ -12,15 +12,16 @@ export default function PedidoModal({ open, onClose, idPedido }: PedidoModalProp
   const { cargarPedidoPorId } = useOrderLogic()
   const [pedido, setPedido] = useState<any>(null)
 
-//   useEffect(() => {
-//     const fetchPedido = async () => {
-//       if (idPedido !== null) {
-//         const result = await cargarPedidoPorId(idPedido)
-//         if (result.pedido) setPedido(result.pedido)
-//       }
-//     }
-//     fetchPedido()
-//   }, [idPedido])
+useEffect(() => {
+  const fetchPedido = async () => {
+    if (idPedido !== null) {
+      const pedido = await cargarPedidoPorId(idPedido); // 👈 directamente el objeto
+      console.log('Pedido cargado:', pedido);
+      setPedido(pedido); // 👈 seteás directo
+    }
+  };
+  fetchPedido();
+}, [idPedido]);
 
 
   return (
