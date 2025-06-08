@@ -33,7 +33,7 @@ export interface PagoRowDTO{
 }
 
 export class FiltroBase {
-    estado?: number;
+    estado?: number | null;
     busqueda?: string;
     ordenCol?: string;
     ordenDir?: 'ASC' | 'DESC';

@@ -36,23 +36,31 @@ export function usePaymentLogic() {
     setError(null);
     try {
       const res = await PaymentService.buscarMetodosPago(query);
-      const { data } = parseStoredProcedureListResponse<MetodoPagoRow>(res.data);
+      const data = (res.data.data as unknown as MetodoPagoRow[]) || [];
       setMetodosPago(data);
+
     } catch (err) {
+      console.error("Error al traer datos:", err);
       setError("Error al buscar métodos de pago");
     } finally {
       setLoading(false);
     }
   };
 
-    // Filtrar en base al término de búsqueda
-  useEffect(() => {
-    const term = busqueda.toLowerCase();
-    const filtrados = metodosPago.filter((m) =>
-      m.nombre.toLowerCase().includes(term)
+
+useEffect(() => {
+  // When there's no search term, metodosFiltrados should be the same as metodosPago
+  if (!busqueda) {
+    setMetodosFiltrados(metodosPago);
+  } else {
+    // Logic to filter metodosPago based on busqueda and update metodosFiltrados
+    const filtered = metodosPago.filter(metodo =>
+      metodo.nombre.toLowerCase().includes(busqueda.toLowerCase())
     );
-    setMetodosFiltrados(filtrados);
-  }, [busqueda, metodosPago]);
+    setMetodosFiltrados(filtered);
+  }
+}, [metodosPago, busqueda]); // This effect should run whenever the full list or the search term changes.
+
 
   const guardarMetodoPago = async (dto: MetodoPagoGuardarDTO) => {
     setLoading(true);
@@ -60,8 +68,15 @@ export function usePaymentLogic() {
     setError(null);
     try {
       const res = await PaymentService.guardarMetodoPago(dto);
-      const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
-      success ? setMensaje(message) : setError(message);
+      const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data.sp_guardar_metodo_pago);
+
+       if (success) {
+        setMensaje(message); // ← o simplemente retornarlo
+        return { success: true, message };
+      } else {
+        setError(message);
+        return { success: false, message };
+      }
     } catch {
       setError("Error al guardar el método de pago");
     } finally {
@@ -76,29 +91,44 @@ export function usePaymentLogic() {
     try {
       const res = await PaymentService.deshabilitarMetodoPago(id);
       const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
-      success ? setMensaje(message) : setError(message);
-    } catch {
+
+      if (success) {
+        setMensaje(message); // ← o simplemente retornarlo
+        return { success: true, message };
+      } else {
+        setError(message);
+        return { success: false, message };
+      }
+    } catch (err) {
       setError("Error al deshabilitar el método de pago");
+      return { success: false, message: "Error inesperado" };
     } finally {
       setLoading(false);
     }
   };
 
     const habilitarMetodoPago = async (id: number) => {
-    setLoading(true);
-    setMensaje(null);
-    setError(null);
-    try {
-      const res = await PaymentService.habilitarMetodoPago(id);
-      const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
-      success ? setMensaje(message) : setError(message);
-    } catch {
-      setError("Error al habilitar el método de pago");
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(true);
+      setMensaje(null);
+      setError(null);
+      try {
+        const res = await PaymentService.habilitarMetodoPago(id);
+        const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
 
+        if (success) {
+          setMensaje(message); // ← o simplemente retornarlo
+          return { success: true, message };
+        } else {
+          setError(message);
+          return { success: false, message };
+        }
+      } catch (err) {
+        setError("Error al habilitar el método de pago");
+        return { success: false, message: "Error inesperado" };
+      } finally {
+        setLoading(false);
+      }
+    };
 
 
   // Pagos
@@ -108,7 +138,7 @@ export function usePaymentLogic() {
     setError(null);
     try {
       const res = await PaymentService.listarPagos(query);
-      const { data, total } = parseStoredProcedureListResponse<PagoRowDTO>(res.data);
+      const { data, total } = parseStoredProcedureListResponse<PagoRowDTO>(res.data); //o bien, const {data, total} = res.data.data
       setPagos(data);
       setTotalPagos(total);
     } catch {
@@ -150,7 +180,10 @@ export function usePaymentLogic() {
 
   return {
     metodosPago,
+    setMetodosPago,
     metodosFiltrados,      // lista filtrada automáticamente
+    setMetodosFiltrados,
+    busqueda,
     setBusqueda,           // para vincular con el input
     pagos,
     totalPagos,
