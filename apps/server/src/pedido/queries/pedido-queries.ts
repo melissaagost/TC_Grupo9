@@ -1,6 +1,6 @@
 export const PedidoQueries = {
   buscarPorId: `
-      SELECT * FROM restaurant.sp_buscar_pedido_por_id(
+      SELECT * FROM restaurant.sp_buscar_pedido_por_id_completo(
         $1::INTEGER
       );
     `,
@@ -17,7 +17,6 @@ export const PedidoQueries = {
     $2::INTEGER, -- p_nuevo_estado
   );
 `,
-
 
   guardarPedidoCompleto: `
       SELECT  restaurant.sp_guardar_pedido_completo(
