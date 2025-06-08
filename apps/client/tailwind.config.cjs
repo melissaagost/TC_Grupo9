@@ -14,6 +14,7 @@ module.exports = {
       colors: {
         /*rojos*/
         blood: {
+          50: '#F6C3B2',
           100: '#A03936', // extrabright
           300: '#651F0D', // bright
           400: '#572320', // mid

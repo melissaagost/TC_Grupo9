@@ -5,9 +5,10 @@ import Title from '../components/Payment/Title';
 const MainLayout = () => {
   return (
     <div className="flex">
+
       <Sidebar />
 
-      <main className="flex-1 p-6 bg-gray-100 min-h-screen">
+      <main className="flex-1 pt-4 bg-white min-h-screen">
         <Title/>
         <Outlet />
       </main>

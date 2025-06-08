@@ -12,7 +12,7 @@ const path = location.pathname;
 };
 
   return (
-    <h1 className="text-2xl font-bold mb-4">{getTitle()}</h1>
+    <h1 className="text-2xl pb-4 pl-2 text-gray-charcoal font-playfair font-bold border-b-3  border-gray-100">{getTitle()}</h1>
   );
 };
 
