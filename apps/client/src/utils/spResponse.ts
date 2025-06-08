@@ -20,12 +20,18 @@ export function parseStoredProcedureResponse<T extends RespuestaGenerica = Respu
     };
   }
 
-  const inner = Object.values(response)[0] as T;
+  let inner = Object.values(response)[0];
+
+  if (Array.isArray(inner)) {
+    inner = inner[0];
+  }
+
+  const typedInner = inner as T;
 
   return {
-    success: inner.success === 1,
-    message: inner.message || "Respuesta sin mensaje",
-    payload: inner,
+    success: typedInner.success === 1,
+    message: typedInner.message || "Respuesta sin mensaje",
+    payload: typedInner,
   };
 }
 

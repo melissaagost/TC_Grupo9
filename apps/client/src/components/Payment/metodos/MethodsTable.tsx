@@ -18,7 +18,7 @@ const MethodsTable = () => {
     const [metodoToEdit, setMetodoToEdit] = useState<MetodoPagoGuardarDTO | null>(null);
 
 
-    const showOrderActionToast = (message: string, type: "success" | "error" | "info") => {
+    const showToast = (message: string, type: "success" | "error" | "info") => {
         setToastMessage(message);
         setToastType(type);
     };
@@ -38,7 +38,7 @@ const MethodsTable = () => {
 
     useEffect(() => {
         if (error) {
-            showOrderActionToast(error, "error");
+            showToast(error, "error");
         }
     }, [error]);
 
@@ -54,9 +54,9 @@ const MethodsTable = () => {
         : await habilitarMetodoPago(metodo.id_metodo);
 
     if (result.success) {
-        showOrderActionToast(result.message, "success");
+        showToast(result.message, "success");
     } else {
-        showOrderActionToast(result.message, "error");
+        showToast(result.message, "error");
     }
 
     // Recargar
@@ -68,28 +68,25 @@ const MethodsTable = () => {
     const result = await guardarMetodoPago(data);
 
     if (result.success) {
-        showOrderActionToast(result.message, "success");
+        showToast(result.message, "success");
+        setIsCreating(false);
+        await buscarMetodosPago({ pageIndex: 1, pageSize: 100 });
     } else {
-        showOrderActionToast(result.message, "error");
+        showToast(result.message, "error");
     }
-
-    setIsCreating(false);
-    await buscarMetodosPago({ pageIndex: 1, pageSize: 100 });
-
     };
 
     const handleEdit = async (data: MetodoPagoGuardarDTO) => {
      const result =  await guardarMetodoPago(data);
 
     if (result.success) {
-        showOrderActionToast(result.message, "success");
-    } else {
-        showOrderActionToast(result.message, "error");
-    }
-
+        showToast(result.message, "success");
         setIsEditing(false);
         setMetodoToEdit(null);
         await buscarMetodosPago({ pageIndex: 1, pageSize: 100 });
+    } else {
+        showToast(result.message, "error");
+    }
     };
 
 
@@ -180,6 +177,7 @@ const MethodsTable = () => {
                 open={isCreating}
                 onClose={() => setIsCreating(false)}
                 onCreate={handleCreate}
+                onToast={showToast}
             />
 
             {/* Diálogo para editar */}
@@ -191,6 +189,7 @@ const MethodsTable = () => {
                 }}
                 onSave={handleEdit}
                 initialData={metodoToEdit}
+                onToast={showToast}
             />
 
 

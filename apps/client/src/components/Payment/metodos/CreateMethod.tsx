@@ -9,11 +9,13 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onCreate: (data: MetodoPagoGuardarDTO) => void;
+  onToast: (message: string, type: "success" | "error" | "info") => void;
+
 }
-const CreateMethod = ({ open, onClose, onCreate }: Props) => (
+const CreateMethod = ({ open, onClose, onCreate, onToast }: Props) => (
   <Dialog open={open} onClose={onClose}>
     <h2 className="text-lg font-semibold mb-4">Crear método de pago</h2>
-    <MethodsForm mode="create" onSubmit={onCreate} />
+    <MethodsForm mode="create" onSubmit={onCreate} onToast={onToast} />
   </Dialog>
 );
 

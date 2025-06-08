@@ -7,9 +7,12 @@ interface MethodsFormProps {
   initialValues?: MetodoPagoGuardarDTO;
   onSubmit: (data: MetodoPagoGuardarDTO) => void;
   mode: "create" | "edit";
+  onToast: (message: string, type: "success" | "error" | "info") => void;
 }
 
-const MethodsForm = ({ initialValues, onSubmit, mode }: MethodsFormProps) => {
+const MethodsForm = ({ initialValues, onSubmit, mode, onToast }: MethodsFormProps) => {
+
+
   const [form, setForm] = useState<MetodoPagoGuardarDTO>({
     id_metodo: initialValues?.id_metodo,
     nombre: initialValues?.nombre ?? "",
@@ -24,10 +27,23 @@ const MethodsForm = ({ initialValues, onSubmit, mode }: MethodsFormProps) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!form.nombre.trim()) {
+    onToast('El campo nombre es obligatorio.', 'error');
+    return;
+    }
+
+
+    if (form.estado !== 0 && form.estado !== 1) {
+        onToast("El estado debe ser activo o inactivo", "error");
+        return;
+    }
+
     onSubmit(form);
-  };
+    };
+
 
   return (
     <form

@@ -67,8 +67,10 @@ useEffect(() => {
     setMensaje(null);
     setError(null);
     try {
+
       const res = await PaymentService.guardarMetodoPago(dto);
-      const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data.sp_guardar_metodo_pago);
+      const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
+
 
        if (success) {
         setMensaje(message); // ← o simplemente retornarlo
@@ -78,7 +80,9 @@ useEffect(() => {
         return { success: false, message };
       }
     } catch {
-      setError("Error al guardar el método de pago");
+      const errorMessage = "Error al guardar el método de pago";
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
     } finally {
       setLoading(false);
     }
@@ -93,7 +97,7 @@ useEffect(() => {
       const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
 
       if (success) {
-        setMensaje(message); // ← o simplemente retornarlo
+        setMensaje(message);
         return { success: true, message };
       } else {
         setError(message);
