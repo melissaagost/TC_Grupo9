@@ -9,6 +9,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal, Edit2, CreditCard, Check, X, Eye } from "lucide-react";
 import NewOrderModal from "../Order/NewOrder/NewOrderModal";
 import { useOrderLogic } from "../../hooks/useOrderLogic";
+import OrderDetails from "../Order/OrderDetails"
 import { PedidoCompletoGuardarDTO, PedidoRowDTO } from "../../types/orderTypes";
 
 // Define the MesaConPedido interface based on useTableLogic structure
@@ -29,7 +30,13 @@ const MesasTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderToastMessage, setOrderToastMessage] = useState<string | null>(null);
   const [orderToastType, setOrderToastType] = useState<"success" | "error" | "info">("info");
+  const [openDetalles, setOpenDetalles] = useState(false)
+  const [pedidoId, setPedidoId] = useState<number | null>(null)
 
+  const handleOpenDetalles = (id: number) => {
+    setPedidoId(id)
+    setOpenDetalles(true)
+  }
   const showOrderToast = (message: string, type: "success" | "error" | "info") => {
     setOrderToastMessage(message);
     setOrderToastType(type);
@@ -346,6 +353,7 @@ const estadosPedidoTexto: Record<number, string> = {
                             <X/> Cancelar Pedido
                           </DropdownMenu.Item>
                           <DropdownMenu.Item
+                          onClick={() => handleOpenDetalles(mesa.pedido.id_pedido)}
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800  hover:bg-cream-100 cursor-pointer"
                           >
                             <Eye/> Detalles
@@ -382,6 +390,7 @@ const estadosPedidoTexto: Record<number, string> = {
                               <Edit2 /> Modificar Pedido
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
+                            onClick={() => handleOpenDetalles(mesa.pedido.id_pedido)}
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800  hover:bg-cream-100 cursor-pointer"
                           >
                             <Eye/> Detalles
@@ -418,6 +427,7 @@ const estadosPedidoTexto: Record<number, string> = {
                               <Edit2 /> Modificar Pedido
                             </DropdownMenu.Item>
                             <DropdownMenu.Item
+                             onClick={() => handleOpenDetalles(mesa.pedido.id_pedido)}
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800  hover:bg-cream-100 cursor-pointer"
                           >
                             <Eye/> Detalles
@@ -480,6 +490,12 @@ const estadosPedidoTexto: Record<number, string> = {
         setEditDescripcion={setEditDescripcion}
         onClose={() => setEditingMesa(null)}
         onSubmit={handleUpdateMesa}
+      />
+
+      <OrderDetails
+        open={openDetalles}
+        onClose={() => setOpenDetalles(false)}
+        idPedido={pedidoId}
       />
 
     </div>

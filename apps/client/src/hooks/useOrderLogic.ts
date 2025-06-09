@@ -123,22 +123,24 @@ export const useOrderLogic = () => {
     setMesaSeleccionada(id);
   };
 
+  const cargarPedidoPorId = async (id_pedido: number): Promise<{ pedido: PedidoCompletoGuardarDTO | null; toast?: { message: string; type: "success" | "error" | "info" } }> => {
+  try {
 
+    const pedido = await orderService.getById(id_pedido);
 
+    return { pedido };
 
+  } catch (error) {
+    return {
+      pedido: null,
+      toast: {
+        message: error instanceof Error ? error.message : 'Error al cargar el pedido.',
+        type: 'error',
+      }
+    };
+  }
+};
 
-
-
-
-  //obtener pedido existente
-  const cargarPedidoPorId = async (id_pedido: number): Promise<{ pedido: PedidoCompletoGuardarDTO | null; toast?: { message: string; type: 'error' } }> => {
-    try {
-      const pedido = await orderService.getById(id_pedido);
-      return { pedido };
-    } catch (error) {
-      return { pedido: null, toast: { message: "Error al cargar el pedido.", type: 'error' } };
-    }
-  };
 
   //crear / modificar pedido
   const guardarOrden = async (onPedidoGuardado?: () => void): Promise<{ success: boolean; message: string; type: 'success' | 'error'; id?: number | null } | undefined> => {

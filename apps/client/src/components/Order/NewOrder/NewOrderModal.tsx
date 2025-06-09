@@ -7,6 +7,7 @@ import { itemService } from "../../../services/itemService";
 import { ItemRowDTO } from "../../../types/itemTypes";
 import { getAllMesas } from "../../../services/tableService";
 import { PedidoCompletoGuardarDTO } from "../../../types/orderTypes";
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -33,7 +34,7 @@ type Props = {
     setMesa,
     isSaving,
     guardarOrden, // retorna { success, message, type }
-    pedidoExistente, setPedidoExistente,
+    setPedidoExistente,
   } = useOrderLogic();
 
 

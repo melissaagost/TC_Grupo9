@@ -35,23 +35,28 @@ interface ActualizarEstadoSpecificResponse {
 const API_URL = "pedido";
 
 export const orderService = {
-    getById: async (id_pedido: number): Promise<PedidoCompletoGuardarDTO> => {
-    const response = await axiosInstance.get(`/api/pedidos/${id_pedido}`);
-    const rows: PedidoRowDTO[] = response.data;
 
-    const { id_mesa, id_usuario, id_pedido: pedidoId } = rows[0];
+  getById: async (id_pedido: number): Promise<PedidoCompletoGuardarDTO> => {
+    const response = await axiosInstance.get(`pedido/buscar/${id_pedido}`);
+    const data = response.data;
 
-    const items = rows.map((row) => ({
-      id_item: row.id_item,
-      cantidad: row.cantidad_item,
-    }));
+    if (data.length === 0) {
+      throw new Error(`Pedido con id ${id_pedido} no encontrado`);
+    }
 
+    // Adaptá el mapeo a lo que esperás construir como PedidoCompletoGuardarDTO
     return {
-      id_pedido: pedidoId,
-      id_mesa,
-      id_usuario,
-      items,
-    };
+      id_pedido: data[0].id_pedido,
+      id_mesa: data[0].id_mesa,
+      id_usuario: data[0].id_usuario,
+      items: data.map((pedido: PedidoRowDTO) => {return {
+          id_item: pedido.id_item,
+          nombre: pedido.nombre_item,
+          descripcion: pedido.descripcion_item,
+          subtotal: pedido.subtotal_item,
+          cantidad: pedido.cantidad_item,
+        }})
+    }
   },
 
   cancelar: (id: number) =>

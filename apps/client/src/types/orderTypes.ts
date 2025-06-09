@@ -4,6 +4,9 @@ export interface ActualizarEstadoDTO{
 
 export interface ItemPedidoDTO {
   id_item: number;
+  nombre?: string;
+  descripcion?: string;
+  subtotal?: number;
   cantidad: number;
 }
 
