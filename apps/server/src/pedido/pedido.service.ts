@@ -11,13 +11,14 @@ import { Paginado } from 'src/common/interface/paginado';
 export class PedidoService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async buscarPedidoPorIdAsync(id: number): Promise<RespuestaGenerica> {
-    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+  async buscarPedidoPorIdAsync(id: number): Promise<PedidoRowDTO[]> {
+    //const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+    const result = await this.prisma.$queryRawUnsafe<PedidoRowDTO[]>(
       PedidoQueries.buscarPorId,
       id,
     );
 
-    return result[0];
+    return result;
   }
 
   async cancelarPedidoAsync(id: number): Promise<RespuestaGenerica> {
