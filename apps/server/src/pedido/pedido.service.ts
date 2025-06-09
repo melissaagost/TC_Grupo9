@@ -11,13 +11,14 @@ import { Paginado } from 'src/common/interface/paginado';
 export class PedidoService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async buscarPedidoPorIdAsync(id: number): Promise<RespuestaGenerica> {
-    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+  async buscarPedidoPorIdAsync(id: number): Promise<PedidoRowDTO[]> {
+    //const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+    const result = await this.prisma.$queryRawUnsafe<PedidoRowDTO[]>(
       PedidoQueries.buscarPorId,
       id,
     );
 
-    return result[0];
+    return result;
   }
 
   async cancelarPedidoAsync(id: number): Promise<RespuestaGenerica> {
@@ -25,7 +26,6 @@ export class PedidoService {
       PedidoQueries.cancelarPedido,
       id,
     );
-
 
     // Obtener la mesa asociada al pedido
     const pedido = await this.prisma.pedido.findUnique({
@@ -48,30 +48,29 @@ export class PedidoService {
     id_pedido: number,
     nuevo_estado: number,
   ): Promise<RespuestaGenerica> {
-   const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
-  `
+    const result = await this.prisma.$queryRawUnsafe<RespuestaGenerica[]>(
+      `
   SELECT * FROM restaurant.actualizar_estado_pedido(
     ${id_pedido}::INTEGER,
     ${nuevo_estado}::INTEGER
   );
-  `
-);
-
+  `,
+    );
 
     return result[0];
   }
-
 
   async guardarPedidoCompletoAsync(
     data: PedidoCompletoGuardarDTO,
   ): Promise<RespuestaGenerica> {
     const { id_pedido, id_usuario, id_mesa, items } = data;
 
-
     // Convertir el array de items a formato JSONB
     const itemsJsonb = JSON.stringify(items);
 
-    const result = await this.prisma.$queryRawUnsafe<{ result: RespuestaGenerica }[]>(
+    const result = await this.prisma.$queryRawUnsafe<
+      { result: RespuestaGenerica }[]
+    >(
       PedidoQueries.guardarPedidoCompleto,
       id_pedido ?? null,
       id_usuario,
@@ -80,11 +79,10 @@ export class PedidoService {
     );
 
     // Cambiar estado de la mesa a "ocupada" (1)
-   await this.prisma.mesa.update({
+    await this.prisma.mesa.update({
       where: { id_mesa },
       data: { estado: 1 },
     });
-
 
     return result[0].result;
   }
