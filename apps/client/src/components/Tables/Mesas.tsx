@@ -11,6 +11,8 @@ import NewOrderModal from "../Order/NewOrder/NewOrderModal";
 import { useOrderLogic } from "../../hooks/useOrderLogic";
 import OrderDetails from "../Order/OrderDetails"
 import { PedidoCompletoGuardarDTO, PedidoRowDTO } from "../../types/orderTypes";
+import {  useNavigate } from "react-router-dom";
+
 
 // Define the MesaConPedido interface based on useTableLogic structure
 interface MesaConPedido {
@@ -41,6 +43,8 @@ const MesasTable = () => {
     setOrderToastMessage(message);
     setOrderToastType(type);
   };
+
+  const navigate = useNavigate();
 
   const {
     actualizarEstado,
@@ -415,7 +419,7 @@ const estadosPedidoTexto: Record<number, string> = {
                             className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                           >
                             <DropdownMenu.Item
-                              onClick={() => console.log("Pagar")}
+                              onClick={() => navigate(`/active-payment/${pedido.id_pedido}`)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <CreditCard/> Pagar

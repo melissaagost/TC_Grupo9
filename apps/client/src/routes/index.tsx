@@ -26,6 +26,7 @@ import Building from '../pages/Building'
 
 import PrivateRoute from '../components/PrivateRoute'
 import PublicRoute from '../components/PublicRoute'
+import ActivePayment from '../pages/ActivePayment'
 
 //se envuelve la ruta en el layout que corresponda
 //tipo 1 (admin)
@@ -146,6 +147,16 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="active-payment/:id_pedido"
+          element={
+            <PrivateRoute allowedUserTypes={['administrador', 'mozo']}>
+              <ActivePayment />
+            </PrivateRoute>
+          }
+        />
+
       </Route>
 
       <Route path="/building" element={<Building />} />

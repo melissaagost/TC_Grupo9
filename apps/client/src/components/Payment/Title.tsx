@@ -8,6 +8,7 @@ const path = location.pathname;
   if (path === '/payments-index') return 'Inicio';
   if (path === '/payments-index/payments') return 'Pagos';
   if (path === '/payments-index/payment-methods') return 'Métodos de Pago';
+  if (path === '/payments-index/active-payment') return 'Pagar una Orden';
   return '';
 };
 
