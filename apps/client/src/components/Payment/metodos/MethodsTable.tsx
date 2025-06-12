@@ -26,8 +26,6 @@ const MethodsTable = () => {
     const {
         metodosFiltrados,
         setBusqueda,
-        loading,
-        mensaje,
         error,
 
         buscarMetodosPago,

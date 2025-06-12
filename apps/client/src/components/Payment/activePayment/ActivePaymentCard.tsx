@@ -1,26 +1,41 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { usePaymentLogic } from "../../../hooks/usePaymentLogic";
+import { useTableLogic } from "../../../hooks/useTableLogic";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../services/axiosInstance";
 import { PedidoRowDTO } from "../../../types/orderTypes";
+import Toast from "../../UI/Toast";
 
 export default function PagoView() {
-  const { idPedido } = useParams();
-  const navigate = useNavigate();
-  const {  buscarMetodosPago, guardarPago, metodosPago, mensaje, error } = usePaymentLogic();
+
+    const { idPedido } = useParams();
+    const navigate = useNavigate();
+
+    const {marcarMesaLibre} = useTableLogic();
+    const {  buscarMetodosPago, guardarPago, metodosPago} = usePaymentLogic();
 
 
-  const [metodoSeleccionado, setMetodoSeleccionado] = useState<number | null>(null);
-   const [pedido, setPedido] = useState<PedidoRowDTO[] | null>(null);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "info">("info");
+    const [metodoSeleccionado, setMetodoSeleccionado] = useState<number | null>(null);
+    const [pedido, setPedido] = useState<PedidoRowDTO[] | null>(null);
+
+
+
+    //render de msj
+    const showToast = (message: string, type: "success" | "error" | "info") => {
+        setToastMessage(message);
+        setToastType(type);
+    };
 
    //carga metodos de pago en el dropdown
-useEffect(() => {
-  buscarMetodosPago({
-    pageIndex: 1,
-    pageSize: 100, // o el número que prefieras
-    busqueda: "", // si este campo existe en tu tipo
-  });
-}, []);
+    useEffect(() => {
+      buscarMetodosPago({
+        pageIndex: 1,
+        pageSize: 100,
+        busqueda: "",
+      });
+    }, []);
 
 
 
@@ -40,35 +55,34 @@ useEffect(() => {
       fetchPedido();
     }, [idPedido]);
 
-
-  // useEffect(() => {
-  //   const fetchPedido = async () => {
-  //     if (idPedido) {
-  //       const res = await cargarPedidoPorId(Number(idPedido));
-  //       setPedido(res.pedido);
-  //       if (res.toast?.type === "error") {
-  //         alert(res.toast.message);
-  //       }
-  //     }
-  //   };
-  //   fetchPedido();
-  //   buscarMetodosPago({});
-  // }, [idPedido]);
-
   const handlePagar = async () => {
-    if (!metodoSeleccionado) return alert("Seleccioná un método de pago");
+    if (!metodoSeleccionado) return showToast("Seleccioná un método de pago", "error");
     const result = await guardarPago({
       id_pedido: parseInt(idPedido!),
       id_metodo: metodoSeleccionado,
       estado: 1,
     });
-    if (result?.success) {
-      navigate("/");
+    if (result?.success && pedido?.[0]?.id_mesa) {
+        marcarMesaLibre.mutate(pedido[0].id_mesa); //libera la mesa cuando se guarda el pago
+        showToast(result.message, "success");
+        navigate('/payments-index/payments')
+    } else {
+        //showToast(result.message, "error");
     }
   };
 
   return (
     <div className="p-6">
+
+        {toastMessage && (
+
+                <Toast
+                    message={toastMessage}
+                    type={toastType}
+                    onClose={() => setToastMessage(null)}
+                />
+
+            )}
 
       {Array.isArray(pedido) && pedido.length > 0 ? (
 
@@ -120,13 +134,11 @@ useEffect(() => {
         <button onClick={handlePagar} className="bg-green-600 text-white px-4 py-2 rounded">
           Pagar
         </button>
-        <button onClick={() => navigate("/")} className="bg-gray-400 text-white px-4 py-2 rounded">
+        <button onClick={() => navigate("/tables")} className="bg-gray-400 text-white px-4 py-2 rounded">
           Cancelar
         </button>
       </div>
 
-      {mensaje && <p className="text-green-700 mt-4">{mensaje}</p>}
-      {error && <p className="text-red-600 mt-4">{error}</p>}
     </div>
   );
 }
