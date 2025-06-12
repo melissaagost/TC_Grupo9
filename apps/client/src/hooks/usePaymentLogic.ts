@@ -160,6 +160,7 @@ useEffect(() => {
       const res = await PaymentService.guardarPago(dto);
       const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
       success ? setMensaje(message) : setError(message);
+      return { success: true, message}
     } catch {
       setError("Error al guardar el pago");
     } finally {

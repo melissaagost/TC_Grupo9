@@ -1,17 +1,28 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { usePaymentLogic } from "../../../hooks/usePaymentLogic";
-import { useOrderLogic } from "../../../hooks/useOrderLogic";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../services/axiosInstance";
+import { PedidoRowDTO } from "../../../types/orderTypes";
 
 export default function PagoView() {
   const { idPedido } = useParams();
   const navigate = useNavigate();
-  const { buscarMetodosPago, guardarPago, metodosPago, mensaje, error } = usePaymentLogic();
-  const { cargarPedidoPorId } = useOrderLogic();
+  const {  buscarMetodosPago, guardarPago, metodosPago, mensaje, error } = usePaymentLogic();
+
 
   const [metodoSeleccionado, setMetodoSeleccionado] = useState<number | null>(null);
-  const [pedido, setPedido] = useState(null);
+   const [pedido, setPedido] = useState<PedidoRowDTO[] | null>(null);
+
+   //carga metodos de pago en el dropdown
+useEffect(() => {
+  buscarMetodosPago({
+    pageIndex: 1,
+    pageSize: 100, // o el número que prefieras
+    busqueda: "", // si este campo existe en tu tipo
+  });
+}, []);
+
+
 
     //trae datos del pedido
     useEffect(() => {
@@ -49,7 +60,7 @@ export default function PagoView() {
     const result = await guardarPago({
       id_pedido: parseInt(idPedido!),
       id_metodo: metodoSeleccionado,
-      estado: "Pendiente",
+      estado: 1,
     });
     if (result?.success) {
       navigate("/");
@@ -58,18 +69,46 @@ export default function PagoView() {
 
   return (
     <div className="p-6">
-      <h2 className="text-xl font-semibold mb-2">
-        Pago del Pedido #{pedido?.id_pedido}
-      </h2>
-      <p className="mb-4">Mesa: {pedido?.mesa?.numero}</p>
-      <p className="mb-4">Total: ${pedido?.total}</p>
+
+      {Array.isArray(pedido) && pedido.length > 0 ? (
+
+      <div className="space-y-2 text-sm text-gray-700">
+
+          <p><strong>Pedido N°:</strong> {pedido[0].id_pedido}</p>
+          <p><strong>Fecha:</strong> {new Date(pedido[0].fecha).toLocaleDateString()}</p>
+          <p><strong>Estado:</strong> {pedido[0].estado_descripcion}</p>
+          <p><strong>Mesa:</strong> {pedido[0].numero_mesa} – {pedido[0].descripcion_mesa}</p>
+          <p><strong>A cargo de:</strong> {pedido[0].usuario_nombre}</p>
+
+          <div className="mt-4">
+          <strong>Items:</strong>
+          <ul className="list-disc list-inside">
+              {pedido.map((item, index) => (
+              <li key={index}>
+                  <p className="font-medium">{item.nombre_item}</p>
+                  <p>
+                  Cantidad: {item.cantidad_item} – Subtotal: ${item.subtotal_item}
+                  </p>
+              </li>
+              ))}
+          </ul>
+          </div>
+
+          <p className="text-right mt-2 font-bold">
+          Total: ${pedido.reduce((acc, item) => acc + Number(item.subtotal_item), 0).toFixed(2)}
+          </p>
+      </div>
+      ) : (
+      <p className="text-sm text-gray-500">Cargando detalles del pedido...</p>
+      )}
+
 
       <label className="block mb-2">Seleccioná un método de pago:</label>
       <select
         onChange={(e) => setMetodoSeleccionado(Number(e.target.value))}
         className="border rounded px-3 py-2 mb-4"
       >
-        <option value="">-- Seleccionar --</option>
+        <option value="">Seleccionar</option>
         {metodosPago.map((m) => (
           <option key={m.id_metodo} value={m.id_metodo}>
             {m.nombre}

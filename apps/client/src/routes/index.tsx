@@ -149,7 +149,7 @@ const AppRoutes = () => {
         />
 
         <Route
-          path="active-payment/:id_pedido"
+          path="active-payment/:idPedido"
           element={
             <PrivateRoute allowedUserTypes={['administrador', 'mozo']}>
               <ActivePayment />

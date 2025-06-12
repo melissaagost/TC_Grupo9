@@ -419,7 +419,7 @@ const estadosPedidoTexto: Record<number, string> = {
                             className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                           >
                             <DropdownMenu.Item
-                              onClick={() => navigate(`/active-payment/${pedido.id_pedido}`)}
+                              onClick={() => navigate(`/payments-index/active-payment/${pedido.id_pedido}`)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <CreditCard/> Pagar
