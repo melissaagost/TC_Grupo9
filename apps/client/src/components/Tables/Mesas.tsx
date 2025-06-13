@@ -115,11 +115,12 @@ const MesasTable = () => {
     }
     actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, { //error aca
       onSuccess: (response) => {
-        if (response.data.success) {
+        if (response.data.actualizar_estado_pedido.success) {
           showOrderToast(response.data.message || "Estado actualizado", "success");
         } else {
           showOrderToast(response.data.message || "No se pudo actualizar el estado", "error");
         }
+        fetchMesas();
       },
       onError: (error: any) => {
          showOrderToast(error?.response?.data?.message || error.message || "Error al actualizar el estado", "error");
