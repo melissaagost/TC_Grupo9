@@ -16,7 +16,7 @@ const Search = ({ onSearch }: SearchProps) => {
   };
 
   return (
-    <div className="relative mb-6 w-full max-w-md">
+    <div className="relative mb-0 w-full max-w-md">
       <SearchIcon className="absolute left-3 top-1/3 -translate-y-1/2 text-gray-400 w-5 h-5" />
       <input
         type="text"

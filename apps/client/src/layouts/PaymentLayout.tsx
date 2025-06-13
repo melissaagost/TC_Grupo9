@@ -4,7 +4,7 @@ import Title from '../components/Payment/Title';
 
 const MainLayout = () => {
   return (
-    <div className="flex">
+    <div className="flex ">
 
       <Sidebar />
 

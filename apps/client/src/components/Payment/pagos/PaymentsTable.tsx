@@ -5,7 +5,7 @@ import Toast from "../../UI/Toast";
 import { usePaymentLogic } from "../../../hooks/usePaymentLogic";
 import { TableLayout } from "../../UI/Table";
 import { PagoRowDTO } from "../../../types/paymentTypes";
-import { BanknoteX } from "lucide-react";
+import { BanknoteX, Filter } from "lucide-react";
 import { Pagination } from "../Pagination";
 
 const PaymentsTable = () =>{
@@ -86,14 +86,15 @@ const PaymentsTable = () =>{
             <Search onSearch={setBusqueda}/>
 
             {/*filtros */}
-            <div className="flex gap-2 font-urbanist">
+            <div className="sm:block lg:flex gap-3 font-urbanist ">
+            <Filter className="mt-5 text-gray-200 " size={20}/>
             <select
                 value={estadoSeleccionado ?? ""}
                 onChange={(e) => {
                     const value = e.target.value;
                     setEstadoSeleccionado(value === "" ? null : parseInt(value));
                 }}
-                className="border px-3 py-2 rounded"
+                className="border bg-white border-gray-100 px-3 py-2 m-3 rounded"
                 >
                 <option value="">Todos los Estados</option>
                 <option value="0">Cancelado</option>
@@ -101,38 +102,38 @@ const PaymentsTable = () =>{
                 </select>
 
 
-                    <button
-                        onClick={() => {
-                        if (ordenCol === "fecha") {
-                            setOrdenDir(ordenDir === "ASC" ? "DESC" : "ASC");
-                        } else {
-                            setOrdenCol("fecha");
-                            setOrdenDir("DESC");
-                        }
-                        }}
-                        className={`px-3 py-1 border rounded ${
-                        ordenCol === "fecha" ? "bg-gray-200 font-semibold" : ""
-                        }`}
-                    >
-                        Date {ordenCol === "fecha" ? (ordenDir === "ASC" ? "↑" : "↓") : ""}
-                    </button>
+                <button
+                    onClick={() => {
+                    if (ordenCol === "fecha") {
+                        setOrdenDir(ordenDir === "ASC" ? "DESC" : "ASC");
+                    } else {
+                        setOrdenCol("fecha");
+                        setOrdenDir("DESC");
+                    }
+                    }}
+                    className={`px-3 py-1 border m-3   bg-white border-gray-100 rounded ${
+                    ordenCol === "fecha" ? "bg-gray-200" : ""
+                    }`}
+                >
+                    Date {ordenCol === "fecha" ? (ordenDir === "ASC" ? "↑" : "↓") : ""}
+                </button>
 
-                    <button
-                        onClick={() => {
-                        if (ordenCol === "monto") {
-                            setOrdenDir(ordenDir === "ASC" ? "DESC" : "ASC");
-                        } else {
-                            setOrdenCol("monto");
-                            setOrdenDir("DESC");
-                        }
-                        }}
-                        className={`px-3 py-1 border rounded ${
-                        ordenCol === "monto" ? "bg-gray-200 font-semibold" : ""
-                        }`}
-                    >
-                        Amount {ordenCol === "monto" ? (ordenDir === "ASC" ? "↑" : "↓") : ""}
-                    </button>
-                    </div>
+                <button
+                    onClick={() => {
+                    if (ordenCol === "monto") {
+                        setOrdenDir(ordenDir === "ASC" ? "DESC" : "ASC");
+                    } else {
+                        setOrdenCol("monto");
+                        setOrdenDir("DESC");
+                    }
+                    }}
+                    className={`px-3 py-1 border m-3   bg-white border-gray-100 rounded ${
+                    ordenCol === "monto" ? "bg-gray-200" : ""
+                    }`}
+                >
+                    Amount {ordenCol === "monto" ? (ordenDir === "ASC" ? "↑" : "↓") : ""}
+                </button>
+                </div>
 
 
               {/*tabla */}

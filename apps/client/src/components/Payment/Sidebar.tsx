@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
-    <aside className="font-raleway w-64 h-screen bg-white text-white border-1 border-gray-100 flex flex-col ">
+    <aside className="font-raleway  lg:w-65  h-screen bg-white text-white border-1 border-gray-100 flex flex-col ">
 
       <h2 className="text-2xl font-playfair  text-blood-100 font-bold mb-6 border-b-2 p-4 border-gray-100">Gestión de Pagos</h2>
 
