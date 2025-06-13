@@ -8,7 +8,7 @@ const MainLayout = () => {
 
       <Sidebar />
 
-      <main className="flex-1 pt-4 bg-white min-h-screen">
+      <main className="flex-1 pt-4 overflow-x-auto bg-white min-h-screen">
         <Title/>
         <Outlet />
       </main>
