@@ -67,7 +67,7 @@ export default function PagoView() {
         showToast(result.message, "success");
          setTimeout(() => {
           navigate('/payments-index/payments');
-        }, 5000);
+        }, 4000);
     } else {
         //showToast(result.message, "error");
     }

@@ -48,7 +48,7 @@ const PaymentsTable = () =>{
     useEffect(() => {
         listarPagos({ pageIndex, pageSize, estado: estadoSeleccionado, ordenCol, ordenDir,});
         //listarPagos({ pageIndex, pageSize, estado: estadoSeleccionado, ordenCol, ordenDir,});
-    }, [estadoSeleccionado, ordenCol, ordenDir]);
+    }, [estadoSeleccionado, ordenCol, ordenDir, pageIndex, pageSize]);
 
     // cancelar pago
     const onToggleEstado = async (pago: PagoRowDTO) => {
