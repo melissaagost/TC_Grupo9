@@ -46,8 +46,8 @@ const PaymentsTable = () =>{
     }, [error]);
 
     useEffect(() => {
-        console.log("Re-listando pagos con orden:", ordenCol, ordenDir);
-        listarPagos({ pageIndex: 1, pageSize: 100, estado: estadoSeleccionado, ordenCol, ordenDir,});
+        listarPagos({ pageIndex, pageSize, estado: estadoSeleccionado, ordenCol, ordenDir,});
+        //listarPagos({ pageIndex, pageSize, estado: estadoSeleccionado, ordenCol, ordenDir,});
     }, [estadoSeleccionado, ordenCol, ordenDir]);
 
     // cancelar pago
@@ -63,7 +63,7 @@ const PaymentsTable = () =>{
         }
 
         // Recargar
-        await listarPagos({ pageIndex: 1, pageSize: 100, estado: null, ordenCol, ordenDir });
+        await listarPagos({ pageIndex, pageSize, estado: null, ordenCol, ordenDir });
 
     };
 
@@ -138,7 +138,6 @@ const PaymentsTable = () =>{
               {/*tabla */}
               <div  className="overflow-x-auto w-full">
                 <TableLayout
-                    title=""
                     data={pagosFiltrados ?? []}
                     columns={[
                         {

@@ -140,12 +140,10 @@ useEffect(() => {
     setError(null);
     try {
       const res = await PaymentService.listarPagos(query);
-      const { total } = parseStoredProcedureListResponse<PagoRowDTO>(res.data.data); //o bien, const {data, total} = res.data.data
+      const { total } = parseStoredProcedureListResponse<PagoRowDTO>(res.data); //o bien, const {data, total} = res.data.data
       const data = (res.data.data as unknown as PagoRowDTO[]) || [];
       setPagos(data);
       setTotalPagos(total);
-      console.log("Total desde backend:", total, "Cantidad de pagos:", data.length);
-
     } catch {
       setError("Error al listar pagos");
     } finally {
