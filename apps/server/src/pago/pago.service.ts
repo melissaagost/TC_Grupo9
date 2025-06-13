@@ -43,7 +43,7 @@ export class PagoService {
   ): Promise<Paginado<PagoRowDTO>> => {
     const {
       busqueda = null,
-      estado = 1,
+      estado = undefined,
       ordenCol = 'nombre',
       ordenDir = 'ASC',
       pageIndex = 1,
@@ -95,6 +95,7 @@ export class PagoService {
     });
 
     const total = data.length > 0 ? data[0].total_rows : 0;
+
 
     return {
       data,

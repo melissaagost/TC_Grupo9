@@ -25,9 +25,8 @@ export function usePaymentLogic() {
   //busqueda / filtro:
   //metodos de pago
   const [metodosFiltrados, setMetodosFiltrados] = useState<MetodoPagoRow[]>([]);
+  const [pagosFiltrados, setPagosFiltrados] = useState<PagoRowDTO[]>([]);
   const [busqueda, setBusqueda] = useState<string>("");
-
-  //pagos
 
   // Métodos de pago
   const buscarMetodosPago = async (query: FiltroBase) => {
@@ -40,7 +39,6 @@ export function usePaymentLogic() {
       setMetodosPago(data);
 
     } catch (err) {
-      console.error("Error al traer datos:", err);
       setError("Error al buscar métodos de pago");
     } finally {
       setLoading(false);
@@ -142,9 +140,12 @@ useEffect(() => {
     setError(null);
     try {
       const res = await PaymentService.listarPagos(query);
-      const { data, total } = parseStoredProcedureListResponse<PagoRowDTO>(res.data); //o bien, const {data, total} = res.data.data
+      const { total } = parseStoredProcedureListResponse<PagoRowDTO>(res.data.data); //o bien, const {data, total} = res.data.data
+      const data = (res.data.data as unknown as PagoRowDTO[]) || [];
       setPagos(data);
       setTotalPagos(total);
+      console.log("Total desde backend:", total, "Cantidad de pagos:", data.length);
+
     } catch {
       setError("Error al listar pagos");
     } finally {
@@ -176,17 +177,42 @@ useEffect(() => {
       const res = await PaymentService.cancelarPago(id);
       const { success, message } = parseStoredProcedureResponse<RespuestaGenerica>(res.data);
       success ? setMensaje(message) : setError(message);
-    } catch {
-      setError("Error al cancelar el pago");
+
+     if (success) {
+        setMensaje(message);
+        return { success: true, message };
+      } else {
+        setError(message);
+        return { success: false, message };
+      }
+
+    } catch (err) {
+        setError("Error al cancelar el pago");
+      return { success: false, message: "Error inesperado" };
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // When there's no search term, pagos filtrados should be the same as pagos
+    if (!busqueda) {
+      setPagosFiltrados(pagos);
+    } else {
+      // Logic to filter pagos based on busqueda and update pagos
+      const filtered = pagos.filter(pago =>
+        pago.nombre_metodo.toLowerCase().includes(busqueda.toLowerCase())
+      );
+      setPagosFiltrados(filtered);
+    }
+  }, [pagos, busqueda]); // This effect should run whenever the full list or the search term changes.
+
 
   return {
     metodosPago,
     setMetodosPago,
     metodosFiltrados,      // lista filtrada automáticamente
+    pagosFiltrados,
     setMetodosFiltrados,
     busqueda,
     setBusqueda,           // para vincular con el input

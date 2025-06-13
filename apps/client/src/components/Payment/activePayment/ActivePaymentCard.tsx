@@ -65,7 +65,9 @@ export default function PagoView() {
     if (result?.success && pedido?.[0]?.id_mesa) {
         marcarMesaLibre.mutate(pedido[0].id_mesa); //libera la mesa cuando se guarda el pago
         showToast(result.message, "success");
-        navigate('/payments-index/payments')
+         setTimeout(() => {
+          navigate('/payments-index/payments');
+        }, 5000);
     } else {
         //showToast(result.message, "error");
     }

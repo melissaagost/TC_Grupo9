@@ -45,7 +45,7 @@ const MethodsTable = () => {
         buscarMetodosPago({ pageIndex: 1, pageSize: 100});
     }, []);
 
-    // //deshabilitar / habilitar
+    //deshabilitar / habilitar
     const onToggleEstado = async (metodo: MetodoPagoRow) => {
     const result = metodo.estado === 1
         ? await deshabilitarMetodoPago(metodo.id_metodo)
