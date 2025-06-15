@@ -12,7 +12,6 @@ const Navbar = () => {
   const { tienePermiso } = usePermisos()
   const navigate = useNavigate();
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
 
   const { token, userType } = useAuth();
@@ -142,8 +141,7 @@ const Navbar = () => {
                 <DropdownMenu.Item>
                       <Link
                         to="/profile"
-                        className="inline-flex gap-1 px-4 py-2 text-gray-700 hover:text-blood-100 "
-                        onClick={() => setDropdownOpen(false)}>
+                        className="inline-flex gap-1 px-4 py-2 text-gray-700 hover:text-blood-100 ">
                         <UserCircle2/>Perfil
                       </Link>
                 </DropdownMenu.Item>
