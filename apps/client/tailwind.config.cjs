@@ -76,7 +76,9 @@ module.exports = {
       fontFamily: {
         playfair: ['Playfair Display', 'serif'],
         raleway: ['Raleway', 'sans-serif'],
-        urbanist: ['Urbanist', 'sans-serif']
+        urbanist: ['Urbanist', 'sans-serif'],
+        mono: ['Doto', 'sans-serif'],
+        typewritter: ['Anonymous Pro', 'sans-serif']
       },
 
       keyframes: {

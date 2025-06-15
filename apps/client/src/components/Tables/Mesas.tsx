@@ -299,18 +299,20 @@ const estadosPedidoTexto: Record<number, string> = {
                   if (estadoMesa === 2) {
                     // Mesa reservada -> ambas funciones deberian refrescar tablas
                     return (
-                      <div className="flex flex-col items-center gap-2">
+                      <div className=" inline-flex items-center gap-2">
                         <button
                           onClick={() => marcarMesaOcupada.mutate(mesa.id_mesa)}
-                          className="bg-yellow-300 text-white px-2 py-1 rounded-md"
+                          className=" text-green-600 hover:text-green-800 px-2 py-1 rounded-md transition-all duration-300 hover:-translate-y-1"
+                          title="Ocupar Mesa"
                         >
-                          Ocupar Mesa
+                          <Check/>
                         </button>
                         <button
                           onClick={() => marcarMesaLibre.mutate(mesa.id_mesa)}
-                          className="bg-green-400 text-white px-2 py-1 rounded-md"
+                          className=" text-red-500 hover:text-red-800 px-2 py-1 rounded-md transition-all duration-300 hover:-translate-y-1"
+                          title="Liberar Mesa"
                         >
-                          Liberar Mesa
+                          <X/>
                         </button>
                       </div>
                     );
