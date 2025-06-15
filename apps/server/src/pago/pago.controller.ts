@@ -25,7 +25,7 @@ import { PagoGuardarDTO } from './dto/pagoGuardarDTO';
 export class PagoController {
   constructor(private pagoService: PagoService) {}
 
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Post('guardar_metodo_pago')
   async guardarMetodoPago(@Body() dto: MetodoPagoGuardarDTO) {
     try {
@@ -40,7 +40,7 @@ export class PagoController {
     }
   }
 
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch('deshabilitar_metodo_pago/:id')
   async deshabilitar(@Param('id', ParseIntPipe) id: number) {
     try {
@@ -55,6 +55,22 @@ export class PagoController {
     }
   }
 
+  @Roles('administrador')
+  @Patch('habilitar_metodo_pago/:id')
+  async habilitar(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.pagoService.habilitarMetodoPagoAsync(id);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Error desconocido';
+      throw new HttpException(
+        { message: 'Error al habilitar método de pago', details: message },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Roles('administrador', 'mozo')
   @Get('buscar_metodo_pago')
   async buscar(@Query() query: FiltroBase) {
     try {
@@ -71,7 +87,7 @@ export class PagoController {
 
   // ...existing code...
 
-  @Roles(Role.Administrador, Role.Mozo)
+  @Roles('administrador', 'mozo')
   @Post('guardar')
   async guardarPago(@Body() dto: PagoGuardarDTO) {
     try {
@@ -86,7 +102,7 @@ export class PagoController {
     }
   }
 
-  @Roles(Role.Administrador, Role.Mozo)
+  @Roles('administrador', 'mozo')
   @Get('listar')
   async listarPagos(@Query() query: FiltroBase) {
     try {
@@ -101,7 +117,7 @@ export class PagoController {
     }
   }
 
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch('cancelar/:id')
   async cancelarPago(@Param('id', ParseIntPipe) id: number) {
     try {

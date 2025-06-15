@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Calendar, BookOpen, Users, LogIn, LogOut, User, Menu, X, Utensils, UserCircle2  } from "lucide-react";
+import { Calendar, BookOpen, Users, LogIn, LogOut, User, Menu, X, Utensils, UserCircle2, CookingPot, Wallet, ChevronDown  } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { usePermisos } from '../hooks/usePermisos'
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { setToken, setUserType } = useAuth(); // 👈 usamos AuthContext
-  const navigate = useNavigate(); // 👈 para redirigir
+  const { setToken, setUserType } = useAuth();
+  const { tienePermiso } = usePermisos()
+  const navigate = useNavigate();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -40,7 +43,7 @@ const Navbar = () => {
 
             {userType !== 'administrador' && userType !== 'cocinero' && (
               <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
-                <BookOpen size={16} /> Menú
+                <BookOpen size={16} /> Menú Invitados
               </Link>
             )}
 
@@ -55,68 +58,111 @@ const Navbar = () => {
           {/* logueado */}
           {token && (
             <>
-              {/* Cosas que ven todos los logueados */}
-              <Link to="/building" className="flex items-center gap-1 hover:text-blood-100">
-                <Calendar size={16} /> Reservas
-              </Link>
 
-              <Link to="/tables" className="flex items-center gap-1 hover:text-blood-100">
-                <Utensils size={16} /> Mesas
-              </Link>
+            {/*dropdown abm's*/}
+            <DropdownMenu.Root>
 
+              <DropdownMenu.Trigger asChild>
+                <button className="inline-flex align-middle gap-1">
+                  Administrar <ChevronDown className="mt-1" size={16}/>
+                </button>
+              </DropdownMenu.Trigger>
 
+              <DropdownMenu.Content
+               align="end"
+               sideOffset={8}
+               className="z-50 bg-white border p-3 border-eggshell-creamy rounded-md shadow-md animate-fade-in">
 
-              {/* Cosas que sólo ve el admin */}
-              {(userType === 'administrador' || userType === 'cocinero') && (
-                <Link to="/menu" className="flex items-center gap-1 hover:text-blood-100">
-                  <BookOpen size={16} /> Menú
-                </Link>
-              )}
+                <DropdownMenu.Item>
+                  {tienePermiso("ver_reservas") && (
+                  <Link to="/building" className="flex items-center gap-1 pb-3 hover:text-blood-100">
+                    <Calendar size={16} /> Reservas
+                  </Link>
+                  )}
+                </DropdownMenu.Item>
 
-              {userType === 'administrador' && (
-                <Link to="/users" className="flex items-center gap-1 hover:text-blood-100">
-                  <Users size={16} /> Usuarios
-                </Link>
-              )}
+                <DropdownMenu.Item>
+                  {tienePermiso("ver_pedidos_pendientes") && (
+                    <Link to="/orders" className="flex items-center gap-1 pb-3 hover:text-blood-100">
+                      <CookingPot size={16} /> Pedidos
+                    </Link>
+                  )}
+                </DropdownMenu.Item>
 
+                <DropdownMenu.Item>
+                  {tienePermiso("ver_pagos") && (
+                    <Link to="/payments-index" className="flex items-center gap-1 pb-3 hover:text-blood-100">
+                      <Wallet size={16} /> Pagos
+                    </Link>
+                  )}
+                </DropdownMenu.Item>
 
-                {/* dropdown */}
-                <div className="relative">
+                <DropdownMenu.Item>
+                  {tienePermiso("ver_mesas") && (
+                    <Link to="/tables" className="flex items-center gap-1 pb-3 hover:text-blood-100">
+                      <Utensils size={16} /> Mesas
+                    </Link>
+                  )}
+                </DropdownMenu.Item>
 
+                <DropdownMenu.Item>
+                  {tienePermiso("ver_menu_editable") && (
+                    <Link to="/menu" className="flex items-center gap-1 pb-3 hover:text-blood-100">
+                      <BookOpen size={16} /> Menú
+                    </Link>
+                )}
+                </DropdownMenu.Item>
+
+                <DropdownMenu.Item>
+                  {tienePermiso("ver_usuarios") && (
+                    <Link to="/users" className="flex items-center gap-1  hover:text-blood-100">
+                      <Users size={16} /> Usuarios
+                    </Link>
+                  )}
+                </DropdownMenu.Item>
+
+              </DropdownMenu.Content>
+
+            </DropdownMenu.Root>
+
+            {/*dropdown de opciones perfil*/}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
                   <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="flex items-center gap-2 px-4 py-2 bg-transparent border-1 border-to-blood-300 rounded-lg  text-gray-700 hover:bg-blood-300 hover:text-white">
                     <User size={20} />
                     <span>Mi cuenta</span>
                   </button>
+              </DropdownMenu.Trigger>
 
-                  {/* Dropdown menú */}
-                  {dropdownOpen && (
-                    <div className="absolute  left mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
+              <DropdownMenu.Content
+                align="end"
+                sideOffset={8}
+                className="z-50 bg-white border p-2 border-eggshell-creamy rounded-md shadow-md animate-fade-in">
+                <DropdownMenu.Item>
                       <Link
                         to="/profile"
-                        className="inline-flex gap-1 px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        className="inline-flex gap-1 px-4 py-2 text-gray-700 hover:text-blood-100 "
                         onClick={() => setDropdownOpen(false)}>
                         <UserCircle2/>Perfil
                       </Link>
+                </DropdownMenu.Item>
 
-                      <button
+                <DropdownMenu.Item>
+                   <button
                         onClick={() => {
                           handleLogout();
-                          setDropdownOpen(false);
                         }}
-                        className="gap-1 px-4 py-2 inline-flex text-gray-700 hover:bg-gray-100">
+                        className="gap-1 px-4 py-2 inline-flex text-gray-700 hover:text-blood-100">
                         <LogOut/>
                         Cerrar Sesión
                       </button>
-                    </div>
-                  )}
-                </div>
-
-
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
             </>
           )}
-          </div>
+        </div>
 
 
 
@@ -143,7 +189,7 @@ const Navbar = () => {
 
             {userType !== 'administrador' && userType !== 'cocinero' && (
               <Link to="/building" className="flex items-center gap-2">
-                <BookOpen size={18} /> Menú
+                <BookOpen size={18} /> Menú Invitados
               </Link>
             )}
 
@@ -159,29 +205,46 @@ const Navbar = () => {
 
               {token && (
                 <>
+                {tienePermiso("ver_reservas") && (
                 <Link to="/building" className="flex items-center gap-2">
                   <Calendar size={18} /> Reservas
                 </Link>
+                )}
 
-                <Link to="/tables" className="flex items-center gap-2">
+                {tienePermiso("ver_pagos") && (
+                  <Link to="/payments-index" className="flex items-center gap-1 hover:text-blood-100">
+                    <Wallet size={16} /> Pagos
+                  </Link>
+                )}
+
+                {tienePermiso("ver_pedidos_pendientes") && (
+                  <Link to="/orders" className="flex items-center gap-1 hover:text-blood-100">
+                    <CookingPot size={16} /> Pedidos
+                  </Link>
+                )}
+
+                {tienePermiso("ver_mesas") && (
+                  <Link to="/tables" className="flex items-center gap-2">
                   <Utensils size={18} /> Mesas
                 </Link>
+                )}
 
-                <Link to="/profile" className="flex items-center gap-2">
-                  <User size={18} /> Perfil
-                </Link>
 
-                {(userType === 'administrador' || userType === 'cocinero') &&(
+                {tienePermiso("ver_menu_editable") &&(
                 <Link to="/menu" className="flex items-center gap-2">
                   <BookOpen size={18} /> Menú
                 </Link>
                 )}
 
-                {userType === 'administrador' &&(
+                {tienePermiso("ver_usuarios") &&(
                 <Link to="/users" className="flex items-center gap-2">
                   <Users size={18} /> Usuarios
                 </Link>
                 )}
+
+                <Link to="/profile" className="flex items-center gap-2">
+                  <User size={18} /> Perfil
+                </Link>
 
                 <button
                   onClick={handleLogout}

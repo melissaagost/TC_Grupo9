@@ -2,6 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import axiosInstance from '../../services/axiosInstance'
 import { Fragment, useEffect, useState } from 'react'
 import { PedidoRowDTO } from '../../types/orderTypes'
+import { Calendar, Route, Utensils, HandPlatter } from 'lucide-react'
 
 interface OrderDetailsProps {
   open: boolean
@@ -47,37 +48,38 @@ export default function OrderDetails({ open, onClose, idPedido }: OrderDetailsPr
         </Transition.Child>
 
         <div className="fixed inset-0 flex items-center font-urbanist justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md rounded bg-eggshell-greekvilla p-6 shadow-xl">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-eggshell-greekvilla p-6 shadow-xl">
             <Dialog.Title className="text-lg font-playfair text-gray-700 font-bold">Detalles del Pedido</Dialog.Title>
 
-                {/* {detalles && (
-                    <pre className="text-xs bg-yellow-100 p-2 mt-4 rounded">
-                        {JSON.stringify(detalles, null, 2)}
-                    </pre>
-                )}
- */}
 
                 {Array.isArray(detalles) && detalles.length > 0 ? (
-                <div className="space-y-2 text-sm text-gray-700">
+                <div className="space-y-2  text-md mt-2 rounded-lg text-gray-700">
                     <p><strong>Pedido N°:</strong> {detalles[0].id_pedido}</p>
-                    <p><strong>Fecha:</strong> {new Date(detalles[0].fecha).toLocaleDateString()}</p>
-                    <p><strong>Estado:</strong> {detalles[0].estado_descripcion}</p>
-                    <p><strong>Mesa:</strong> {detalles[0].numero_mesa} – {detalles[0].descripcion_mesa}</p>
-                    <p><strong>Usuario:</strong> {detalles[0].usuario_nombre} ({detalles[0].tipo_usuario})</p>
 
-                    <div className="mt-4">
-                    <strong>Items:</strong>
-                    <ul className="list-disc list-inside">
-                        {detalles.map((item, index) => (
-                        <li key={index}>
-                            <p className="font-medium">{item.nombre_item}</p>
-                            <p className="text-gray-600 text-xs italic">{item.descripcion_item}</p>
-                            <p>
-                            Cantidad: {item.cantidad_item} – Subtotal: ${item.subtotal_item}
-                            </p>
-                        </li>
-                        ))}
-                    </ul>
+                  <div className='flex-col w-60'>
+                    <p className='mb-1 inline-flex items-center gap-1'><Calendar size={15}/><strong>Fecha:</strong> {new Date(detalles[0].fecha).toLocaleDateString()}</p>
+                    <p className='mb-1 inline-flex items-center gap-1'><Route size={15}/><strong>Estado:</strong> {detalles[0].estado_descripcion}</p>
+                    <p className='mb-1 inline-flex items-center gap-1'><Utensils size={15}/><strong>Mesa:</strong> {detalles[0].numero_mesa} – {detalles[0].descripcion_mesa}</p>
+                    <p className='mb-1 inline-flex items-center gap-1'><HandPlatter size={15}/><strong>A cargo de:</strong> {detalles[0].usuario_nombre} {/*({detalles[0].tipo_usuario})*/}</p>
+                  </div>
+                    <div className="mt-2">
+
+                      <strong>Items:</strong>
+
+                      <ul className=" list-inside">
+                          {detalles.map((item, index) => (
+                            <li key={index}>
+                              <div className='inline-flex gap-5'>
+                                <p className="font-medium">{item.nombre_item}</p>
+                                {/* <p className="text-gray-600 text-xs italic">{item.descripcion_item}</p> */}
+                                <p>
+                                x {item.cantidad_item} – $ {item.subtotal_item}
+                                </p>
+                              </div>
+                            </li>
+                          ))}
+                      </ul>
+
                     </div>
 
                     <p className="text-right mt-2 font-bold">

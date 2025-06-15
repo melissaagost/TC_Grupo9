@@ -3,6 +3,7 @@ import { usePermisos } from '../../hooks/usePermisos'
 import { useOrderLogic } from '../../hooks/useOrderLogic'
 import { useState, useMemo } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import OrderDetails from './OrderDetails'
 
 interface OrderCardProps {
   showOrderActionToast: (message: string, type: 'success' | 'error' | 'info') => void
@@ -16,6 +17,8 @@ const OrderCard = ({ showOrderActionToast }: OrderCardProps) => {
   const { listarPedidos, pedidosAgrupados, actualizarEstado } = useOrderLogic()
 
   const [estadoSeleccionado, setEstadoSeleccionado] = useState<number | null>(null) // null = todos
+  const [openDetalles, setOpenDetalles] = useState(false)
+  const [pedidoId, setPedidoId] = useState<number | null>(null)
 
   const estados = [
     { id: null, label: 'Todas las Mesas' },
@@ -79,6 +82,11 @@ const OrderCard = ({ showOrderActionToast }: OrderCardProps) => {
         },
       }
     )
+  }
+
+  const handleOpenDetalles = (id: number) => {
+    setPedidoId(id)
+    setOpenDetalles(true)
   }
 
   if (listarPedidos.isLoading) return <div>Cargando pedidos...</div>
@@ -145,7 +153,10 @@ const OrderCard = ({ showOrderActionToast }: OrderCardProps) => {
 
               {/* Acciones */}
               <div className="flex flex-wrap max-w-sm text-base items-center justify-between gap-2 font-urbanist pt-4">
-                <button className="inline-flex items-center gap-2 hover:text-blood-100 hover:underline">
+                <button
+                  onClick={() => handleOpenDetalles(order.id_pedido)}
+                  className="inline-flex items-center gap-2 hover:text-blood-100 hover:underline"
+                >
                   <EyeIcon size={20} /> Detalles
                 </button>
 
@@ -174,6 +185,11 @@ const OrderCard = ({ showOrderActionToast }: OrderCardProps) => {
           )
         })}
       </div>
+      <OrderDetails
+        open={openDetalles}
+        onClose={() => setOpenDetalles(false)}
+        idPedido={pedidoId}
+      />
     </>
   )
 }

@@ -26,7 +26,7 @@ import { FiltroBase } from 'src/common/interface/filtroBase';
 export class PedidoController {
   constructor(private pedidoService: PedidoService) {}
 
-  @Roles('administrador', 'mozo')
+  @Roles('administrador', 'mozo', 'cocinero')
   @Get('buscar/:id')
   async buscarPedidoPorId(@Param('id', ParseIntPipe) id: number) {
     try {

@@ -11,6 +11,8 @@ import NewOrderModal from "../Order/NewOrder/NewOrderModal";
 import { useOrderLogic } from "../../hooks/useOrderLogic";
 import OrderDetails from "../Order/OrderDetails"
 import { PedidoCompletoGuardarDTO, PedidoRowDTO } from "../../types/orderTypes";
+import {  useNavigate } from "react-router-dom";
+
 
 // Define the MesaConPedido interface based on useTableLogic structure
 interface MesaConPedido {
@@ -41,6 +43,8 @@ const MesasTable = () => {
     setOrderToastMessage(message);
     setOrderToastType(type);
   };
+
+  const navigate = useNavigate();
 
   const {
     actualizarEstado,
@@ -111,11 +115,12 @@ const MesasTable = () => {
     }
     actualizarEstado.mutate({ id, data: { nuevo_estado: nuevoEstado } }, { //error aca
       onSuccess: (response) => {
-        if (response.data.success) {
+        if (response.data.actualizar_estado_pedido.success) {
           showOrderToast(response.data.message || "Estado actualizado", "success");
         } else {
           showOrderToast(response.data.message || "No se pudo actualizar el estado", "error");
         }
+        fetchMesas();
       },
       onError: (error: any) => {
          showOrderToast(error?.response?.data?.message || error.message || "Error al actualizar el estado", "error");
@@ -292,20 +297,22 @@ const estadosPedidoTexto: Record<number, string> = {
                   const estadoPedido = pedido?.estado;
 
                   if (estadoMesa === 2) {
-                    // Mesa reservada
+                    // Mesa reservada -> ambas funciones deberian refrescar tablas
                     return (
-                      <div className="flex flex-col items-center gap-2">
+                      <div className=" inline-flex items-center gap-2">
                         <button
                           onClick={() => marcarMesaOcupada.mutate(mesa.id_mesa)}
-                          className="bg-yellow-300 text-white px-2 py-1 rounded-md"
+                          className=" text-green-600 hover:text-green-800 px-2 py-1 rounded-md transition-all duration-300 hover:-translate-y-1"
+                          title="Ocupar Mesa"
                         >
-                          Ocupar Mesa
+                          <Check/>
                         </button>
                         <button
                           onClick={() => marcarMesaLibre.mutate(mesa.id_mesa)}
-                          className="bg-green-400 text-white px-2 py-1 rounded-md"
+                          className=" text-red-500 hover:text-red-800 px-2 py-1 rounded-md transition-all duration-300 hover:-translate-y-1"
+                          title="Liberar Mesa"
                         >
-                          Liberar Mesa
+                          <X/>
                         </button>
                       </div>
                     );
@@ -415,7 +422,7 @@ const estadosPedidoTexto: Record<number, string> = {
                             className="z-50 bg-white border border-eggshell-creamy rounded-md shadow-md animate-fade-in"
                           >
                             <DropdownMenu.Item
-                              onClick={() => console.log("Pagar")}
+                              onClick={() => navigate(`/payments-index/active-payment/${pedido.id_pedido}`)}
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-cream-100 cursor-pointer"
                             >
                               <CreditCard/> Pagar

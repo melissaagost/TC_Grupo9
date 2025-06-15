@@ -7,6 +7,11 @@ export const MetodoPagoQueries = {
       $1::INTEGER
     );
   `,
+    habilitarMetodoPago: `
+    SELECT sp_habilitar_metodo_pago(
+      $1::INTEGER
+    );
+  `,
   buscarTodosMetodosPago: `
     SELECT * FROM sp_listar_metodos_pago(
     $1::VARCHAR,

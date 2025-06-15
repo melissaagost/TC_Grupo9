@@ -86,7 +86,7 @@ export const useOrderLogic = () => {
     },
   });
 
-  //NEW ORDER MODAL actions
+  //NEW ORDER MODAL ACTIONS
     const addItem = (item: { id: string; precio: number; nombre: string }) => {
     setOrden((prev) => {
       const found = prev.find((i) => i.id === item.id);

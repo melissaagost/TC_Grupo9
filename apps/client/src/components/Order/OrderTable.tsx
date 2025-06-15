@@ -42,8 +42,6 @@ const OrderTable = () => {
 
             <OrderCard showOrderActionToast={showOrderActionToast} />
 
-
-        {/* <NewOrderModal isOpen={open} onClose={() => setOpen(false)} ></NewOrderModal> */}
         </div>
     );
 };
