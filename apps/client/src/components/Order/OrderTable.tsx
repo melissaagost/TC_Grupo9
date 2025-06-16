@@ -2,6 +2,7 @@ import OrderCard from "./OrderCard";
 import Toast from "../UI/Toast";
 import { usePermisos } from "../../hooks/usePermisos";
 import { useState } from "react";
+import { useAuth } from '../../context/AuthContext'
 
 const OrderTable = () => {
     //  const [open, setOpen] = useState(true);
@@ -16,6 +17,8 @@ const OrderTable = () => {
         setToastMessage(message);
         setToastType(type);
     };
+
+      const { userType } = useAuth() //"cocinero", "mozo", "gestor", etc.
 
     return (
 
@@ -35,9 +38,8 @@ const OrderTable = () => {
             {tienePermiso("filtrar_pedidos") &&
                 <h3 className="text-lg font-urbanist  text-gray-700 font-light mb-4">Administra los pedidos de tu restaurante</h3>
             }
-            {tienePermiso("marcar_en_preparacion") &&
+            {tienePermiso("marcar_en_preparacion") && userType !== 'administrador'  &&
                 <h3 className="text-lg font-urbanist  text-gray-700 font-light mb-4">Administra los pedidos pendientes del restaurante</h3>
-
             }
 
             <OrderCard showOrderActionToast={showOrderActionToast} />

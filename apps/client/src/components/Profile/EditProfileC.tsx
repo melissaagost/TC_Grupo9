@@ -7,6 +7,7 @@ import userService from '../../services/userService';
 import Toast  from '../UI/Toast'
 import pfp from '../../assets/pfp.svg'
 
+
 const EditProfileC = () => {
 
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -14,6 +15,7 @@ const EditProfileC = () => {
 
     const [nombre, setNombre] = useState("");
     const [correo, setCorreo] = useState("");
+    const [originalCorreo, setOriginalCorreo] = useState("");
 
 
     useEffect(() => {
@@ -22,6 +24,7 @@ const EditProfileC = () => {
         const data = await userService.getProfile(token);
         setNombre(data.nombre);
         setCorreo(data.correo);
+        setOriginalCorreo(data.correo);
       };
       fetchData();
     }, []);
@@ -42,20 +45,29 @@ const EditProfileC = () => {
           setToastType("error");
           return;
         }
-        //msj de confirmacion y deslogueo
+
+        const emailChanged = correo !== originalCorreo;
+
       try {
         await userService.updateOwnProfile({ nombre, correo }, token);
-        window.location.href = "/profile";
-        setToastMessage("Perfil actualizado");
+
+        if (emailChanged) {
+          // Clear token and redirect to login
+          localStorage.removeItem("token");
+          window.location.href = "/auth";
+          setToastMessage("Perfil actualizado. Por favor, inicie sesión nuevamente.");
+        } else {
+          window.location.href = "/profile";
+          setToastMessage("Perfil actualizado");
+        }
         setToastType("success");
 
       } catch (err) {
-
         setToastMessage("Error al actualizar");
         setToastType("error");
-
       }
     };
+
 
 
   return (

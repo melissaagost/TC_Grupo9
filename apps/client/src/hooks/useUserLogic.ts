@@ -106,7 +106,7 @@ useEffect(() => {
       resetForm();
     } catch (err) {
       console.error("Error al crear usuario:", err);
-      setToastMessage("No se pudo crear el usuario.");
+      setToastMessage("Ya existe un usuario con ese correo.");
       setToastType("error");
     }
   };
