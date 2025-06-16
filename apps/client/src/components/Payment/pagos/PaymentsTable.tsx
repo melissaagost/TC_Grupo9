@@ -53,7 +53,7 @@ const PaymentsTable = () =>{
     // cancelar pago
     const onToggleEstado = async (pago: PagoRowDTO) => {
 
-        const result = await cancelarPago(pago.id_metodo);
+        const result = await cancelarPago(pago.id_pago);
 
 
         if (result.success) {

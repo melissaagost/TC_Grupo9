@@ -1,8 +1,8 @@
-import {Charts} from "../components/Payment/Charts"
+import { Charts } from "../components/Payment/Charts";
+import { useChartData } from "../hooks/useChartsData";
 
 const PaymentIndex = () => {
-  const pagosData = { pagado: 87, cancelado: 13 };
-  const metodosPagoData = { activos: 5, inactivos: 2 };
+  const { pagosData, metodosPagoData, pedidosPorMes } = useChartData();
 
   return (
     <main className="min-h-screen bg-blood-100/5 p-6">
@@ -10,8 +10,10 @@ const PaymentIndex = () => {
       <Charts
         pagosData={pagosData}
         metodosPagoData={metodosPagoData}
+        pedidosPorMes={pedidosPorMes}
       />
-    </main>);
+    </main>
+  );
 };
 
 export default PaymentIndex;
