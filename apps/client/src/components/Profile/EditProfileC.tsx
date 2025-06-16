@@ -7,6 +7,7 @@ import userService from '../../services/userService';
 import Toast  from '../UI/Toast'
 import pfp from '../../assets/pfp.svg'
 
+
 const EditProfileC = () => {
 
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -56,6 +57,7 @@ const EditProfileC = () => {
 
       }
     };
+
 
 
   return (
