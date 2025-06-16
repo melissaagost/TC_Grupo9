@@ -158,6 +158,23 @@ export const useOrderLogic = () => {
         return { success: false, message: "Usuario no autenticado.", type: 'error' };
       }
 
+      //verif que la mesa ya no tenga una orden activa
+      const mesaId = parseInt(mesaSeleccionada);
+      const pedidosMesa = pedidosAgrupados.filter(p => p.numero_mesa.toString() === mesaSeleccionada);
+      const pedidoActivo = pedidosMesa.find(p =>
+        p.estado_pedido === 1 || // solicitado
+        p.estado_pedido === 3 || // en preparación
+        p.estado_pedido === 5    // en mesa
+      );
+
+      if (pedidoActivo && !pedidoExistente) {
+        return {
+          success: false,
+          message: `La mesa ${mesaId} ya tiene un pedido activo (${pedidoActivo.estado}). No se puede crear un nuevo pedido.`,
+          type: 'error'
+        };
+      }
+
       for (const item of orden) {
         if (!item.id || isNaN(parseInt(item.id))) {
           return { success: false, message: "Uno de los ítems no tiene un ID válido.", type: 'error' };
