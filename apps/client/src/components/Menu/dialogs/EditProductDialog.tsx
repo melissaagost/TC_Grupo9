@@ -15,6 +15,7 @@ interface EditItemDialogProps {
   onSave: (updatedItem: ItemGuardarDTO) => Promise<void>;
   initialData: ItemRowDTO | null;
   categorias: { id: number; nombre: string }[];
+  menus: { id: number; nombre: string }[];
   setToastType: (type: "success" | "error" | "info") => void;
   setToastMessage: (msg: string) => void;
 }
@@ -25,6 +26,7 @@ export const EditItemDialog = ({
   onSave,
   initialData,
   categorias,
+  menus,
   setToastMessage,
   setToastType,
 }: EditItemDialogProps) => {
@@ -42,6 +44,7 @@ export const EditItemDialog = ({
           initialValues={initialData}
           id_menu={initialData.id_menu}
           categorias={categorias}
+          menus={menus}
           onSubmit={onSave}
           onCancel={onClose}
           setToastType={setToastType}
