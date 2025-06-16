@@ -1,23 +1,3 @@
-// import axios from "axios";
-
-// const BASE_URL = "/api"
-
-// const axiosInstance = axios.create({
-//    baseURL: BASE_URL
-// });
-
-// // Interceptor para agregar el token a cada request
-// axiosInstance.interceptors.request.use((config) => {
-
-//   const token = localStorage.getItem("token"); // o sessionStorage
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
-// export default axiosInstance;
-
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -45,8 +25,8 @@ axiosInstance.interceptors.response.use(
 
       localStorage.removeItem("token");
       setTimeout(() => {
-        window.location.href = "/login";
-      }, 2000);
+        window.location.href = "/auth";
+      }, 3000);
     }
 
     return Promise.reject(error);
