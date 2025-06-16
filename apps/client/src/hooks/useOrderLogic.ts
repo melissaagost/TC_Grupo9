@@ -170,6 +170,18 @@ export const useOrderLogic = () => {
       //si el pedido ya existe carga datos y guarda los que se modifiquen
       const esEdicion = pedidoExistente && pedidoExistente.id_pedido;
 
+      // Si es una edición, verificar si el pedido estaba en estado 5 (en mesa)
+      if (esEdicion && pedidoExistente.id_pedido) {
+        const pedidoActual = pedidosAgrupados.find(p => p.id_pedido === pedidoExistente.id_pedido);
+        if (pedidoActual?.estado_pedido === 5) {
+          // Si estaba en mesa, actualizar el estado a 1 (solicitado)
+          await actualizarEstado.mutateAsync({
+            id: pedidoExistente.id_pedido,
+            data: { nuevo_estado: 1 }
+          });
+        }
+      }
+
       const payload: PedidoCompletoGuardarDTO = {
         ...(esEdicion ? { id_pedido: pedidoExistente.id_pedido } : {}),
         id_mesa: parseInt(mesaSeleccionada),
