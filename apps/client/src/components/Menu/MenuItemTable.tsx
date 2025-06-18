@@ -174,6 +174,10 @@ const MenuItemTable = () => {
                 id: cat.id_categoria,
                 nombre: cat.nombre,
                 }))}
+                menus={menus.map(menu => ({
+                    id: menu.id_menu,
+                    nombre: menu.nombre,
+                }))}
                 id_menu={activeMenuId ?? 1}
                 setToastType={setToastType}
                 setToastMessage={setToastMessage}
@@ -197,6 +201,10 @@ const MenuItemTable = () => {
                 categorias={categories.map(cat => ({
                     id: cat.id_categoria,
                     nombre: cat.nombre
+                }))}
+                menus={menus.map(menu => ({
+                    id: menu.id_menu,
+                    nombre: menu.nombre,
                 }))}
                 setToastMessage={setToastMessage}
                 setToastType={setToastType}

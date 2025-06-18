@@ -12,6 +12,7 @@ interface CreateItemDialogProps {
   onClose: () => void;
   onCreate: (item: ItemGuardarDTO) => Promise<void>;
   categorias: { id: number; nombre: string }[];
+  menus: { id: number; nombre: string }[];
   id_menu: number;
   setToastType: (type: "success" | "error" | "info") => void;
   setToastMessage: (msg: string) => void;
@@ -22,6 +23,7 @@ export const CreateItemDialog = ({
   onClose,
   onCreate,
   categorias,
+  menus,
   id_menu,
   setToastMessage,
   setToastType,
@@ -38,6 +40,7 @@ export const CreateItemDialog = ({
           initialValues={undefined}
           id_menu={id_menu}
           categorias={categorias}
+          menus={menus}
           onSubmit={onCreate}
           onCancel={onClose}
           setToastType={setToastType}

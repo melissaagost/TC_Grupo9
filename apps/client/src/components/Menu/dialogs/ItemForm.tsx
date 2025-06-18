@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ItemGuardarDTO, ItemRowDTO } from "../../../types/itemTypes";
 import axios from "axios";
@@ -7,6 +6,7 @@ import axios from "axios";
 interface Props {
   initialValues?: ItemRowDTO;
   categorias: { id: number; nombre: string }[];
+  menus: { id: number; nombre: string }[];
   id_menu: number;
   onSubmit: (item: ItemGuardarDTO) => Promise<void>;
   onCancel: () => void;
@@ -18,6 +18,7 @@ interface Props {
 export const ItemForm: React.FC<Props> = ({
   initialValues,
   categorias,
+  menus,
   id_menu,
   onSubmit,
   onCancel,
@@ -30,6 +31,7 @@ export const ItemForm: React.FC<Props> = ({
   const [precio, setPrecio] = useState<number>(0);
   const [stock, setStock] = useState<number>(0);
   const [id_categoria, setIdCategoria] = useState<number>(0);
+  const [selectedMenuId, setSelectedMenuId] = useState<number>(id_menu);
   const [estado, setEstado] = useState(true);
 
   useEffect(() => {
@@ -39,6 +41,7 @@ export const ItemForm: React.FC<Props> = ({
       setPrecio(initialValues.precio);
       setStock(initialValues.stock);
       setIdCategoria(initialValues.id_categoria);
+      setSelectedMenuId(initialValues.id_menu);
       setEstado(initialValues.estado === 1);
     } else {
       resetForm();
@@ -51,6 +54,7 @@ export const ItemForm: React.FC<Props> = ({
     setPrecio(0);
     setStock(0);
     setIdCategoria(0);
+    setSelectedMenuId(id_menu);
     setEstado(true);
   };
 
@@ -80,6 +84,13 @@ export const ItemForm: React.FC<Props> = ({
             setToastMessage("Seleccioná una categoría válida.");
             return;
         }
+
+        if (selectedMenuId === 0) {
+            setToastType("error");
+            setToastMessage("Seleccioná un menú válido.");
+            return;
+        }
+
        const nuevoItem: ItemGuardarDTO = {
         ...(mode === "edit" && initialValues?.id_item
             ? { id_item: initialValues.id_item }
@@ -90,7 +101,7 @@ export const ItemForm: React.FC<Props> = ({
         stock: Number(stock),
         estado: estado ? 1 : 0,
         id_categoria: Number(id_categoria),
-        id_menu: Number(id_menu),
+        id_menu: Number(selectedMenuId),
         };
 
 
@@ -200,6 +211,24 @@ export const ItemForm: React.FC<Props> = ({
           {categorias.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Menú */}
+      <div>
+        <label className="block font-semibold text-gray-200 text-md mb-1">Menú</label>
+        <select
+          value={selectedMenuId}
+          onChange={(e) => setSelectedMenuId(Number(e.target.value))}
+          className="w-full shadow-md border text-gray-200 border-gray-300 rounded-md px-3 py-2"
+          required
+        >
+          <option value={0} disabled>Seleccionar menú</option>
+          {menus.map((menu) => (
+            <option key={menu.id} value={menu.id}>
+              {menu.nombre}
             </option>
           ))}
         </select>
