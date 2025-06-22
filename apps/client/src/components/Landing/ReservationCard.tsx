@@ -1,6 +1,6 @@
 const ReservationCard = () => {
     return (
-        <div className="bg-white/15 backdrop-blur-md rounded-lg p-6 border-1 text-eggshell-100 w-full max-w-md mr-4">
+        <div className="bg-white/15 backdrop-blur-md rounded-lg p-6 border-1 text-eggshell-100 lg:w-full max-w-md mr-4">
 
           <h3 className="text-2xl font-playfair text-eggshell-100 font-semibold mb-4">Haz una Reserva</h3>
 
@@ -31,7 +31,7 @@ const ReservationCard = () => {
 
             <button
               type="submit"
-              className="bg-gold-mustard  font-raleway hover:bg-gold-after text-blood-700 font-semibold w-full py-2 mt-2 rounded-md transition-colors">
+              className="bg-gold-mustard  font-urbanist hover:bg-gold-after text-blood-700 font-semibold w-full py-2 mt-2 rounded-md transition-colors">
               Buscar una Mesa
             </button>
 

@@ -25,4 +25,10 @@ export const MenuQueries = {
       $1 -- id_menu
     );
   `,
+
+  enable: `
+    SELECT restaurant.sp_enable_menu(
+      $1 -- id_menu
+    );
+  `,
 };

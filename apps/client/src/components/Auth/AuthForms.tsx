@@ -8,6 +8,7 @@ import { Input } from '../UI/Input'
 import { Eye, EyeOff } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import  Toast  from "../UI/Toast";
 
 const AuthForms = () => {
   const [email, setEmail] = useState('')
@@ -16,38 +17,64 @@ const AuthForms = () => {
   const [showPassword, setShowPassword] = useState(false)
 
   const navigate = useNavigate()
-  const { setToken, setUserType, setIdRestaurante } = useAuth() // ⬅️ También el id_restaurante
+  const { setToken, setUserType, setIdRestaurante, setIdUsuario } = useAuth()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+   //toast
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
 
-    try {
-      const response = await login(email, password)
-      const token = response.access_token
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
 
-      setToken(token)
+      try {
+        const response = await login(email, password);
+        const token = response.access_token;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const decoded: any = jwtDecode(token)
+        setToken(token);
 
-      if (decoded?.rol) {
-        setUserType(decoded.rol) //administrador" o "usuario"
-      }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const decoded: any = jwtDecode(token);
 
-      if (decoded?.id_restaurante !== undefined) {
-        setIdRestaurante(decoded.id_restaurante)
-      }
 
-      console.log('Login exitoso ✅')
-      navigate('/')
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error en login', error.response?.data?.message || error.message)
+        if (decoded?.rol) {
+          setUserType(decoded.rol);
+        }
+
+        if (decoded?.id_restaurante !== undefined) {
+          setIdRestaurante(decoded.id_restaurante);
+        }
+
+        if (decoded?.sub) {
+          setIdUsuario(decoded.sub);
+        }
+
+
+        console.log('Login exitoso ✅');
+        navigate('/');
+
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const msg = error.response?.data?.message;
+
+            if (msg === 'Credenciales inválidas') {
+              setToastMessage(msg);
+              setToastType("error");
+              return;
+            }
+
+          if (msg === 'Su cuenta está desactivada. Por favor, póngase en contacto.') {
+            setToastMessage(msg);
+            setToastType("info");
+            return;
+          }
+
+          console.error('Error en login', msg || error.message);
       } else {
-        console.error('Error desconocido', error)
+        console.error('Error desconocido', error);
       }
     }
-  }
+};
+
   return (
     <div className="md:w-1/2 p-8 bg-eggshell-400 relative overflow-hidden">
       <div className="relative w-full" style={{ height: '500px' }}>
@@ -99,7 +126,6 @@ const AuthForms = () => {
           </form>
 
 
-
           {/* Link para recuperar contraseña */}
           <p className="mt-6 text-sm text-center font-raleway text-gray-200">
             Olvidaste tu contraseña?{' '}
@@ -107,69 +133,23 @@ const AuthForms = () => {
               Reestablecer
             </Link>
           </p>
+
+
         </div>
 
-        {/* Register Form (Placeholder, sin funcionalidad real aún) */}
-        <div
-          className={`absolute w-full transition-all duration-500 ease-in-out ${!isLogin ? 'translate-x-0' : 'translate-x-full opacity-0'}`}
-        >
-          <h2 className="text-3xl font-playfair font-semibold text-gray-700 mb-6">
-            Crea una Cuenta
-          </h2>
+        {/* Register Form si correspondiera*/}
 
-          <form className="space-y-4 font-raleway">
-            <div>
-              <label className="text-sm text-charcoal-600 block mb-1">Nombre Completo</label>
-              <Input
-                className="bg-pink-100 border-eggshell-creamy"
-                type="text"
-                placeholder="Ingresa tu nombre completo"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-charcoal-600 block mb-1">Email</label>
-              <Input
-                className="bg-pink-100 border-eggshell-creamy"
-                type="email"
-                placeholder="Ingresa tu email"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-charcoal-600 block mb-1">Contraseña</label>
-              <div className="relative">
-                <Input
-                  className="bg-pink-100 border-eggshell-creamy"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Elige una contraseña"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-600"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
-
-            <Button type="button" className="w-full">
-              Crear Cuenta
-            </Button>
-          </form>
-
-          <p className="mt-6 text-center font-raleway text-charcoal-600">
-            Ya tienes una cuenta?{' '}
-            <button
-              onClick={() => setIsLogin(true)}
-              className="text-blood-300 hover:underline font-semibold"
-            >
-              Ingresa
-            </button>
-          </p>
-        </div>
       </div>
+
+
+        {toastMessage && (
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                onClose={() => setToastMessage(null)}
+            />
+        )}
+
     </div>
   )
 }

@@ -16,6 +16,12 @@ import { UsuarioController } from './usuario/usuario.controller';
 import { MesaService } from './mesa/mesa.service';
 import { MesaController } from './mesa/mesa.controller';
 import { MesaModule } from './mesa/mesa.module';
+import { PagoService } from './pago/pago.service';
+import { PagoController } from './pago/pago.controller';
+import { PagoModule } from './pago/pago.module';
+import { PedidoService } from './pedido/pedido.service';
+import { PedidoController } from './pedido/pedido.controller';
+import { PedidoModule } from './pedido/pedido.module';
 
 @Module({
   imports: [
@@ -34,8 +40,17 @@ import { MesaModule } from './mesa/mesa.module';
     ItemModule,
     CategoriesModule,
     MesaModule,
+    PagoModule,
+    PedidoModule,
   ],
-  controllers: [AppController, CategoriesController, UsuarioController, MesaController],
-  providers: [AppService, MesaService],
+  controllers: [
+    AppController,
+    CategoriesController,
+    UsuarioController,
+    MesaController,
+    PagoController,
+    PedidoController,
+  ],
+  providers: [AppService, MesaService, PagoService, PedidoService],
 })
 export class AppModule {}

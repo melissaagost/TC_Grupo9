@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { Usuario } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,13 +20,15 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { UsuarioConTipo, UsuarioPerfil } from './interfaces/usuario.interface';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('usuario')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  //@Roles(Role.Administrador)
+  @Roles('administrador')
   @Get()
   async obtenerTodos(): Promise<{ data: UsuarioConTipo[] }> {
     const usuarios = await this.usuarioService.obtenerTodos();
@@ -33,7 +36,8 @@ export class UsuarioController {
   }
   //Endpoint create user
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  //@Roles(Role.Administrador)
+  @Roles('administrador')
   @Post()
   createUser(@Body() data: CreateUserDto): Promise<Usuario> {
     return this.usuarioService.createUser(data);
@@ -41,7 +45,8 @@ export class UsuarioController {
 
   // Endpoint for updateUser
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  //@Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id')
   updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -50,9 +55,20 @@ export class UsuarioController {
     return this.usuarioService.updateUser(id, data);
   }
 
+  // Endpoint para actualizar el perfil propio
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile/update')
+  updateOwnProfile(
+    @User() user: AuthenticatedUser,
+    @Body() data: UpdateProfileDto,
+  ): Promise<UsuarioPerfil> {
+    return this.usuarioService.updateOwnProfile(user.id_usuario, data);
+  }
+
   //Endpoint to set inactive
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  //@Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id/inactive')
   setUserInactive(
     @User() user: AuthenticatedUser,
@@ -63,7 +79,8 @@ export class UsuarioController {
 
   //Endpoint for update password
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  //@Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id/updatepass')
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
@@ -78,4 +95,6 @@ export class UsuarioController {
   getProfile(@User() user: AuthenticatedUser) {
     return this.usuarioService.findProfile(user.id_usuario);
   }
+
+
 }

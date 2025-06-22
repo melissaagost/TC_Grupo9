@@ -1,4 +1,4 @@
-
+import FadeEffect from '../components/UI/FadeEffect.tsx';
 import CallToAction from '../components/Landing/CallToAction.tsx';
 import Features from '../components/Landing/Features.tsx'
 import Efficiency from '../components/Landing/Efficiency.tsx'
@@ -8,13 +8,14 @@ const Home = () => {
   return (
     <>
 
-      <CallToAction/>
 
-      <Features/>
+      <FadeEffect duration={1}><CallToAction/></FadeEffect>
 
-      <Efficiency/>
+      <FadeEffect duration={1}><Features/></FadeEffect>
 
-      <StartTrial/>
+      <FadeEffect duration={1}><Efficiency/></FadeEffect>
+
+      <FadeEffect duration={1}><StartTrial/></FadeEffect>
 
     </>
   );

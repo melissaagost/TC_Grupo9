@@ -15,6 +15,11 @@ import { mesa } from '@prisma/client';
 export class MesaController {
   constructor(private readonly mesaService: MesaService) {}
 
+     @Get('con-pedido')
+  async obtenerMesasConPedido() {
+    return await this.mesaService.obtenerMesasConPedidoActivo();
+  }
+
   @Post()
   async createMesa(@Body() data: CreateMesaDTO): Promise<mesa> {
     return this.mesaService.createMesa(data);
@@ -34,6 +39,8 @@ export class MesaController {
     return { data: mesas };
   }
 
+
+
   @Get(':id')
   async findOneMesa(@Param('id', ParseIntPipe) id: number): Promise<mesa> {
     return this.mesaService.findOneMesa(id);
@@ -52,4 +59,14 @@ export class MesaController {
   ): Promise<{ message: string }> {
     return this.mesaService.setEstadoOcupado(id);
   }
+
+
+  @Patch(':id/reservado')
+  async setEstadoReservado(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    return this.mesaService.setEstadoReservado(id);
+  }
+
+
 }

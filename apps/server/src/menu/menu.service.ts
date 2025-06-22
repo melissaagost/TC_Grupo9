@@ -89,11 +89,40 @@ export class MenuService {
     }
   }
 
-  async findAllMenu(): Promise<menu[]> {
-    const menu = await this.prisma.menu.findMany().catch(() => {
-      throw new NotFoundException('No se encontraron menu');
+   async setEnableMenu(id: number): Promise<{ message: string }> {
+    try {
+      const result = await this.prisma.$queryRawUnsafe<
+        { sp_enable_menu: string }[]
+      >(`SELECT restaurant.sp_enable_menu($1)`, id);
+
+      if (!result.length) {
+        throw new BadRequestException(
+          'No se recibió respuesta al activar el menú',
+        );
+      }
+
+      return { message: result[0].sp_enable_menu };
+    } catch (error) {
+      throw new BadRequestException(error || 'Error al activar el menú');
+    }
+  }
+
+ async findAllMenu(): Promise<menu[]> {
+  try {
+    const menu = await this.prisma.menu.findMany({
+      orderBy: {
+        id_menu: 'asc', // o 'desc' si querés orden descendente
+      },
     });
 
+    if (!menu.length) {
+      throw new NotFoundException('No se encontraron menús');
+    }
+
     return menu;
+  } catch (error) {
+    throw new NotFoundException('Error al obtener menús');
   }
+}
+
 }

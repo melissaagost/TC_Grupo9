@@ -28,14 +28,14 @@ export class MenuController {
   // metodos privados
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Post()
   createMenuAsync(@Body() data: UpdateMenu) {
     return this.menuService.createMenu(data);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id')
   async updateMenuAsync(
     @Param('id', ParseIntPipe) id: number,
@@ -45,18 +45,27 @@ export class MenuController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  //@Roles('administrador', 'mozo', 'usuario') -> para que los clientes puedan ver
   @Get()
   async findAllMenu(): Promise<menu[]> {
     return await this.menuService.findAllMenu();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+  @Roles('administrador')
   @Patch(':id/disable')
   async disableMenu(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ message: string }> {
     return this.menuService.setDisableMenu(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('administrador')
+  @Patch(':id/enable')
+  async enableMenu(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    return this.menuService.setEnableMenu(id);
   }
 }

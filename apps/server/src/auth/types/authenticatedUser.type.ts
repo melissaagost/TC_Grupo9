@@ -11,5 +11,6 @@ export type AuthenticatedUser = {
 
 export enum Role {
   Administrador = 'administrador',
-  Usuario = 'usuario',
+  Cocinero = 'cocinero',
+  Mozo = 'mozo',
 }
